@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>SmartTrip — Smart Travel Planner</title>
+  <meta name="description" content="Plan smarter trips with live weather insights. Save destinations and get real-time weather data." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui']
+          },
+          colors: {
+            background: 'hsl(200 40% 98%)',
+            foreground: 'hsl(210 40% 12%)',
+            card: 'hsl(0 0% 100%)',
+            'card-foreground': 'hsl(210 40% 12%)',
+            primary: {
+              DEFAULT: 'hsl(195 85% 41%)',
+              foreground: 'hsl(0 0% 100%)',
+              glow: 'hsl(185 90% 55%)'
+            },
+            secondary: {
+              DEFAULT: 'hsl(25 95% 60%)',
+              foreground: 'hsl(0 0% 100%)'
+            },
+            muted: {
+              DEFAULT: 'hsl(200 30% 94%)',
+              foreground: 'hsl(210 15% 45%)'
+            },
+            accent: {
+              DEFAULT: 'hsl(35 95% 65%)',
+              foreground: 'hsl(210 40% 12%)'
+            },
+            destructive: {
+              DEFAULT: 'hsl(0 84% 60%)',
+              foreground: 'hsl(0 0% 100%)'
+            },
+            border: 'hsl(200 25% 88%)',
+            input: 'hsl(200 25% 90%)',
+          },
+          borderRadius: {
+            lg: '0.875rem',
+            md: 'calc(0.875rem - 2px)',
+            sm: 'calc(0.875rem - 4px)'
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .bg-gradient-primary {
+      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
+    }
+
+    .bg-gradient-sunset {
+      background-image: linear-gradient(135deg, hsl(25 95% 60%), hsl(340 85% 65%));
+    }
+
+    .bg-gradient-card {
+      background-image: linear-gradient(180deg, hsl(0 0% 100%), hsl(200 40% 97%));
+    }
+
+    .shadow-soft {
+      box-shadow: 0 4px 20px -4px hsl(195 60% 30% / 0.12);
+    }
+
+    .shadow-glow {
+      box-shadow: 0 10px 40px -10px hsl(195 85% 41% / 0.35);
+    }
+
+    .shadow-card {
+      box-shadow: 0 8px 30px -8px hsl(210 40% 20% / 0.1);
+    }
+
+    .transition-smooth {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-bg {
+      background-image:
+        linear-gradient(135deg, hsl(195 85% 41% / 0.85), hsl(220 70% 30% / 0.7)),
+        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .input-base {
+      display: flex;
+      height: 2.5rem;
+      width: 100%;
+      border-radius: 0.5rem;
+      border: 1px solid hsl(200 25% 88%);
+      background: hsl(0 0% 100%);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      outline: none;
+    }
+
+    .input-base:focus {
+      box-shadow: 0 0 0 2px hsl(195 85% 41% / 0.4);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.125rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-foreground antialiased">
+
+  <!-- HERO -->
+  <header class="hero-bg relative h-[480px] w-full overflow-hidden">
+    <nav class="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+      <div class="flex items-center gap-2 text-white">
+        <i class="fa-solid fa-plane text-2xl"></i>
+        <span class="text-lg font-semibold">SmartTrip</span>
+      </div>
+
+      <div class="hidden gap-6 text-sm font-medium text-white/90 md:flex">
+        <a href="#" class="hover:text-white transition-smooth">
+          <i class="fa-solid fa-house mr-1"></i> Home
+        </a>
+        <a href="#new" class="hover:text-white transition-smooth">
+          <i class="fa-solid fa-plus mr-1"></i> Add Trip
+        </a>
+        <a href="#trips" class="hover:text-white transition-smooth">
+          <i class="fa-solid fa-suitcase-rolling mr-1"></i> My Trips
+        </a>
+        <a href="#weather" class="hover:text-white transition-smooth">
+          <i class="fa-solid fa-cloud-sun mr-1"></i> Weather
+        </a>
+      </div>
+    </nav>
+
+    <div class="relative z-10 mx-auto flex h-[calc(100%-96px)] max-w-6xl flex-col justify-center px-6">
+      <span class="badge w-fit bg-white/20 text-white backdrop-blur mb-4">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Smart Travel Planner
+      </span>
+
+      <h1 class="max-w-2xl text-5xl font-bold leading-tight text-white md:text-6xl">
+        Plan smarter trips with live weather insights
+      </h1>
+
+      <p class="mt-4 max-w-xl text-lg text-white/85">
+        Save destinations, organize travel notes, and check real-time weather information from OpenWeatherMap — all in one simple platform.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#new" class="bg-gradient-sunset text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+          <i class="fa-solid fa-plus mr-2"></i>
+          Plan a New Trip
+        </a>
+
+        <a href="#trips" class="bg-white/10 text-white border border-white/40 backdrop-blur px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-smooth">
+          <i class="fa-solid fa-list mr-2"></i>
+          View Trips
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-6 py-16 space-y-20">
+
+    <!-- ADD TRIP -->
+    <section id="new" class="grid gap-8 md:grid-cols-[1.1fr_1fr]">
+      <div>
+        <span class="badge bg-muted text-foreground mb-3">
+          <i class="fa-solid fa-circle-plus"></i>
+          01 — Create
+        </span>
+
+        <h2 class="text-3xl font-bold">Add a new trip</h2>
+
+        <p class="mt-3 text-muted-foreground">
+          Capture your destination, dates, preferences and personal notes. Your trip is stored securely
+          in our backend using Node.js, Express, and MySQL via a clean REST API.
+        </p>
+
+        <div class="mt-6 space-y-3">
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">POST</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">GET</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">PUT</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">DELETE</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-card rounded-lg border border-border shadow-card">
+        <div class="p-6 pb-0">
+          <h3 class="text-2xl font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-plus text-primary"></i>
+            New trip
+          </h3>
+        </div>
+
+        <form class="p-6 space-y-4" onsubmit="event.preventDefault(); alert('POST /api/trips');">
+          <div class="space-y-2">
+            <label for="dest" class="text-sm font-medium">Destination</label>
+            <input id="dest" class="input-base" placeholder="e.g. Kyoto, Japan" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label for="date" class="text-sm font-medium">Travel date</label>
+              <input id="date" type="date" class="input-base" />
+            </div>
+
+            <div class="space-y-2">
+              <label for="pref" class="text-sm font-medium">Preferences</label>
+              <input id="pref" class="input-base" placeholder="Food, Culture" />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="notes" class="text-sm font-medium">Notes</label>
+            <textarea id="notes" rows="4" class="input-base" style="height:auto;" placeholder="Things to do, places to see..."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-gradient-primary text-white py-2.5 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>
+            Save Trip
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- TRIPS -->
+    <section id="trips">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <span class="badge bg-muted text-foreground mb-3">
+            <i class="fa-solid fa-briefcase"></i>
+            02 — Manage
+          </span>
+
+          <h2 class="text-3xl font-bold">Your saved trips</h2>
+
+          <p class="mt-2 text-muted-foreground">
+            Live weather data is fetched from OpenWeatherMap for each destination.
+          </p>
+        </div>
+
+        <div class="relative hidden md:block">
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
+        </div>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Trip card 1 -->
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+          <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-sm opacity-90">
+                  <i class="fa-solid fa-location-dot"></i>
+                  Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
+              </div>
+
+              <i class="fa-solid fa-cloud text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                18°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                65%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                12 km/h
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <i class="fa-solid fa-calendar-days text-primary"></i>
+              June 15, 2026
+            </div>
+
+            <p class="text-sm text-foreground/80 leading-relaxed">
+              Visit the Eiffel Tower, try local cafes, and explore museums.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge bg-muted text-foreground font-normal">Culture</span>
+              <span class="badge bg-muted text-foreground font-normal">Food</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-border pt-4">
+              <div class="text-xs text-muted-foreground">
+                <i class="fa-solid fa-cloud mr-1"></i>
+                Partly cloudy
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Trip card 2 -->
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+          <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-sm opacity-90">
+                  <i class="fa-solid fa-location-dot"></i>
+                  Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
+              </div>
+
+              <i class="fa-solid fa-sun text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                24°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                70%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                8 km/h
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <i class="fa-solid fa-calendar-days text-primary"></i>
+              July 3, 2026
+            </div>
+
+            <p class="text-sm text-foreground/80 leading-relaxed">
+              Explore Shibuya, visit temples, and try Japanese street food.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge bg-muted text-foreground font-normal">Shopping</span>
+              <span class="badge bg-muted text-foreground font-normal">Food</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-border pt-4">
+              <div class="text-xs text-muted-foreground">
+                <i class="fa-solid fa-sun mr-1"></i>
+                Sunny
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Trip card 3 -->
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+          <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-sm opacity-90">
+                  <i class="fa-solid fa-location-dot"></i>
+                  Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
+              </div>
+
+              <i class="fa-solid fa-snowflake text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                7°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                78%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                22 km/h
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <i class="fa-solid fa-calendar-days text-primary"></i>
+              September 5, 2026
+            </div>
+
+            <p class="text-sm text-foreground/80 leading-relaxed">
+              Northern lights, Blue Lagoon, Golden Circle tour.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge bg-muted text-foreground font-normal">Adventure</span>
+              <span class="badge bg-muted text-foreground font-normal">Nature</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-border pt-4">
+              <div class="text-xs text-muted-foreground">
+                <i class="fa-solid fa-snowflake mr-1"></i>
+                Snowy
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- WEATHER -->
+    <section id="weather" class="rounded-2xl bg-gradient-sunset p-10 text-white shadow-glow">
+      <div class="grid gap-8 md:grid-cols-2 md:items-center">
+        <div>
+          <span class="badge bg-white/25 text-white backdrop-blur mb-3">
+            <i class="fa-solid fa-cloud-sun"></i>
+            03 — Real-time
+          </span>
+
+          <h2 class="text-3xl font-bold">Live weather, anywhere</h2>
+
+          <p class="mt-3 text-white/90">
+            Combine your saved travel data with real-time weather from OpenWeatherMap. Make informed decisions
+            about what to pack and when to go.
+          </p>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-lg shadow-card">
+          <div class="p-6">
+            <label for="city" class="text-sm font-medium text-foreground">
+              Check weather for any city
+            </label>
+
+            <div class="mt-2 flex gap-2">
+              <input id="city" placeholder="e.g. Paris" class="input-base flex-1" />
+
+              <button class="bg-gradient-primary text-white px-4 rounded-lg hover:opacity-90 transition-smooth">
+                <i class="fa-solid fa-magnifying-glass mr-1"></i>
+                Search
+              </button>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between rounded-xl bg-muted p-4">
+              <div>
+                <div class="text-sm text-muted-foreground">Paris, France</div>
+                <div class="text-3xl font-bold text-foreground">18°C</div>
+                <div class="text-sm text-muted-foreground">Partly cloudy</div>
+              </div>
+
+              <i class="fa-solid fa-cloud-sun text-5xl text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-border bg-muted/40 py-8">
+    <div class="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
+      SmartTrip — Web API Development Assignment · Node.js · Express · MySQL · OpenWeatherMap
+    </div>
+  </footer>
+
+</body>
+</html>
