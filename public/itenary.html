@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Day-by-Day Plan · FlyAway</title>
+  <meta name="description" content="Build a curated trip itinerary, hour by hour. Plan your day-by-day travel activities with FlyAway." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            navy: '#0f1e3d',
+            amber: {
+              brand: '#f5a623',
+            },
+            cream: '#f7f5f0',
+          },
+        },
+      },
+    };
+  </script>
+  <style>body{font-family:'Inter',sans-serif;background:#f7f5f0;}</style>
+</head>
+<body class="text-navy">
+
+  <!-- Top Nav -->
+  <header class="bg-cream border-b border-black/5">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 font-bold text-lg">
+        <i class="fa-solid fa-location-crosshairs text-amber-brand"></i>
+        Wayfarer
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="itinerary.html" class="text-navy font-semibold">Dashboard</a>
+        <a href="index.html#trips" class="text-navy/70 hover:text-navy">My Trips</a>
+        <a href="index.html#weather" class="text-navy/70 hover:text-navy">Explore</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#" class="px-4 py-2 text-sm border border-navy/15 rounded-md hover:bg-white">Log In</a>
+        <a href="#" class="px-4 py-2 text-sm bg-amber-brand text-white font-semibold rounded-md hover:brightness-95">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+      <a href="index.html" class="flex items-center gap-2 text-sm text-navy/70 hover:text-navy">
+        <i class="fa-solid fa-arrow-left"></i> All Trips
+      </a>
+
+      <div class="rounded-xl overflow-hidden border border-black/5 bg-white">
+        <img src="https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=600&q=60"
+             alt="Lisbon" class="w-full h-36 object-cover grayscale" />
+        <div class="p-4">
+          <h2 class="font-serif text-2xl font-bold leading-tight">Lisbon &amp; The Algarve</h2>
+          <p class="text-sm text-navy/60 mt-1">Apr 14 — Apr 23, 2026</p>
+          <span class="inline-flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-amber-brand text-white text-xs font-semibold">
+            <i class="fa-solid fa-plane"></i> Upcoming
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-wider text-navy/50 mb-2">Trip Sections</p>
+        <nav class="flex flex-col gap-1 text-sm">
+          <a href="#" class="px-4 py-2.5 rounded-md bg-navy text-white font-semibold">Itinerary</a>
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Budget</a>
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Packing List</a>
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Notes</a>
+        </nav>
+      </div>
+
+      <div class="rounded-xl bg-white border border-black/5 p-4">
+        <div class="flex items-center gap-2 text-sm font-semibold">
+          <i class="fa-solid fa-compass text-amber-brand"></i> Travel Tip
+        </div>
+        <p class="text-sm text-navy/70 mt-2 leading-relaxed">
+          Pastéis de Belém open at 8 AM — head early to avoid the queue and enjoy them warm.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="space-y-8">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm text-navy/60">Trip Itinerary</p>
+          <h1 class="font-serif text-4xl md:text-5xl font-bold mt-1">Your Day-by-Day Plan</h1>
+          <p class="text-navy/60 mt-3 max-w-xl">Build a curated journey, hour by hour. Every great trip begins with a thoughtful plan.</p>
+        </div>
+        <button class="shrink-0 inline-flex items-center gap-2 px-5 py-3 bg-amber-brand text-white font-semibold rounded-md hover:brightness-95">
+          <i class="fa-solid fa-plus"></i> Add Activity
+        </button>
+      </div>
+
+      <!-- Choose a Day -->
+      <section class="rounded-2xl bg-white/60 border border-black/5 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-lg">Choose a Day</h3>
+          <span class="text-xs text-navy/60">Apr 14 — Apr 23, 2026 · 10 days</span>
+        </div>
+        <div class="grid grid-cols-4 md:grid-cols-8 gap-3">
+          <button class="h-14 rounded-md bg-navy text-white text-sm font-semibold">Day 1</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 2</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 3</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 4</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 5</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 6</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 7</button>
+          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 8</button>
+        </div>
+      </section>
+
+      <!-- Summary Cards -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
+          <div class="w-12 h-12 rounded-full bg-amber-brand/15 text-amber-brand flex items-center justify-center text-lg">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wider text-navy/50">Selected Day</p>
+            <p class="font-serif text-lg font-bold">Tuesday, April 14</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
+          <div class="w-12 h-12 rounded-full bg-navy/10 text-navy flex items-center justify-center text-lg">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wider text-navy/50">Activities</p>
+            <p class="font-serif text-lg font-bold">5 planned</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
+          <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+            <i class="fa-regular fa-clock"></i>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wider text-navy/50">First Activity</p>
+            <p class="font-serif text-lg font-bold">8:30 AM · Airport Pickup</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Day details -->
+      <section>
+        <div class="flex items-end justify-between flex-wrap gap-2">
+          <div>
+            <h2 class="font-serif text-3xl font-bold">Tuesday, April 14</h2>
+            <p class="text-navy/60 mt-1">Arrival day — settle in and explore the Alfama district.</p>
+          </div>
+          <span class="text-sm text-navy/50">Local time · Lisbon (WET)</span>
+        </div>
+
+        <!-- Activities -->
+        <div class="mt-6 space-y-4">
+
+          <!-- Activity card -->
+          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
+            <div class="bg-cream flex flex-col items-center justify-center p-6">
+              <p class="font-serif text-xl font-bold">5/01/26</p>
+              <p class="text-xs text-navy/50 mt-1">Local time</p>
+            </div>
+            <div class="p-5">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-brand text-white text-xs font-semibold">
+                <i class="fa-solid fa-plane"></i> Transport
+              </span>
+              <div class="flex items-start justify-between mt-3">
+                <h3 class="font-serif text-xl font-bold">Airport Shuttle to Hotel</h3>
+                <div class="flex items-center gap-3 text-navy/40">
+                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
+                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+              </div>
+              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot"></i> Ngurah Rai International Airport, Bali
+              </p>
+              <p class="text-sm text-navy/80 mt-3">Pre-booked shuttle from Ngurah Rai Airport to Kuta hotel zone.</p>
+            </div>
+          </article>
+
+          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
+            <div class="bg-cream flex flex-col items-center justify-center p-6">
+              <p class="font-serif text-xl font-bold">5/02/26</p>
+              <p class="text-xs text-navy/50 mt-1">Local time</p>
+            </div>
+            <div class="p-5">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-brand text-white text-xs font-semibold">
+                <i class="fa-solid fa-plane"></i> Transport
+              </span>
+              <div class="flex items-start justify-between mt-3">
+                <h3 class="font-serif text-xl font-bold">Grab Taxi to Seminyak</h3>
+                <div class="flex items-center gap-3 text-navy/40">
+                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
+                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+              </div>
+              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot"></i> Seminyak, Bali
+              </p>
+              <p class="text-sm text-navy/80 mt-3">Ride to beachside cafés and boutique shopping in Seminyak.</p>
+            </div>
+          </article>
+
+          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
+            <div class="bg-cream flex flex-col items-center justify-center p-6">
+              <p class="font-serif text-xl font-bold">5/03/26</p>
+              <p class="text-xs text-navy/50 mt-1">Local time</p>
+            </div>
+            <div class="p-5">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold">
+                <i class="fa-solid fa-utensils"></i> Food
+              </span>
+              <div class="flex items-start justify-between mt-3">
+                <h3 class="font-serif text-xl font-bold">Dinner at Time Out Market</h3>
+                <div class="flex items-center gap-3 text-navy/40">
+                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
+                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+              </div>
+              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot"></i> Mercado da Ribeira, Lisbon
+              </p>
+              <p class="text-sm text-navy/80 mt-3">Try pastéis de nata and Portuguese seafood from the city's top chefs.</p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <div class="pt-4">
+        <a href="index.html" class="inline-flex items-center gap-2 text-sm text-navy/70 hover:text-navy">
+          <i class="fa-solid fa-arrow-left"></i> Back to FlyAway home
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <footer class="border-t border-black/5 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-6 text-sm text-navy/60">
+      FlyAway · Trip Itinerary · Node.js · Express · MySQL · OpenWeatherMap
+    </div>
+  </footer>
+</body>
+</html>

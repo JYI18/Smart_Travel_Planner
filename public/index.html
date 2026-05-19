@@ -25,7 +25,7 @@
             sans: ['Inter', 'ui-sans-serif', 'system-ui']
           },
           colors: {
-            background: 'hsl(200 40% 98%)',
+            background: '#f7f5f0',
             foreground: 'hsl(210 40% 12%)',
             card: 'hsl(0 0% 100%)',
             'card-foreground': 'hsl(210 40% 12%)',
@@ -61,6 +61,16 @@
         }
       }
     }
+
+  fetch("/components/topNavBar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("topnavbar").innerHTML = data;
+    })
+    .catch(error => {
+      console.error("Navbar failed to load:", error);
+    });
+
   </script>
 
   <style>
@@ -94,8 +104,8 @@
 
     .hero-bg {
       background-image:
-        linear-gradient(135deg, hsl(195 85% 41% / 0.85), hsl(220 70% 30% / 0.7)),
-        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80');
+        linear-gradient(135deg, hsl(35 85% 45% / 0.7), hsl(220 25% 18% / 0.85)),
+        url("/img/FlyAway_Background.jpg");
       background-size: cover;
       background-position: center;
     }
@@ -135,45 +145,25 @@
 <body class="bg-background text-foreground antialiased">
 
   <!-- HERO -->
-  <header class="hero-bg relative h-[480px] w-full overflow-hidden">
-    <nav class="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-      <div class="flex items-center gap-2 text-white">
-        <img src="/img/FlyAway_Logo.png" alt="FlyAway Logo" class="h-10 w-10 object-contain">
-        <span class="text-lg font-semibold">FlyAway</span>
-      </div>
+  <header class="hero-bg relative min-h-[610px] w-full overflow-hidden">
+    <div id="topnavbar"></div>
 
-      <div class="hidden gap-6 text-sm font-medium text-white/90 md:flex">
-        <a href="#" class="hover:text-white transition-smooth">
-          <i class="fa-solid fa-house mr-1"></i> Home
-        </a>
-        <a href="#new" class="hover:text-white transition-smooth">
-          <i class="fa-solid fa-plus mr-1"></i> Add Trip
-        </a>
-        <a href="#trips" class="hover:text-white transition-smooth">
-          <i class="fa-solid fa-suitcase-rolling mr-1"></i> My Trips
-        </a>
-        <a href="#weather" class="hover:text-white transition-smooth">
-          <i class="fa-solid fa-cloud-sun mr-1"></i> Weather
-        </a>
-      </div>
-    </nav>
-
-    <div class="relative z-10 mx-auto flex h-[calc(100%-96px)] max-w-6xl flex-col justify-center px-6">
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-2 text-center">
       <span class="badge w-fit bg-white/20 text-white backdrop-blur mb-4">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         Smart Travel Planner
       </span>
 
-      <h1 class="max-w-2xl text-5xl font-bold leading-tight text-white md:text-6xl">
-        Plan smarter trips with live weather insights
+      <h1 class="max-w-2xl text-3xl font-bold leading-tight text-white md:text-4xl">
+        Plan Your Dream Holidays Now
       </h1>
 
       <p class="mt-4 max-w-xl text-lg text-white/85">
-        Save destinations, organize travel notes, and check real-time weather information from OpenWeatherMap — all in one simple platform.
+        Save destinations, organize travel notes — all in one simple platform.
       </p>
 
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="#new" class="bg-gradient-sunset text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="#new" class="bg-gradient-primary text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
           <i class="fa-solid fa-plus mr-2"></i>
           Plan a New Trip
         </a>
@@ -183,10 +173,64 @@
           View Trips
         </a>
       </div>
+
+      <!-- SEARCH BAR + TRIP TYPE BUTTONS -->
+      <div class="mx-auto mt-6 w-full max-w-3xl overflow-hidden rounded-xl bg-white/95 shadow-card backdrop-blur text-left">
+        <div class="flex items-center gap-4 bg-blue-50 px-6 py-3">
+          <input
+            type="text"
+            placeholder="Where to?"
+            class="flex-1 bg-transparent text-xl font-medium text-foreground placeholder:text-foreground outline-none"
+          />
+
+          <button class="rounded-lg bg-white p-3 text-2xl text-primary shadow-soft hover:bg-muted transition-smooth">
+            <i class="fa-solid fa-location-dot"></i>
+          </button>
+        </div>
+
+        <div class="border-t border-border px-4 py-4">
+          <h3 class="mb-3 text-sm font-semibold text-foreground">
+            Reservations and attachments
+          </h3>
+
+          <div class="grid grid-cols-3 gap-2 text-center sm:grid-cols-6">
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-plane text-xl"></i>
+              <div class="mt-1 text-xs">Flight</div>
+            </button>
+
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-bed text-xl"></i>
+              <div class="mt-1 text-xs">Lodging</div>
+            </button>
+
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-car text-xl"></i>
+              <div class="mt-1 text-xs">Rental car</div>
+            </button>
+
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-utensils text-xl"></i>
+              <div class="mt-1 text-xs">Restaurant</div>
+            </button>
+
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-paperclip text-xl"></i>
+              <div class="mt-1 text-xs">Attachment</div>
+            </button>
+
+            <button class="rounded-lg px-3 py-2 text-muted-foreground hover:bg-muted hover:text-primary transition-smooth">
+              <i class="fa-solid fa-ellipsis text-xl"></i>
+              <div class="mt-1 text-xs">Other</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-16 space-y-20">
+  <main class="mx-auto max-w-6xl px-6 py-12 space-y-20">
 
     <!-- ADD TRIP -->
     <section id="new" class="grid gap-8 md:grid-cols-[1.1fr_1fr]">
@@ -199,8 +243,7 @@
         <h2 class="text-3xl font-bold">Add a new trip</h2>
 
         <p class="mt-3 text-muted-foreground">
-          Capture your destination, dates, preferences and personal notes. Your trip is stored securely
-          in our backend using Node.js, Express, and MySQL via a clean REST API.
+          Capture your destination, dates, preferences and personal notes.
         </p>
 
         <div class="mt-6 space-y-3">
