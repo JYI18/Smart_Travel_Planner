@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Add New Trip — FlyAway</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['"Playfair Display"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            navy: '#0F2A47',
+            teal: '#1FA2B8',
+            tealDark: '#168598',
+            amber: '#F5A524',
+            cream: '#F6F1E7',
+          }
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #F6F1E7; }
+  .font-serif { font-family: 'Playfair Display', serif; }
+  .input-base {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 placeholder-slate-400
+           focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition;
+  }
+  .chip {
+    @apply flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-4 px-3
+           text-slate-600 hover:border-brand-teal hover:text-brand-teal hover:shadow-sm transition cursor-pointer;
+  }
+  .chip.active {
+    @apply border-brand-teal bg-brand-teal/10 text-brand-teal shadow-sm;
+  }
+</style>
+</head>
+<body class="text-brand-navy">
+
+<!-- Navbar -->
+<header class="bg-brand-navy text-white">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-brand-teal flex items-center justify-center">
+        <i class="fa-solid fa-paper-plane text-white"></i>
+      </div>
+      <span class="text-xl font-bold">FlyAway</span>
+    </div>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-house mr-1"></i> Home</a>
+      <a href="#" class="text-brand-teal"><i class="fa-solid fa-plus mr-1"></i> Add Trip</a>
+      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-suitcase mr-1"></i> My Trips</a>
+      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-user mr-1"></i> Profile</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Page header -->
+<section class="max-w-5xl mx-auto px-6 pt-12 pb-6">
+  <a href="#" class="text-sm text-slate-500 hover:text-brand-teal"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Trips</a>
+  <p class="mt-6 text-brand-teal font-medium tracking-wide uppercase text-xs">New Adventure</p>
+  <h1 class="font-serif text-5xl md:text-6xl mt-2">Plan a New Trip</h1>
+  <p class="text-slate-600 mt-3 max-w-2xl">Tell us where you're heading. We'll help you organize destinations, dates, and details — all in one place.</p>
+</section>
+
+<!-- Form Card -->
+<main class="max-w-5xl mx-auto px-6 pb-20">
+  <form class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 md:p-10 space-y-10">
+
+    <!-- Trip Basics -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">Trip Basics</h2>
+      <p class="text-sm text-slate-500 mb-6">Give your trip a name and a destination.</p>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium mb-2">Trip Name</label>
+          <input type="text" placeholder="e.g. Lisbon & The Algarve" class="input-base" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Destination</label>
+          <div class="relative">
+            <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" placeholder="City or country" class="input-base pl-11" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">When are you going?</h2>
+      <p class="text-sm text-slate-500 mb-6">Select your travel window.</p>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium mb-2">Departure</label>
+          <input type="date" class="input-base" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Return</label>
+          <input type="date" class="input-base" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Trip Type -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">Trip Style</h2>
+      <p class="text-sm text-slate-500 mb-6">Pick the vibe — we'll tailor suggestions.</p>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="chip active">
+          <i class="fa-solid fa-umbrella-beach text-2xl"></i>
+          <span class="text-sm font-medium">Beach</span>
+        </div>
+        <div class="chip">
+          <i class="fa-solid fa-mountain-sun text-2xl"></i>
+          <span class="text-sm font-medium">Adventure</span>
+        </div>
+        <div class="chip">
+          <i class="fa-solid fa-city text-2xl"></i>
+          <span class="text-sm font-medium">City</span>
+        </div>
+        <div class="chip">
+          <i class="fa-solid fa-utensils text-2xl"></i>
+          <span class="text-sm font-medium">Foodie</span>
+        </div>
+        <div class="chip">
+          <i class="fa-solid fa-spa text-2xl"></i>
+          <span class="text-sm font-medium">Relax</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Travelers & Budget -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">Travelers & Budget</h2>
+      <p class="text-sm text-slate-500 mb-6">Who's going and what's the spend?</p>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div>
+          <label class="block text-sm font-medium mb-2">Travelers</label>
+          <div class="relative">
+            <i class="fa-solid fa-user-group absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="number" min="1" value="2" class="input-base pl-11" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Budget</label>
+          <div class="relative">
+            <i class="fa-solid fa-dollar-sign absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="number" placeholder="2500" class="input-base pl-11" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Currency</label>
+          <select class="input-base">
+            <option>USD ($)</option>
+            <option>EUR (€)</option>
+            <option>GBP (£)</option>
+            <option>JPY (¥)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">Travel Notes</h2>
+      <p class="text-sm text-slate-500 mb-6">Anything you want to remember about this trip?</p>
+      <textarea rows="4" placeholder="Restaurants to try, places to visit, reminders…" class="input-base resize-none"></textarea>
+    </div>
+
+    <!-- Cover Image -->
+    <div>
+      <h2 class="font-serif text-2xl mb-1">Cover Image</h2>
+      <p class="text-sm text-slate-500 mb-6">Optional — set the mood for your trip.</p>
+
+      <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl py-12 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition">
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-teal mb-3"></i>
+        <p class="font-medium">Drop an image or <span class="text-brand-teal underline">browse</span></p>
+        <p class="text-xs text-slate-400 mt-1">PNG, JPG up to 10MB</p>
+        <input type="file" class="hidden" />
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3 sm:justify-end pt-4 border-t border-slate-100">
+      <button type="button" class="px-6 py-3 rounded-xl border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition">
+        Cancel
+      </button>
+      <button type="button" class="px-6 py-3 rounded-xl bg-white border border-brand-teal text-brand-teal font-medium hover:bg-brand-teal/5 transition">
+        <i class="fa-regular fa-bookmark mr-1"></i> Save as Draft
+      </button>
+      <button type="submit" class="px-8 py-3 rounded-xl bg-brand-amber text-white font-semibold shadow hover:brightness-95 transition">
+        <i class="fa-solid fa-plane-departure mr-2"></i> Create Trip
+      </button>
+    </div>
+  </form>
+</main>
+
+<footer class="text-center text-xs text-slate-500 pb-8">
+  © 2026 FlyAway · Plan beautifully, travel happily.
+</footer>
+
+</body>
+</html>

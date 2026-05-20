@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <div id="topnavbar"></div>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Day-by-Day Plan · FlyAway</title>
+  <title>Itenary</title>
   <meta name="description" content="Build a curated trip itinerary, hour by hour. Plan your day-by-day travel activities with FlyAway." />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,29 +30,19 @@
         },
       },
     };
+
+    fetch("/components/topNavBar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("topnavbar").innerHTML = data;
+    })
+    .catch(error => {
+      console.error("Navbar failed to load:", error);
+    });
   </script>
   <style>body{font-family:'Inter',sans-serif;background:#f7f5f0;}</style>
 </head>
 <body class="text-navy">
-
-  <!-- Top Nav -->
-  <header class="bg-cream border-b border-black/5">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2 font-bold text-lg">
-        <i class="fa-solid fa-location-crosshairs text-amber-brand"></i>
-        Wayfarer
-      </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <a href="itinerary.html" class="text-navy font-semibold">Dashboard</a>
-        <a href="index.html#trips" class="text-navy/70 hover:text-navy">My Trips</a>
-        <a href="index.html#weather" class="text-navy/70 hover:text-navy">Explore</a>
-      </nav>
-      <div class="flex items-center gap-3">
-        <a href="#" class="px-4 py-2 text-sm border border-navy/15 rounded-md hover:bg-white">Log In</a>
-        <a href="#" class="px-4 py-2 text-sm bg-amber-brand text-white font-semibold rounded-md hover:brightness-95">Sign Up</a>
-      </div>
-    </div>
-  </header>
 
   <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
 
