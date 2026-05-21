@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Search Places | FlyAway</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f7f5f0;
+    }
+
+    .bg-gradient-primary {
+      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
+    }
+
+    .shadow-card {
+      box-shadow: 0 8px 30px -8px hsl(210 40% 20% / 0.1);
+    }
+  </style>
+</head>
+
+<body class="text-slate-900">
+
+  <!-- Optional navbar area -->
+  <div id="topnavbar"></div>
+
+  <!-- Page wrapper -->
+  <main class="mx-auto max-w-6xl px-6 py-10">
+
+    <!-- Back link -->
+    <a href="/" class="inline-flex items-center text-sm font-medium text-sky-700 hover:underline">
+      <i class="fa-solid fa-arrow-left mr-2"></i>
+      Back to home
+    </a>
+
+    <!-- Page title -->
+    <section class="mt-8">
+      <p class="text-sm font-semibold uppercase tracking-wider text-sky-600">
+        Explore destinations
+      </p>
+
+      <h1 class="mt-2 text-4xl font-bold">
+        Search Places
+      </h1>
+
+      <p class="mt-3 max-w-2xl text-slate-600">
+        Search a city and discover attractions, museums, restaurants, and other places you may like.
+      </p>
+    </section>
+
+    <!-- Search box -->
+    <section class="mt-8 rounded-2xl bg-white p-6 shadow-card ring-1 ring-slate-200">
+      <form id="placeSearchForm" class="grid gap-4 md:grid-cols-[1fr_220px_auto]">
+
+        <!-- City input -->
+        <div>
+          <label for="cityInput" class="mb-2 block text-sm font-semibold">
+            City
+          </label>
+
+          <input
+            id="cityInput"
+            type="text"
+            placeholder="Example: Tokyo, Paris, Hong Kong"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+            required
+          />
+        </div>
+
+        <!-- Category dropdown -->
+        <div>
+          <label for="categorySelect" class="mb-2 block text-sm font-semibold">
+            Category
+          </label>
+
+          <select
+            id="categorySelect"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+          >
+            <option value="attractions">Attractions</option>
+            <option value="museums">Museums</option>
+            <option value="food">Food</option>
+          </select>
+        </div>
+
+        <!-- Search button -->
+        <div class="flex items-end">
+          <button
+            type="submit"
+            class="w-full rounded-xl bg-gradient-primary px-6 py-3 font-semibold text-white hover:opacity-90"
+          >
+            <i class="fa-solid fa-magnifying-glass mr-2"></i>
+            Search
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- Status message -->
+    <p id="statusMessage" class="mt-6 text-slate-600">
+      Enter a city and click Search.
+    </p>
+
+    <!-- Results area -->
+    <section class="mt-8">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold">
+          Recommended Places
+        </h2>
+
+        <p id="resultSubtitle" class="mt-1 text-sm text-slate-500">
+          Search results will appear below.
+        </p>
+      </div>
+
+      <!-- JavaScript will insert place cards here later -->
+      <div
+        id="placesGrid"
+        class="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+      >
+        <!-- Empty for now -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Optional: load your existing navbar if the file exists -->
+  <script>
+    fetch("/components/topNavBar.html")
+      .then(response => response.text())
+      .then(data => {
+        const navbar = document.getElementById("topnavbar");
+        if (navbar) {
+          navbar.innerHTML = data;
+        }
+      })
+      .catch(error => {
+        console.log("Navbar not loaded. This is okay for now.");
+      });
+  </script>
+
+  <!-- We will create this file in the next step -->
+  <script src="/js/searchPlaces.js"></script>
+
+</body>
+</html>
