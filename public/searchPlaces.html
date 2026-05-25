@@ -22,6 +22,15 @@
     rel="stylesheet"
   >
 
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
   <style>
     body {
       font-family: 'Inter', system-ui, sans-serif;
@@ -34,6 +43,12 @@
 
     .shadow-card {
       box-shadow: 0 8px 30px -8px hsl(210 40% 20% / 0.1);
+    }
+
+    #map {
+        height: 420px;
+        width: 100%;
+        border-radius: 1rem;
     }
   </style>
 </head>
@@ -69,7 +84,7 @@
 
     <!-- Search box -->
     <section class="mt-8 rounded-2xl bg-white p-6 shadow-card ring-1 ring-slate-200">
-      <form id="placeSearchForm" class="grid gap-4 md:grid-cols-[1fr_220px_auto]">
+      <form id="placeSearchForm" class="grid gap-4 md:grid-cols-[1fr_220px_180px_auto]">
 
         <!-- City input -->
         <div>
@@ -95,11 +110,35 @@
           <select
             id="categorySelect"
             class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+
           >
-            <option value="attractions">Attractions</option>
-            <option value="museums">Museums</option>
-            <option value="food">Food</option>
+        <option value="all">All</option>
+        <option value="must_see">Must-see attractions</option>
+        <option value="culture">Culture & heritage</option>
+        <option value="museums">Museums</option>
+        <option value="food">Food & cafes</option>
+        <option value="shopping">Shopping</option>
+        <option value="nature">Nature & parks</option>
+        <option value="hotels">Hotels</option>
+        <option value="nightlife">Nightlife</option>
+        <option value="transport">Transport</option>
           </select>
+        </div>
+
+        <div>
+        <label for="radiusSelect" class="mb-2 block text-sm font-semibold">
+            Search radius
+        </label>
+
+        <select
+            id="radiusSelect"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+        >
+            <option value="5000">5 km</option>
+            <option value="10000" selected>10 km</option>
+            <option value="20000">20 km</option>
+            <option value="50000">50 km</option>
+        </select>
         </div>
 
         <!-- Search button -->
@@ -134,12 +173,15 @@
       </div>
 
       <!-- JavaScript will insert place cards here later -->
-      <div
+        <div class="mb-8 overflow-hidden rounded-2xl bg-white p-3 shadow-card ring-1 ring-slate-200">
+        <div id="map"></div>
+        </div>
+
+        <div
         id="placesGrid"
         class="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-      >
-        <!-- Empty for now -->
-      </div>
+        >
+        </div>
     </section>
 
   </main>
