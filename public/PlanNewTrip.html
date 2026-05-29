@@ -2,216 +2,710 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Add New Trip — FlyAway</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<title>FlyAway — Your Journey Begins Here</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          serif: ['"Playfair Display"', 'serif'],
-          sans: ['Inter', 'sans-serif'],
-        },
-        colors: {
-          brand: {
-            navy: '#0F2A47',
-            teal: '#1FA2B8',
-            tealDark: '#168598',
-            amber: '#F5A524',
-            cream: '#F6F1E7',
-          }
-        }
-      }
-    }
-  }
-</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-  body { font-family: 'Inter', sans-serif; background: #F6F1E7; }
-  .font-serif { font-family: 'Playfair Display', serif; }
-  .input-base {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 placeholder-slate-400
-           focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    overflow-x: hidden;
   }
-  .chip {
-    @apply flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-4 px-3
-           text-slate-600 hover:border-brand-teal hover:text-brand-teal hover:shadow-sm transition cursor-pointer;
+  
+  /* Parallax & Travel Vibe Background */
+  .parallax-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-image: url('img/FlyAway_Background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
   }
-  .chip.active {
-    @apply border-brand-teal bg-brand-teal/10 text-brand-teal shadow-sm;
+  
+  .parallax-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.85) 100%);
+    pointer-events: none;
   }
+  
+  /* Animated clouds */
+  .cloud {
+    position: fixed;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1000px;
+    filter: blur(30px);
+    pointer-events: none;
+    z-index: -1;
+    animation: floatCloud 40s linear infinite;
+  }
+  
+  @keyframes floatCloud {
+    0% { transform: translateX(-100px); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateX(calc(100vw + 200px)); opacity: 0; }
+  }
+  
+  /* 3D Card Effect */
+  .travel-card {
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  
+  .travel-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 40px -20px rgba(0,0,0,0.4), 0 0 0 2px rgba(245,165,36,0.3);
+  }
+  
+  .travel-card-inner {
+    transition: all 0.3s ease;
+  }
+  
+  /* Glow effect on hover */
+  .glow-on-hover:hover {
+    box-shadow: 0 0 25px rgba(245,165,36,0.4);
+  }
+  
+  /* Hero section with parallax text */
+  .hero-title {
+    background: linear-gradient(135deg, #F5A524 0%, #FFD700 50%, #F5A524 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 10px rgba(245,165,36,0.3);
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+  
+  @keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(245,165,36,0.3); }
+    50% { text-shadow: 0 0 40px rgba(245,165,36,0.6); }
+  }
+  
+  /* Animated underline */
+  .animated-underline {
+    position: relative;
+  }
+  
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #F5A524, #FFD700);
+    transition: width 0.3s ease;
+  }
+  
+  .animated-underline:hover::after {
+    width: 100%;
+  }
+  
+  /* Pulse animation for buttons */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  .pulse-on-hover:hover {
+    animation: pulse 0.5s ease-in-out;
+  }
+  
+  /* Shimmer border */
+  .shimmer-border {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #F5A524, #FFD700, #F5A524, #FFD700);
+    background-size: 400% 400%;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+  }
+  
+  .shimmer-border:hover::before {
+    opacity: 1;
+    animation: shimmerRotate 3s linear infinite;
+  }
+  
+  @keyframes shimmerRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Modal animation */
+  .modal-enter {
+    animation: modalSlideIn 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  }
+  
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: scale(0.95) translateY(-20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  /* Floating particles */
+  .particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: rgba(245,165,36,0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat 8s linear infinite;
+  }
+  
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+  }
+  
+  /* Scroll reveal */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+  }
+  
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Loading skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, #2a2a3e 25%, #3a3a4e 50%, #2a2a3e 75%);
+    background-size: 200% 100%;
+    animation: skeletonWave 1.5s infinite;
+  }
+  
+  @keyframes skeletonWave {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  /* Destination badge pulse */
+  .destination-badge {
+    position: relative;
+  }
+  
+  .destination-badge::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(245,165,36,0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: radarPing 2s infinite;
+  }
+  
+  @keyframes radarPing {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: #F5A524; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
 </style>
 </head>
-<body class="text-brand-navy">
-
-<!-- Navbar -->
-<header class="bg-brand-navy text-white">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-brand-teal flex items-center justify-center">
-        <i class="fa-solid fa-paper-plane text-white"></i>
+<body>
+<!-- Parallax Background -->
+<div class="parallax-bg"></div>
+<!-- Floating Clouds -->
+<div id="clouds"></div>
+<!-- Particles -->
+<div id="particles"></div>
+<!-- Glassmorphic Navbar -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-xl border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+    <div class="flex items-center gap-3 group cursor-pointer" onclick="location.reload()">
+      <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110 duration-300 overflow-hidden bg-white">
+        <img src="img/FlyAway_Logo.png" alt="FlyAway Logo" class="w-full h-full object-cover">
       </div>
-      <span class="text-xl font-bold">FlyAway</span>
+      <div>
+        <span class="text-2xl font-serif font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">FlyAway</span>
+      </div>
     </div>
-    <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-house mr-1"></i> Home</a>
-      <a href="#" class="text-brand-teal"><i class="fa-solid fa-plus mr-1"></i> Add Trip</a>
-      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-suitcase mr-1"></i> My Trips</a>
-      <a href="#" class="hover:text-brand-teal transition"><i class="fa-solid fa-user mr-1"></i> Profile</a>
-    </nav>
+    <div class="flex gap-3">
+      <button onclick="openAddModal()" class="px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg hover:shadow-amber-500/30 transition-all hover:scale-105 pulse-on-hover">
+        <i class="fas fa-plus mr-2"></i>New Expedition
+      </button>
+      <button onclick="toggleView()" class="px-5 py-2 rounded-full border border-white/30 text-white/80 font-semibold hover:bg-white/10 transition-all backdrop-blur">
+        <i class="fas fa-th-large mr-2"></i><span id="viewToggleText">Grid</span>
+      </button>
+    </div>
   </div>
-</header>
-
-<!-- Page header -->
-<section class="max-w-5xl mx-auto px-6 pt-12 pb-6">
-  <a href="#" class="text-sm text-slate-500 hover:text-brand-teal"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Trips</a>
-  <p class="mt-6 text-brand-teal font-medium tracking-wide uppercase text-xs">New Adventure</p>
-  <h1 class="font-serif text-5xl md:text-6xl mt-2">Plan a New Trip</h1>
-  <p class="text-slate-600 mt-3 max-w-2xl">Tell us where you're heading. We'll help you organize destinations, dates, and details — all in one place.</p>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-16 text-center">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="scroll-reveal">
+      <div class="inline-block mb-4 px-4 py-1 rounded-full bg-white/10 backdrop-blur border border-white/20">
+        <span class="text-amber-400 text-sm font-medium"><i class="fas fa-map-marked-alt mr-2"></i>DISCOVER THE WORLD</span>
+      </div>
+      <h1 class="hero-title font-serif text-6xl md:text-7xl lg:text-8xl font-black mb-4">
+        Your Journey<br>Begins Here
+      </h1>
+      <p class="text-white/70 text-lg max-w-2xl mx-auto font-light">
+        Every trip tells a story. Collect memories, not things. Start planning your next adventure today.
+      </p>
+    </div>
+  </div>
 </section>
-
-<!-- Form Card -->
-<main class="max-w-5xl mx-auto px-6 pb-20">
-  <form class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 md:p-10 space-y-10">
-
-    <!-- Trip Basics -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">Trip Basics</h2>
-      <p class="text-sm text-slate-500 mb-6">Give your trip a name and a destination.</p>
-
-      <div class="grid md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium mb-2">Trip Name</label>
-          <input type="text" placeholder="e.g. Lisbon & The Algarve" class="input-base" />
+<!-- Stats Dashboard -->
+<div class="max-w-7xl mx-auto px-6 py-8">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statsGrid">
+    <!-- Stats loaded dynamically -->
+  </div>
+</div>
+<!-- Search & Filter Bar -->
+<div class="max-w-7xl mx-auto px-6 py-6">
+  <div class="flex flex-wrap gap-4 items-center justify-between bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
+    <div class="relative flex-1 max-w-md">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/40"></i>
+      <input type="text" id="searchInput" placeholder="Search your next destination..." class="w-full pl-11 pr-4 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+    </div>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="filterByStyle('All')" class="filter-chip px-4 py-2 rounded-full bg-amber-500 text-white font-medium transition-all hover:scale-105" data-style="All">All</button>
+      <button onclick="filterByStyle('Beach')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Beach"><i class="fas fa-umbrella-beach mr-1"></i>Beach</button>
+      <button onclick="filterByStyle('Adventure')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Adventure"><i class="fas fa-mountain-sun mr-1"></i>Adventure</button>
+      <button onclick="filterByStyle('City')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="City"><i class="fas fa-city mr-1"></i>City</button>
+      <button onclick="filterByStyle('Foodie')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Foodie"><i class="fas fa-utensils mr-1"></i>Foodie</button>
+      <button onclick="filterByStyle('Relax')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Relax"><i class="fas fa-spa mr-1"></i>Relax</button>
+      <button onclick="toggleFavoritesFilter()" id="favFilterBtn" class="px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-yellow-500/30 transition-all"><i class="fas fa-star mr-1"></i>Favorites</button>
+    </div>
+  </div>
+</div>
+<!-- Trips Container -->
+<div class="max-w-7xl mx-auto px-6 pb-20">
+  <div id="tripsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all">
+    <!-- Skeleton loaders -->
+    <div class="skeleton rounded-2xl h-80"></div>
+    <div class="skeleton rounded-2xl h-80"></div>
+    <div class="skeleton rounded-2xl h-80"></div>
+  </div>
+</div>
+<!-- Add/Edit Modal -->
+<div id="tripModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-10 modal-enter border border-white/20">
+    <div class="sticky top-0 bg-gray-900/95 backdrop-blur border-b border-white/10 px-6 py-4 flex justify-between items-center">
+      <h2 class="font-serif text-2xl text-white" id="modalTitle">✈️ Plan New Expedition</h2>
+      <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-white/10 transition"><i class="fas fa-times text-white/70"></i></button>
+    </div>
+    <div class="p-6">
+      <form id="tripForm" onsubmit="event.preventDefault(); saveTrip();">
+        <input type="hidden" id="tripId">
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Trip Name</label><input type="text" id="tripName" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Summer in Paris"></div>
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Destination</label><input type="text" id="destination" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Paris, France"></div>
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Destination</label>
-          <div class="relative">
-            <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" placeholder="City or country" class="input-base pl-11" />
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Departure</label><input type="date" id="departureDate" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Return</label><input type="date" id="returnDate" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white/80 mb-2">Travel Style</label>
+          <div class="flex gap-2 flex-wrap" id="modalStyleContainer">
+            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Beach"><i class="fas fa-umbrella-beach mr-1"></i>Beach</div>
+            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Adventure"><i class="fas fa-mountain-sun mr-1"></i>Adventure</div>
+            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="City"><i class="fas fa-city mr-1"></i>City</div>
+            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Foodie"><i class="fas fa-utensils mr-1"></i>Foodie</div>
+            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Relax"><i class="fas fa-spa mr-1"></i>Relax</div>
           </div>
+          <input type="hidden" id="tripStyle">
         </div>
-      </div>
+        <div class="grid md:grid-cols-3 gap-4 mb-4">
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Travelers</label><input type="number" id="travelers" value="2" min="1" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Budget</label><input type="number" id="budget" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40" placeholder="0"></div>
+          <div><label class="block text-sm font-medium text-white/80 mb-1">Currency</label><select id="currency" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select></div>
+        </div>
+        <div class="mb-4"><label class="block text-sm font-medium text-white/80 mb-1">Travel Notes</label><textarea id="notes" rows="3" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40" placeholder="Must-see places, local tips..."></textarea></div>
+        <div class="flex gap-3 justify-end">
+          <button type="button" onclick="closeModal()" class="px-6 py-2 rounded-full border border-white/30 text-white/70 hover:bg-white/10 transition">Cancel</button>
+          <button type="submit" class="px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg hover:shadow-amber-500/30 transition"><i class="fas fa-save mr-2"></i>Save Trip</button>
+        </div>
+      </form>
     </div>
-
-    <!-- Dates -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">When are you going?</h2>
-      <p class="text-sm text-slate-500 mb-6">Select your travel window.</p>
-
-      <div class="grid md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium mb-2">Departure</label>
-          <input type="date" class="input-base" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Return</label>
-          <input type="date" class="input-base" />
-        </div>
-      </div>
+  </div>
+</div>
+<!-- Toast -->
+<div id="toastContainer" class="fixed bottom-6 right-6 z-50"></div>
+<script>
+const API_URL = window.location.origin;
+let allTrips = [];
+let currentFilter = 'All';
+let showFavOnly = false;
+let isGridView = true;
+// Create floating clouds
+function createClouds() {
+const cloudContainer = document.getElementById('clouds');
+for (let i = 0; i < 8; i++) {
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud';
+    cloud.style.width = Math.random() * 200 + 100 + 'px';
+    cloud.style.height = Math.random() * 100 + 50 + 'px';
+    cloud.style.bottom = Math.random() * 60 + 10 + '%';
+    cloud.style.left = -Math.random() * 200 + 'px';
+    cloud.style.animationDelay = Math.random() * 20 + 's';
+    cloud.style.animationDuration = Math.random() * 30 + 30 + 's';
+    cloudContainer.appendChild(cloud);
+}
+}
+// Create floating particles
+function createParticles() {
+const particleContainer = document.getElementById('particles');
+for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 8 + 's';
+    particle.style.animationDuration = Math.random() * 10 + 5 + 's';
+    particle.style.width = Math.random() * 3 + 2 + 'px';
+    particle.style.height = particle.style.width;
+    particleContainer.appendChild(particle);
+}
+}
+// Scroll reveal observer
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+    if (entry.isIntersecting) {
+    entry.target.classList.add('revealed');
+    }
+});
+}, { threshold: 0.1 });
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+document.addEventListener('DOMContentLoaded', () => {
+createClouds();
+createParticles();
+loadTrips();
+document.getElementById('searchInput').addEventListener('input', filterTrips);
+});
+async function loadTrips() {
+try {
+    const res = await fetch(`${API_URL}/api/trips`);
+    allTrips = await res.json();
+    updateStats();
+    filterTrips();
+} catch (err) {
+    console.error(err);
+}
+}
+function updateStats() {
+const total = allTrips.length;
+const totalBudget = allTrips.reduce((sum, t) => sum + (t.budget || 0), 0);
+const destinations = new Set(allTrips.map(t => t.destination)).size;
+const favCount = allTrips.filter(t => t.favorite).length;
+document.getElementById('statsGrid').innerHTML = `
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
+    <i class="fas fa-suitcase-rolling text-3xl text-amber-400 mb-2"></i>
+    <p class="text-3xl font-bold text-white">${total}</p>
+    <p class="text-xs text-white/50">EXPLORATIONS</p>
     </div>
-
-    <!-- Trip Type -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">Trip Style</h2>
-      <p class="text-sm text-slate-500 mb-6">Pick the vibe — we'll tailor suggestions.</p>
-
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div class="chip active">
-          <i class="fa-solid fa-umbrella-beach text-2xl"></i>
-          <span class="text-sm font-medium">Beach</span>
-        </div>
-        <div class="chip">
-          <i class="fa-solid fa-mountain-sun text-2xl"></i>
-          <span class="text-sm font-medium">Adventure</span>
-        </div>
-        <div class="chip">
-          <i class="fa-solid fa-city text-2xl"></i>
-          <span class="text-sm font-medium">City</span>
-        </div>
-        <div class="chip">
-          <i class="fa-solid fa-utensils text-2xl"></i>
-          <span class="text-sm font-medium">Foodie</span>
-        </div>
-        <div class="chip">
-          <i class="fa-solid fa-spa text-2xl"></i>
-          <span class="text-sm font-medium">Relax</span>
-        </div>
-      </div>
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
+    <i class="fas fa-globe-asia text-3xl text-emerald-400 mb-2"></i>
+    <p class="text-3xl font-bold text-white">${destinations}</p>
+    <p class="text-xs text-white/50">DESTINATIONS</p>
     </div>
-
-    <!-- Travelers & Budget -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">Travelers & Budget</h2>
-      <p class="text-sm text-slate-500 mb-6">Who's going and what's the spend?</p>
-
-      <div class="grid md:grid-cols-3 gap-5">
-        <div>
-          <label class="block text-sm font-medium mb-2">Travelers</label>
-          <div class="relative">
-            <i class="fa-solid fa-user-group absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="number" min="1" value="2" class="input-base pl-11" />
-          </div>
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
+    <i class="fas fa-dollar-sign text-3xl text-green-400 mb-2"></i>
+    <p class="text-3xl font-bold text-white">$${totalBudget.toLocaleString()}</p>
+    <p class="text-xs text-white/50">TREASURE</p>
+    </div>
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
+    <i class="fas fa-star text-3xl text-yellow-400 mb-2"></i>
+    <p class="text-3xl font-bold text-white">${favCount}</p>
+    <p class="text-xs text-white/50">FAVORITES</p>
+    </div>
+`;
+document.querySelectorAll('#statsGrid .scroll-reveal').forEach(el => observer.observe(el));
+}
+function filterTrips() {
+const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+let filtered = allTrips.filter(trip => {
+    const matchesSearch = trip.trip_name.toLowerCase().includes(searchTerm) || trip.destination.toLowerCase().includes(searchTerm);
+    const matchesStyle = currentFilter === 'All' || trip.trip_style === currentFilter;
+    const matchesFav = !showFavOnly || trip.favorite;
+    return matchesSearch && matchesStyle && matchesFav;
+});
+renderTrips(filtered);
+}
+function filterByStyle(style) {
+currentFilter = style;
+document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.remove('bg-amber-500', 'text-white');
+    chip.classList.add('bg-white/10', 'text-white/70');
+    if (chip.getAttribute('data-style') === style) {
+    chip.classList.add('bg-amber-500', 'text-white');
+    chip.classList.remove('bg-white/10', 'text-white/70');
+    }
+});
+filterTrips();
+}
+function toggleFavoritesFilter() {
+showFavOnly = !showFavOnly;
+const btn = document.getElementById('favFilterBtn');
+if (showFavOnly) {
+    btn.classList.add('bg-yellow-500/50', 'text-white');
+    btn.classList.remove('bg-white/10', 'text-white/70');
+} else {
+    btn.classList.remove('bg-yellow-500/50', 'text-white');
+    btn.classList.add('bg-white/10', 'text-white/70');
+}
+filterTrips();
+}
+function toggleView() {
+isGridView = !isGridView;
+const container = document.getElementById('tripsContainer');
+if (isGridView) {
+    container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all';
+    document.getElementById('viewToggleText').innerText = 'Grid';
+} else {
+    container.className = 'flex flex-col gap-6 transition-all';
+    document.getElementById('viewToggleText').innerText = 'List';
+}
+filterTrips();
+}
+function getGradient(style) {
+const gradients = {
+    Beach: 'from-cyan-500/80 to-blue-600/80',
+    Adventure: 'from-orange-500/80 to-red-600/80',
+    City: 'from-purple-500/80 to-pink-600/80',
+    Foodie: 'from-amber-500/80 to-orange-600/80',
+    Relax: 'from-emerald-500/80 to-teal-600/80'
+};
+return gradients[style] || 'from-amber-500/80 to-orange-600/80';
+}
+function getIcon(style) {
+const icons = { Beach: 'umbrella-beach', Adventure: 'mountain-sun', City: 'city', Foodie: 'utensils', Relax: 'spa' };
+return icons[style] || 'plane-departure';
+}
+function renderTrips(trips) {
+const container = document.getElementById('tripsContainer');
+if (trips.length === 0) {
+    container.innerHTML = `<div class="col-span-full text-center py-20"><i class="fas fa-compass fa-5x text-white/20 mb-4"></i><p class="text-white/50 text-lg">No expeditions found. Start your journey!</p></div>`;
+    return;
+}
+container.innerHTML = trips.map(trip => `
+    <div class="travel-card group bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/50 transition-all duration-500" data-id="${trip._id}">
+    <div class="relative h-48 bg-gradient-to-r ${getGradient(trip.trip_style)} overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center transition-transform group-hover:scale-110 duration-700">
+        <i class="fas fa-${getIcon(trip.trip_style)} text-white text-5xl opacity-60"></i>
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Budget</label>
-          <div class="relative">
-            <i class="fa-solid fa-dollar-sign absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="number" placeholder="2500" class="input-base pl-11" />
-          </div>
+        <button onclick="event.stopPropagation(); toggleFavorite('${trip._id}', ${trip.favorite})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/50 backdrop-blur flex items-center justify-center hover:scale-110 transition-all duration-300">
+        <i class="fas fa-star ${trip.favorite ? 'text-yellow-400' : 'text-white/60'} text-sm"></i>
+        </button>
+        <div class="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-xs font-semibold text-white/80">${trip.status}</div>
+        <div class="absolute bottom-3 left-3 right-3">
+        <div class="flex items-center gap-2 text-white/80 text-xs bg-black/40 backdrop-blur rounded-full px-3 py-1 w-fit">
+            <i class="fas fa-calendar-alt"></i>
+            <span>${formatDate(trip.departure_date)} → ${formatDate(trip.return_date)}</span>
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Currency</label>
-          <select class="input-base">
-            <option>USD ($)</option>
-            <option>EUR (€)</option>
-            <option>GBP (£)</option>
-            <option>JPY (¥)</option>
-          </select>
         </div>
-      </div>
     </div>
-
-    <!-- Notes -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">Travel Notes</h2>
-      <p class="text-sm text-slate-500 mb-6">Anything you want to remember about this trip?</p>
-      <textarea rows="4" placeholder="Restaurants to try, places to visit, reminders…" class="input-base resize-none"></textarea>
+    <div class="p-5">
+        <h3 class="font-serif text-2xl font-bold text-white mb-1 group-hover:text-amber-400 transition-colors">${escapeHtml(trip.trip_name)}</h3>
+        <div class="flex items-center gap-2 mb-3">
+        <i class="fas fa-map-pin text-amber-400 text-sm"></i>
+        <p class="text-white/60 text-sm">${escapeHtml(trip.destination)}</p>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-users mr-1"></i>${trip.travelers} travelers</span>
+        <span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-tag mr-1"></i>${trip.trip_style || 'Any'}</span>
+        ${trip.budget ? `<span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-coins mr-1"></i>${trip.budget} ${trip.currency}</span>` : ''}
+        </div>
+        ${trip.notes ? `<p class="text-white/50 text-sm mb-4 line-clamp-2"><i class="fas fa-quote-left mr-1 text-amber-400/50"></i>${escapeHtml(trip.notes.substring(0, 80))}${trip.notes.length > 80 ? '...' : ''}</p>` : ''}
+        <div class="flex gap-2 pt-2 border-t border-white/10">
+        <button onclick="openEditModal('${trip._id}')" class="flex-1 py-2 rounded-xl border border-amber-500/50 text-amber-400 hover:bg-amber-500/20 transition-all text-sm font-medium"><i class="far fa-edit mr-1"></i>Edit</button>
+        <button onclick="deleteTrip('${trip._id}')" class="flex-1 py-2 rounded-xl border border-red-500/50 text-red-400 hover:bg-red-500/20 transition-all text-sm font-medium"><i class="far fa-trash-alt mr-1"></i>Delete</button>
+        </div>
     </div>
-
-    <!-- Cover Image -->
-    <div>
-      <h2 class="font-serif text-2xl mb-1">Cover Image</h2>
-      <p class="text-sm text-slate-500 mb-6">Optional — set the mood for your trip.</p>
-
-      <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl py-12 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition">
-        <i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-teal mb-3"></i>
-        <p class="font-medium">Drop an image or <span class="text-brand-teal underline">browse</span></p>
-        <p class="text-xs text-slate-400 mt-1">PNG, JPG up to 10MB</p>
-        <input type="file" class="hidden" />
-      </label>
     </div>
-
-    <!-- Actions -->
-    <div class="flex flex-col sm:flex-row gap-3 sm:justify-end pt-4 border-t border-slate-100">
-      <button type="button" class="px-6 py-3 rounded-xl border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition">
-        Cancel
-      </button>
-      <button type="button" class="px-6 py-3 rounded-xl bg-white border border-brand-teal text-brand-teal font-medium hover:bg-brand-teal/5 transition">
-        <i class="fa-regular fa-bookmark mr-1"></i> Save as Draft
-      </button>
-      <button type="submit" class="px-8 py-3 rounded-xl bg-brand-amber text-white font-semibold shadow hover:brightness-95 transition">
-        <i class="fa-solid fa-plane-departure mr-2"></i> Create Trip
-      </button>
-    </div>
-  </form>
-</main>
-
-<footer class="text-center text-xs text-slate-500 pb-8">
-  © 2026 FlyAway · Plan beautifully, travel happily.
-</footer>
-
+`).join('');
+}
+async function toggleFavorite(id, currentState) {
+try {
+    const res = await fetch(`${API_URL}/api/trips/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ favorite: !currentState })
+    });
+    if (res.ok) {
+    await loadTrips();
+    showToast('success', !currentState ? '✨ Added to favorites!' : 'Removed from favorites');
+    if (!currentState) {
+        const canvas = document.createElement('canvas');
+        canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+        document.body.appendChild(canvas);
+        const ConfettiGenerator = await import('https://cdn.skypack.dev/confetti-js').then(m => m.default);
+        const confetti = new ConfettiGenerator({ target: canvas, max: 80, size: 1.5 });
+        confetti.render();
+        setTimeout(() => canvas.remove(), 2000);
+    }
+    }
+} catch (err) {
+    showToast('error', 'Failed to update favorite');
+}
+}
+function openAddModal() {
+document.getElementById('modalTitle').innerHTML = '✈️ Plan New Expedition';
+document.getElementById('tripId').value = '';
+document.getElementById('tripForm').reset();
+document.getElementById('tripStyle').value = '';
+document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('bg-amber-500', 'text-white'));
+document.getElementById('tripModal').style.display = 'flex';
+}
+async function openEditModal(id) {
+try {
+    const res = await fetch(`${API_URL}/api/trips/${id}`);
+    const trip = await res.json();
+    document.getElementById('modalTitle').innerHTML = '✏️ Edit Expedition';
+    document.getElementById('tripId').value = trip._id;
+    document.getElementById('tripName').value = trip.trip_name;
+    document.getElementById('destination').value = trip.destination;
+    document.getElementById('departureDate').value = trip.departure_date || '';
+    document.getElementById('returnDate').value = trip.return_date || '';
+    document.getElementById('travelers').value = trip.travelers;
+    document.getElementById('budget').value = trip.budget || '';
+    document.getElementById('currency').value = trip.currency || 'USD';
+    document.getElementById('notes').value = trip.notes || '';
+    document.getElementById('tripStyle').value = trip.trip_style || '';
+    document.querySelectorAll('.style-chip').forEach(c => {
+    c.classList.remove('bg-amber-500', 'text-white');
+    if (c.getAttribute('data-style') === trip.trip_style) {
+        c.classList.add('bg-amber-500', 'text-white');
+    }
+    });
+    document.getElementById('tripModal').style.display = 'flex';
+} catch (err) {
+    showToast('error', 'Could not load trip');
+}
+}
+function closeModal() {
+document.getElementById('tripModal').style.display = 'none';
+}
+async function saveTrip() {
+const id = document.getElementById('tripId').value;
+const tripData = {
+    trip_name: document.getElementById('tripName').value,
+    destination: document.getElementById('destination').value,
+    departure_date: document.getElementById('departureDate').value,
+    return_date: document.getElementById('returnDate').value,
+    trip_style: document.getElementById('tripStyle').value,
+    travelers: parseInt(document.getElementById('travelers').value),
+    budget: parseFloat(document.getElementById('budget').value) || null,
+    currency: document.getElementById('currency').value,
+    notes: document.getElementById('notes').value,
+    status: 'planned'
+};
+if (!tripData.trip_name || !tripData.destination) {
+    showToast('error', 'Trip name and destination required');
+    return;
+}
+try {
+    let res;
+    if (id) {
+    res = await fetch(`${API_URL}/api/trips/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tripData)
+    });
+    } else {
+    res = await fetch(`${API_URL}/api/trips`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tripData)
+    });
+    }
+    if (res.ok) {
+    closeModal();
+    await loadTrips();
+    showToast('success', id ? 'Trip updated!' : 'New adventure created!');
+    } else {
+    showToast('error', 'Failed to save');
+    }
+} catch (err) {
+    showToast('error', 'Connection error');
+}
+}
+async function deleteTrip(id) {
+const result = await Swal.fire({
+    title: 'Delete Expedition?',
+    text: 'This journey will be lost forever',
+    icon: 'warning',
+    background: '#1a1a2e',
+    color: '#fff',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete'
+});
+if (result.isConfirmed) {
+    try {
+    await fetch(`${API_URL}/api/trips/${id}`, { method: 'DELETE' });
+    await loadTrips();
+    showToast('success', 'Trip deleted');
+    } catch (err) {
+    showToast('error', 'Failed to delete');
+    }
+}
+}
+function showToast(type, message) {
+const container = document.getElementById('toastContainer');
+const toast = document.createElement('div');
+toast.className = `mb-3 ${type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-red-500 to-rose-600'} text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 animate-fade-in backdrop-blur`;
+toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>${message}`;
+container.appendChild(toast);
+setTimeout(() => toast.remove(), 3000);
+}
+function formatDate(dateStr) {
+if (!dateStr) return 'TBD';
+return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+function escapeHtml(str) {
+if (!str) return '';
+return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+}
+// Style chips in modal
+document.querySelectorAll('.style-chip').forEach(chip => {
+chip.addEventListener('click', () => {
+    document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('bg-amber-500', 'text-white'));
+    chip.classList.add('bg-amber-500', 'text-white');
+    document.getElementById('tripStyle').value = chip.getAttribute('data-style');
+});
+});
+</script>
 </body>
 </html>
