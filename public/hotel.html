@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hotel Search</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,sans-serif;
+}
+
+body{
+    background:#f5f7fa;
+}
+
+header{
+    background:#0d6efd;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+.search-section{
+    max-width:1200px;
+    margin:20px auto;
+    display:flex;
+    gap:10px;
+    padding:0 15px;
+}
+
+.search-section input{
+    flex:1;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+.search-section button{
+    background:#0d6efd;
+    color:white;
+    border:none;
+    padding:14px 25px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.search-section button:hover{
+    background:#084db3;
+}
+
+#results{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.hotel-card{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    margin-bottom:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.hotel-image{
+    width:100%;
+    height:300px;
+    object-fit:cover;
+}
+
+.hotel-content{
+    padding:20px;
+}
+
+.hotel-name{
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.badges{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+.badge{
+    background:#e8f1ff;
+    color:#0d6efd;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:14px;
+}
+
+.description{
+    margin:15px 0;
+    line-height:1.6;
+    color:#444;
+}
+
+.details{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+}
+
+.detail{
+    background:#f8f9fa;
+    padding:10px;
+    border-radius:10px;
+}
+
+.loading{
+    text-align:center;
+    font-size:22px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏨 Hotel Search</h1>
+    <p>Search hotels by country</p>
+</header>
+
+<div class="search-section">
+
+    <input
+        type="text"
+        id="country"
+        placeholder="Enter Country (Malaysia, Japan, Thailand)"
+    >
+
+    <button onclick="searchHotels()">
+        Search
+    </button>
+
+</div>
+
+<div id="results"></div>
+
+<script>
+
+const countryMap = {
+    malaysia:"MY",
+    singapore:"SG",
+    thailand:"TH",
+    indonesia:"ID",
+    japan:"JP",
+    korea:"KR",
+    china:"CN",
+    vietnam:"VN",
+    france:"FR",
+    germany:"DE",
+    italy:"IT",
+    spain:"ES",
+    uk:"GB",
+    england:"GB",
+    usa:"US",
+    "united states":"US",
+    canada:"CA",
+    australia:"AU"
+};
+
+async function searchHotels(){
+
+    const countryInput =
+    document.getElementById("country")
+    .value
+    .trim()
+    .toLowerCase();
+
+    const countryCode =
+    countryMap[countryInput] || countryInput.toUpperCase();
+
+    const results =
+    document.getElementById("results");
+
+    results.innerHTML =
+    `<div class="loading">Loading hotels...</div>`;
+
+    try{
+
+        const response =
+        await fetch(
+        `/api/hotels?countryCode=${countryCode}&limit=20`
+        );
+
+        const data =
+        await response.json();
+
+        renderHotels(data.data);
+
+    }catch(error){
+
+        console.error(error);
+
+        results.innerHTML =
+        "<h2>Error loading hotels.</h2>";
+    }
+}
+
+function renderHotels(hotels){
+
+    const results =
+    document.getElementById("results");
+
+    if(!hotels || hotels.length===0){
+
+        results.innerHTML =
+        "<h2>No hotels found.</h2>";
+
+        return;
+    }
+
+    results.innerHTML = "";
+
+    hotels.forEach(hotel=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className = "hotel-card";
+
+        card.innerHTML = `
+
+        <img
+        class="hotel-image"
+        src="${hotel.main_photo || hotel.thumbnail}"
+        alt="${hotel.name}"
+        >
+
+        <div class="hotel-content">
+
+            <div class="hotel-name">
+                ${hotel.name}
+            </div>
+
+            <div class="badges">
+
+                <div class="badge">
+                    ⭐ ${hotel.stars || "N/A"} Stars
+                </div>
+
+                <div class="badge">
+                    🏆 Rating ${hotel.rating || "N/A"}
+                </div>
+
+                <div class="badge">
+                    💬 ${hotel.reviewCount || 0} Reviews
+                </div>
+
+            </div>
+
+            <div class="description">
+                ${hotel.hotelDescription || ""}
+            </div>
+
+            <div class="details">
+
+                <div class="detail">
+                    <strong>Country:</strong><br>
+                    ${hotel.country}
+                </div>
+
+                <div class="detail">
+                    <strong>City:</strong><br>
+                    ${hotel.city}
+                </div>
+
+                <div class="detail">
+                    <strong>Address:</strong><br>
+                    ${hotel.address}
+                </div>
+
+                <div class="detail">
+                    <strong>ZIP:</strong><br>
+                    ${hotel.zip || "N/A"}
+                </div>
+
+                <div class="detail">
+                    <strong>Chain:</strong><br>
+                    ${hotel.chain || "Independent"}
+                </div>
+
+                <div class="detail">
+                    <strong>Currency:</strong><br>
+                    ${hotel.currency}
+                </div>
+
+                <div class="detail">
+                    <strong>Latitude:</strong><br>
+                    ${hotel.latitude}
+                </div>
+
+                <div class="detail">
+                    <strong>Longitude:</strong><br>
+                    ${hotel.longitude}
+                </div>
+
+                <div class="detail">
+                    <strong>Hotel ID:</strong><br>
+                    ${hotel.id}
+                </div>
+
+                <div class="detail">
+                    <strong>Facilities:</strong><br>
+                    ${hotel.facilityIds?.length || 0} Facilities
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+        results.appendChild(card);
+
+    });
+}
+
+</script>
+
+</body>
+</html>
