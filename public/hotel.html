@@ -241,6 +241,59 @@ body{
     color:#64748b;
     font-size:18px;
 }
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    z-index:999;
+    overflow:auto;
+    padding:40px;
+}
+
+.modal-content{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:20px;
+    top:15px;
+    font-size:30px;
+    cursor:pointer;
+}
+
+.modal-gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px;
+    margin-top:20px;
+}
+
+.modal-gallery img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.book-btn{
+    margin-top:20px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+}
 
 </style>
 </head>
@@ -285,6 +338,20 @@ body{
 <!-- RESULTS -->
 <div id="results">
     <div class="empty">Search or pick a destination ✨</div>
+</div>
+<!-- HOTEL DETAILS MODAL -->
+<div id="hotelModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <div id="modalBody">
+            Loading...
+        </div>
+
+    </div>
+
 </div>
 
 <script>
@@ -407,10 +474,14 @@ function render(hotels){
                 <div class="meta">📍 ${h.city || ''}, ${h.country || ''}</div>
                 <div class="meta">⭐ ${h.stars || 'N/A'} • 🏆 ${h.rating || 'N/A'}</div>
 
-                <button class="btn" onclick="toggle('${id}')">
-                    View Details
-                </button>
-
+              <button class="btn" onclick="loadHotelDetails('${h.id}')">
+    View Details
+</button>
+<button class="btn"
+onclick="bookHotel('${h.id}')"
+style="background:#16a34a;margin-left:8px;">
+    Book Now
+</button>
                 <div id="${id}" class="details">
                     <b>Address:</b> ${h.address || 'N/A'} <br>
                     <b>ZIP:</b> ${h.zip || 'N/A'} <br>
@@ -433,6 +504,106 @@ function render(hotels){
 function toggle(id){
     const el = document.getElementById(id);
     el.style.display = el.style.display === "block" ? "none" : "block";
+}
+async function loadHotelDetails(hotelId){
+
+    const modal = document.getElementById("hotelModal");
+    const body = document.getElementById("modalBody");
+
+    modal.style.display = "block";
+
+    body.innerHTML = `
+        <div class="loading">
+            Loading hotel details...
+        </div>
+    `;
+
+    try{
+
+        const res = await fetch(
+    `/api/hotels/details?hotelId=${hotelId}`
+);
+        const result = await res.json();
+
+        const hotel = result.data;
+
+        body.innerHTML = `
+
+            <h2>${hotel.name}</h2>
+
+            <p>
+                📍 ${hotel.city},
+                ${hotel.country}
+            </p>
+
+            <br>
+
+            <div>
+                ${hotel.hotelDescription || ""}
+            </div>
+
+            <br>
+
+            <h3>Facilities</h3>
+
+            <ul>
+                ${
+                    hotel.hotelFacilities
+                    ?.slice(0,15)
+                    .map(f=>`<li>${f}</li>`)
+                    .join("")
+                    || ""
+                }
+            </ul>
+
+            <div class="modal-gallery">
+                ${
+                    hotel.hotelImages
+                    ?.slice(0,12)
+                    .map(img=>
+                        `<img src="${img.url}">`
+                    )
+                    .join("")
+                    || ""
+                }
+            </div>
+
+            <button
+                class="book-btn"
+                onclick="bookHotel('${hotel.id}')">
+
+                Book Now
+            </button>
+        `;
+
+    }catch(err){
+
+        body.innerHTML = `
+            <div class="empty">
+                Failed to load details
+            </div>
+        `;
+    }
+}
+
+function closeModal(){
+    document.getElementById("hotelModal").style.display="none";
+}
+
+function bookHotel(hotelId){
+
+    const checkin =
+        prompt("Check-in date (YYYY-MM-DD)");
+
+    if(!checkin) return;
+
+    const checkout =
+        prompt("Check-out date (YYYY-MM-DD)");
+
+    if(!checkout) return;
+
+    window.location.href =
+        `/booking.html?hotelId=${hotelId}&checkin=${checkin}&checkout=${checkout}`;
 }
 
 window.onload = loadRec;
