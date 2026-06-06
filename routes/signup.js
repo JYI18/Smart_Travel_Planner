@@ -148,6 +148,7 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
+      authProvider: "local",
       name: name.trim(),
       dob,
       gender,
@@ -156,6 +157,7 @@ router.post("/signup", async (req, res) => {
       current_city: current_city.trim(),
       email: normalizedEmail,
       password: hashedPassword,
+      profileCompleted: false,
     });
 
     req.session.userId = newUser._id;
@@ -195,11 +197,6 @@ router.post("/auth/firebase-google", async (req, res) => {
     });
 
     if (!user) {
-      const randomPassword = await bcrypt.hash(
-        `firebase-google-${firebaseUid}-${Date.now()}`,
-        10
-      );
-
       user = await User.create({
         googleId: firebaseUid,
         authProvider: "google",
@@ -208,18 +205,16 @@ router.post("/auth/firebase-google", async (req, res) => {
         email: normalizedEmail,
         avatarUrl: avatarUrl || "https://i.pravatar.cc/160?img=47",
 
-        // These fallback values are used because your current User model
-        // still requires these fields.
-        dob: new Date("1970-01-01"),
         gender: "Prefer not to say",
-        contact: "Not provided",
         current_country: "Malaysia",
-        current_city: "Not provided",
-        password: randomPassword,
+        current_city: "",
 
         preferredCurrency: "MYR",
         language: "English",
         travelPreferences: [],
+
+        profileCompleted: false,
+
         totalTrips: 0,
         countriesVisited: 0,
         memberTier: "Bronze",
@@ -239,9 +234,11 @@ router.post("/auth/firebase-google", async (req, res) => {
 
     req.session.userId = user._id;
 
+    const redirectTo = user.profileCompleted ? "/profile" : "/setup-profile";
+
     res.json({
       success: true,
-      redirectTo: "/profile",
+      redirectTo,
     });
   } catch (error) {
     console.error("Firebase Google auth error:", error);
@@ -338,21 +335,6 @@ router.get("/api/profile", async (req, res) => {
 });
 
 /* -----------------------------
-   Logout route
------------------------------ */
-
-router.post("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      console.error("Logout error:", error);
-      return res.status(500).send("Logout failed.");
-    }
-
-    res.redirect("/login");
-  });
-});
-
-/* -----------------------------
    Login POST route
 ----------------------------- */
 
@@ -382,11 +364,28 @@ router.post("/login", async (req, res) => {
 
     req.session.userId = user._id;
 
-    res.redirect("/profile");
+    const redirectTo = user.profileCompleted ? "/profile" : "/setup-profile";
+
+    res.redirect(redirectTo);
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).send("Server error during login.");
   }
+});
+
+/* -----------------------------
+   Logout route
+----------------------------- */
+
+router.post("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.error("Logout error:", error);
+      return res.status(500).send("Logout failed.");
+    }
+
+    res.redirect("/login");
+  });
 });
 
 module.exports = router;
