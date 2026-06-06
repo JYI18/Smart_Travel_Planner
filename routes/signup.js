@@ -87,7 +87,7 @@ router.get("/profile", (req, res) => {
 });
 
 /* -----------------------------
-   Signup POST route
+   Local Signup POST route
 ----------------------------- */
 
 router.post("/signup", async (req, res) => {
@@ -175,6 +175,90 @@ router.post("/signup", async (req, res) => {
 });
 
 /* -----------------------------
+   Firebase Google Auth route
+----------------------------- */
+
+router.post("/auth/firebase-google", async (req, res) => {
+  try {
+    const { firebaseUid, name, email, avatarUrl } = req.body;
+
+    if (!firebaseUid || !email) {
+      return res.status(400).json({
+        error: "Missing Firebase user information.",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    let user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      const randomPassword = await bcrypt.hash(
+        `firebase-google-${firebaseUid}-${Date.now()}`,
+        10
+      );
+
+      user = await User.create({
+        googleId: firebaseUid,
+        authProvider: "google",
+
+        name: name || "Google User",
+        email: normalizedEmail,
+        avatarUrl: avatarUrl || "https://i.pravatar.cc/160?img=47",
+
+        // These fallback values are used because your current User model
+        // still requires these fields.
+        dob: new Date("1970-01-01"),
+        gender: "Prefer not to say",
+        contact: "Not provided",
+        current_country: "Malaysia",
+        current_city: "Not provided",
+        password: randomPassword,
+
+        preferredCurrency: "MYR",
+        language: "English",
+        travelPreferences: [],
+        totalTrips: 0,
+        countriesVisited: 0,
+        memberTier: "Bronze",
+      });
+    } else {
+      user.googleId = firebaseUid;
+      user.authProvider = "google";
+
+      if (avatarUrl) {
+        user.avatarUrl = avatarUrl;
+      }
+
+      await user.save({
+        validateBeforeSave: false,
+      });
+    }
+
+    req.session.userId = user._id;
+
+    res.json({
+      success: true,
+      redirectTo: "/profile",
+    });
+  } catch (error) {
+    console.error("Firebase Google auth error:", error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        error: "Email already registered.",
+      });
+    }
+
+    res.status(500).json({
+      error: "Server error during Google sign-in.",
+    });
+  }
+});
+
+/* -----------------------------
    Setup Profile POST route
 ----------------------------- */
 
@@ -204,6 +288,7 @@ router.post("/setup-profile", (req, res) => {
         preferredCurrency: preferredCurrency || "MYR",
         language: language || "English",
         travelPreferences: preferences,
+        profileCompleted: true,
       };
 
       if (req.file) {
@@ -265,6 +350,43 @@ router.post("/logout", (req, res) => {
 
     res.redirect("/login");
   });
+});
+
+/* -----------------------------
+   Login POST route
+----------------------------- */
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, username, password } = req.body;
+
+    const loginEmail = email || username;
+
+    if (!loginEmail || !password) {
+      return res.status(400).send("Email and password are required.");
+    }
+
+    const user = await User.findOne({
+      email: loginEmail.toLowerCase().trim(),
+    });
+
+    if (!user || !user.password) {
+      return res.status(401).send("Invalid email or password.");
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).send("Invalid email or password.");
+    }
+
+    req.session.userId = user._id;
+
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).send("Server error during login.");
+  }
 });
 
 module.exports = router;

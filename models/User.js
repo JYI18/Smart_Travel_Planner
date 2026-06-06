@@ -2,6 +2,18 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+
     name: {
       type: String,
       required: true,
@@ -10,7 +22,9 @@ const userSchema = new mongoose.Schema(
 
     dob: {
       type: Date,
-      required: true,
+      required: function () {
+        return this.authProvider === "local";
+      },
     },
 
     gender: {
@@ -21,21 +35,29 @@ const userSchema = new mongoose.Schema(
 
     contact: {
       type: String,
-      required: true,
+      required: function () {
+        return this.authProvider === "local";
+      },
       trim: true,
+      default: "",
     },
 
     current_country: {
       type: String,
-      required: true,
+      required: function () {
+        return this.authProvider === "local";
+      },
       trim: true,
       default: "Malaysia",
     },
 
     current_city: {
       type: String,
-      required: true,
+      required: function () {
+        return this.authProvider === "local";
+      },
       trim: true,
+      default: "",
     },
 
     email: {
@@ -48,7 +70,9 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.authProvider === "local";
+      },
     },
 
     avatarUrl: {
@@ -77,6 +101,11 @@ const userSchema = new mongoose.Schema(
     travelPreferences: {
       type: [String],
       default: [],
+    },
+
+    profileCompleted: {
+      type: Boolean,
+      default: false,
     },
 
     totalTrips: {
