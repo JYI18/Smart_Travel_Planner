@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Sign Up | FlyAway Travel Planner</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: "#f0a500",
+            accentDark: "#d99100",
+          },
+          boxShadow: {
+            card: "0 8px 24px rgba(0, 0, 0, 0.15)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    .error-msg {
+      font-size: 12px;
+      color: #dc2626;
+      margin-top: 4px;
+      display: none;
+      text-align: left;
+    }
+
+    .helper {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+      text-align: left;
+    }
+
+    .form-control.invalid {
+      border-color: #dc2626;
+    }
+
+    .form-control.valid {
+      border-color: #16a34a;
+    }
+
+    .psw-fieldwrap {
+      position: relative;
+    }
+
+    .psw-popup {
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 320px;
+      max-width: 90vw;
+      background: #fff;
+      color: #333;
+      border: 1px solid #f0d28a;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+      padding: 12px 14px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .psw-popup::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 14px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: transparent transparent #f0d28a transparent;
+    }
+
+    .psw-popup h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .psw-popup ul {
+      margin: 0;
+      padding-left: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+    }
+
+    .psw-popup li.length-row {
+      grid-column: span 2;
+    }
+
+    .psw-rule.valid {
+      color: #16a34a;
+    }
+
+    .psw-rule.invalid {
+      color: #dc2626;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 py-10 font-sans">
+
+  <main class="w-full max-w-[780px] rounded-3xl bg-white px-8 py-10 text-center shadow-card md:px-10">
+
+    <img
+      src="/img/FlyAway_Logo.png"
+      alt="FlyAway_Logo"
+      class="mx-auto mb-5 h-[90px] w-[90px] rounded-xl object-contain shadow-md"
+    />
+
+    <h1 class="mb-2 text-[26px] font-bold text-slate-900">
+      Create an Account
+    </h1>
+
+    <p class="mb-6 text-[15px] font-medium text-accent">
+      FlyAway Travel Planner
+    </p>
+
+    <div id="flashMessage" class="mb-4 hidden rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+      Please check your details and try again.
+    </div>
+
+    <form
+      method="POST"
+      action="/signup"
+      novalidate
+      id="signupForm"
+      class="grid grid-cols-1 gap-4 text-left md:grid-cols-2"
+    >
+
+      <div>
+        <label for="name" class="mb-1 block text-sm font-semibold text-slate-700">Full Name</label>
+        <div class="relative">
+          <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            placeholder="e.g. Amelia Carter"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="error-msg" id="err_name">Full name is required</div>
+      </div>
+
+      <div>
+        <label for="dob" class="mb-1 block text-sm font-semibold text-slate-700">Date of Birth</label>
+        <div class="relative">
+          <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="dob"
+            name="dob"
+            type="date"
+            autocomplete="bday"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="error-msg" id="err_dob">Date of birth is required</div>
+      </div>
+
+      <div>
+        <label for="gender" class="mb-1 block text-sm font-semibold text-slate-700">Gender</label>
+        <div class="relative">
+          <i class="fa-solid fa-venus-mars absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select
+            id="gender"
+            name="gender"
+            autocomplete="sex"
+            class="form-control w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          >
+            <option value="">Select gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div class="error-msg" id="err_gender">Gender is required</div>
+      </div>
+
+      <div>
+        <label for="contact" class="mb-1 block text-sm font-semibold text-slate-700">Contact No.</label>
+        <div class="relative">
+          <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="contact"
+            name="contact"
+            type="tel"
+            placeholder="6012-3456789"
+            autocomplete="tel"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="helper">Format: 60XX-XXXXXXX or 60XX-XXXXXXXX</div>
+        <div class="error-msg" id="err_contact">Contact number is required</div>
+        <div class="error-msg" id="contactError">Invalid format. Use 60XX-XXXXXXX or 60XX-XXXXXXXX</div>
+      </div>
+
+      <div>
+        <label for="current_country" class="mb-1 block text-sm font-semibold text-slate-700">Current Living Country</label>
+        <div class="relative">
+          <i class="fa-solid fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="current_country"
+            name="current_country"
+            type="text"
+            autocomplete="country-name"
+            placeholder="e.g. Malaysia"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="error-msg" id="err_country">Current living country is required</div>
+      </div>
+
+      <div>
+        <label for="current_city" class="mb-1 block text-sm font-semibold text-slate-700">Current Living City</label>
+        <div class="relative">
+          <i class="fa-regular fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="current_city"
+            name="current_city"
+            type="text"
+            autocomplete="address-level2"
+            placeholder="e.g. Kuala Lumpur"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="error-msg" id="err_city">Current living city is required</div>
+      </div>
+
+      <div>
+        <label for="email" class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
+        <div class="relative">
+          <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+        <div class="error-msg" id="err_email">Email is required</div>
+        <div class="error-msg" id="err_email_fmt">Please enter a valid email</div>
+      </div>
+
+      <div class="psw-fieldwrap">
+        <label for="psw" class="mb-1 block text-sm font-semibold text-slate-700">Password</label>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="psw"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Password"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-12 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+          <button
+            type="button"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-accent"
+            id="togglePwdBtn"
+            aria-label="Show password"
+          >
+            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+
+        <div class="error-msg" id="err_password">Password is required</div>
+
+        <div id="psw-popup" class="psw-popup" role="status" aria-live="polite">
+          <h4>Password requirements</h4>
+          <ul>
+            <li id="rule-lower" class="psw-rule invalid">Lowercase letter</li>
+            <li id="rule-upper" class="psw-rule invalid">Uppercase letter</li>
+            <li id="rule-num" class="psw-rule invalid">Number</li>
+            <li id="rule-spec" class="psw-rule invalid">Special character</li>
+            <li id="rule-len" class="psw-rule invalid length-row">At least 8 characters</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <label for="confirm_password" class="mb-1 block text-sm font-semibold text-slate-700">Confirm Password</label>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="confirm_password"
+            name="confirm_password"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Confirm Password"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-12 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+          <button
+            type="button"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-accent"
+            id="toggleConfirmBtn"
+            aria-label="Show confirm password"
+          >
+            <i class="fa-regular fa-eye" id="confirmEyeIcon"></i>
+          </button>
+        </div>
+
+        <div class="error-msg" id="err_confirm">Confirm Password is required</div>
+        <div class="error-msg" id="err_match">Passwords do not match</div>
+      </div>
+
+      <div class="mt-2 space-y-3 md:col-span-2">
+        <button
+          type="submit"
+          class="w-full rounded-lg bg-accent px-4 py-3 text-base font-semibold text-white transition hover:bg-accentDark"
+        >
+          Create an Account
+        </button>
+
+        <button
+          type="button"
+          onclick="window.location='/auth/google'"
+          class="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm transition hover:shadow-md"
+        >
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google"
+            class="h-[18px] w-[18px]"
+          />
+          <span>Sign up with Google</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 text-sm leading-7">
+      <p class="text-gray-600">
+        Already have an account?
+        <a href="/login" class="font-medium text-accent hover:underline">
+          Log in
+        </a>
+      </p>
+    </div>
+
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const show = (el) => {
+      if (el) el.style.display = "block";
+    };
+
+    const hide = (el) => {
+      if (el) el.style.display = "none";
+    };
+
+    const setValid = (el, ok) => {
+      if (!el) return;
+      el.classList.toggle("invalid", !ok);
+      el.classList.toggle("valid", ok);
+    };
+
+    const form = $("signupForm");
+    const nameEl = $("name");
+    const dobEl = $("dob");
+    const gender = $("gender");
+    const contact = $("contact");
+    const country = $("current_country");
+    const city = $("current_city");
+    const email = $("email");
+    const psw = $("psw");
+    const confirmP = $("confirm_password");
+
+    const err = {
+      name: $("err_name"),
+      dob: $("err_dob"),
+      gender: $("err_gender"),
+      contactReq: $("err_contact"),
+      contactFmt: $("contactError"),
+      country: $("err_country"),
+      city: $("err_city"),
+      emailReq: $("err_email"),
+      emailFmt: $("err_email_fmt"),
+      pwReq: $("err_password"),
+      confirmReq: $("err_confirm"),
+      match: $("err_match"),
+    };
+
+    const phoneRegex = /^60\d{2}-\d{7,8}$/;
+
+    function formatPhoneNumber(value) {
+      const digits = value.replace(/\D/g, "");
+
+      if (!digits.startsWith("60")) {
+        return digits;
+      }
+
+      if (digits.length <= 4) {
+        return digits;
+      }
+
+      const prefix = digits.substring(0, 4);
+      const rest = digits.substring(4);
+
+      return prefix + (rest ? "-" + rest : "");
+    }
+
+    contact.addEventListener("input", (e) => {
+      const formatted = formatPhoneNumber(e.target.value);
+      e.target.value = formatted;
+
+      if (!formatted) {
+        hide(err.contactFmt);
+        setValid(contact, false);
+      } else if (phoneRegex.test(formatted)) {
+        hide(err.contactFmt);
+        setValid(contact, true);
+      } else {
+        if (formatted.length >= 12) show(err.contactFmt);
+        setValid(contact, false);
+      }
+    });
+
+    contact.addEventListener("paste", () => {
+      setTimeout(() => {
+        contact.value = formatPhoneNumber(contact.value);
+        contact.dispatchEvent(new Event("input"));
+      }, 10);
+    });
+
+    const popup = $("psw-popup");
+    const ruleLower = $("rule-lower");
+    const ruleUpper = $("rule-upper");
+    const ruleNum = $("rule-num");
+    const ruleSpec = $("rule-spec");
+    const ruleLen = $("rule-len");
+
+    function setRule(el, ok) {
+      el.classList.toggle("valid", ok);
+      el.classList.toggle("invalid", !ok);
+    }
+
+    function updateRules(v) {
+      setRule(ruleLower, /[a-z]/.test(v));
+      setRule(ruleUpper, /[A-Z]/.test(v));
+      setRule(ruleNum, /\d/.test(v));
+      setRule(ruleSpec, /[^A-Za-z0-9]/.test(v));
+      setRule(ruleLen, v.length >= 8);
+    }
+
+    psw.addEventListener("focus", () => {
+      updateRules(psw.value);
+      show(popup);
+    });
+
+    psw.addEventListener("keyup", () => {
+      updateRules(psw.value);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!popup.contains(e.target) && e.target !== psw) {
+        hide(popup);
+      }
+    });
+
+    function req(el, msgEl) {
+      const ok = (el.value || "").trim() !== "";
+
+      if (ok) {
+        hide(msgEl);
+      } else {
+        show(msgEl);
+      }
+
+      setValid(el, ok);
+      return ok;
+    }
+
+    nameEl.addEventListener("blur", () => req(nameEl, err.name));
+    dobEl.addEventListener("blur", () => req(dobEl, err.dob));
+    gender.addEventListener("blur", () => req(gender, err.gender));
+    country.addEventListener("blur", () => req(country, err.country));
+    city.addEventListener("blur", () => req(city, err.city));
+
+    email.addEventListener("blur", () => {
+      const v = (email.value || "").trim();
+
+      if (!v) {
+        show(err.emailReq);
+        hide(err.emailFmt);
+        setValid(email, false);
+        return;
+      }
+
+      hide(err.emailReq);
+
+      const fmt = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+      if (!fmt) {
+        show(err.emailFmt);
+        setValid(email, false);
+      } else {
+        hide(err.emailFmt);
+        setValid(email, true);
+      }
+    });
+
+    psw.addEventListener("blur", () => {
+      const ok = (psw.value || "").trim() !== "";
+
+      if (ok) {
+        hide(err.pwReq);
+      } else {
+        show(err.pwReq);
+      }
+
+      setValid(psw, ok);
+    });
+
+    confirmP.addEventListener("blur", () => {
+      const v = (confirmP.value || "").trim();
+
+      if (!v) {
+        show(err.confirmReq);
+        hide(err.match);
+        setValid(confirmP, false);
+        return;
+      }
+
+      hide(err.confirmReq);
+
+      const match = v === (psw.value || "").trim();
+
+      if (!match) {
+        show(err.match);
+        setValid(confirmP, false);
+      } else {
+        hide(err.match);
+        setValid(confirmP, true);
+      }
+    });
+
+    form.addEventListener("submit", function (e) {
+      let ok = true;
+
+      ok = req(nameEl, err.name) && ok;
+      ok = req(dobEl, err.dob) && ok;
+      ok = req(gender, err.gender) && ok;
+      ok = req(country, err.country) && ok;
+      ok = req(city, err.city) && ok;
+
+      if (!(contact.value || "").trim()) {
+        show(err.contactReq);
+        hide(err.contactFmt);
+        setValid(contact, false);
+        ok = false;
+      } else {
+        hide(err.contactReq);
+
+        if (!phoneRegex.test(contact.value.trim())) {
+          show(err.contactFmt);
+          setValid(contact, false);
+          ok = false;
+        } else {
+          hide(err.contactFmt);
+          setValid(contact, true);
+        }
+      }
+
+      const em = (email.value || "").trim();
+
+      if (!em) {
+        show(err.emailReq);
+        hide(err.emailFmt);
+        setValid(email, false);
+        ok = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+        hide(err.emailReq);
+        show(err.emailFmt);
+        setValid(email, false);
+        ok = false;
+      } else {
+        hide(err.emailReq);
+        hide(err.emailFmt);
+        setValid(email, true);
+      }
+
+      const p1 = (psw.value || "").trim();
+      const p2 = (confirmP.value || "").trim();
+
+      if (!p1) {
+        show(err.pwReq);
+        setValid(psw, false);
+        ok = false;
+      }
+
+      if (!p2) {
+        show(err.confirmReq);
+        setValid(confirmP, false);
+        ok = false;
+      }
+
+      if (p1 && p2 && p1 !== p2) {
+        show(err.match);
+        setValid(confirmP, false);
+        ok = false;
+      }
+
+      if (p1) {
+        const strong =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(p1);
+
+        if (!strong) {
+          show(popup);
+          updateRules(p1);
+          setValid(psw, false);
+          ok = false;
+        }
+      }
+
+      if (!ok) {
+        e.preventDefault();
+        window.scrollTo({
+          top: form.offsetTop - 24,
+          behavior: "smooth",
+        });
+      }
+    });
+
+    (function () {
+      const pwd = $("psw");
+      const confirmPwd = $("confirm_password");
+      const btn1 = $("togglePwdBtn");
+      const btn2 = $("toggleConfirmBtn");
+      const icon1 = $("eyeIcon");
+      const icon2 = $("confirmEyeIcon");
+
+      function attachToggle(input, btn, icon, labelBase) {
+        if (!input || !btn || !icon) return;
+
+        btn.addEventListener("click", () => {
+          const showPwd = input.type === "password";
+
+          input.type = showPwd ? "text" : "password";
+
+          icon.classList.toggle("fa-eye", !showPwd);
+          icon.classList.toggle("fa-eye-slash", showPwd);
+
+          btn.setAttribute(
+            "aria-label",
+            showPwd ? "Hide " + labelBase : "Show " + labelBase
+          );
+        });
+      }
+
+      attachToggle(pwd, btn1, icon1, "password");
+      attachToggle(confirmPwd, btn2, icon2, "confirm password");
+    })();
+  </script>
+
+</body>
+</html>

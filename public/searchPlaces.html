@@ -22,14 +22,14 @@
     rel="stylesheet"
   >
 
+  <!-- Leaflet CSS -->
   <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     body {
@@ -46,28 +46,24 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
     }
 
     #map {
-        height: 420px;
-        width: 100%;
-        border-radius: 1rem;
+      height: 420px;
+      width: 100%;
+      border-radius: 1rem;
     }
   </style>
 </head>
 
 <body class="text-slate-900">
 
-  <!-- Optional navbar area -->
   <div id="topnavbar"></div>
 
-  <!-- Page wrapper -->
   <main class="mx-auto max-w-6xl px-6 py-10">
 
-    <!-- Back link -->
     <a href="/" class="inline-flex items-center text-sm font-medium text-sky-700 hover:underline">
       <i class="fa-solid fa-arrow-left mr-2"></i>
       Back to home
     </a>
 
-    <!-- Page title -->
     <section class="mt-8">
       <p class="text-sm font-semibold uppercase tracking-wider text-sky-600">
         Explore destinations
@@ -78,15 +74,13 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
       </h1>
 
       <p class="mt-3 max-w-2xl text-slate-600">
-        Search a city and discover attractions, museums, restaurants, and other places you may like.
+        Search a city and discover attractions, museums, events, restaurants, and other places you may like.
       </p>
     </section>
 
-    <!-- Search box -->
     <section class="mt-8 rounded-2xl bg-white p-6 shadow-card ring-1 ring-slate-200">
       <form id="placeSearchForm" class="grid gap-4 md:grid-cols-[1fr_220px_180px_auto]">
 
-        <!-- City input -->
         <div>
           <label for="cityInput" class="mb-2 block text-sm font-semibold">
             City
@@ -101,7 +95,6 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
           />
         </div>
 
-        <!-- Category dropdown -->
         <div>
           <label for="categorySelect" class="mb-2 block text-sm font-semibold">
             Category
@@ -110,38 +103,37 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
           <select
             id="categorySelect"
             class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
-
           >
-        <option value="all">All</option>
-        <option value="must_see">Must-see attractions</option>
-        <option value="culture">Culture & heritage</option>
-        <option value="museums">Museums</option>
-        <option value="food">Food & cafes</option>
-        <option value="shopping">Shopping</option>
-        <option value="nature">Nature & parks</option>
-        <option value="hotels">Hotels</option>
-        <option value="nightlife">Nightlife</option>
-        <option value="transport">Transport</option>
+            <option value="all">All</option>
+            <option value="must_see">Must-see attractions</option>
+            <option value="culture">Culture & heritage</option>
+            <option value="museums">Museums</option>
+            <option value="food">Food & cafes</option>
+            <option value="shopping">Shopping</option>
+            <option value="nature">Nature & parks</option>
+            <option value="hotels">Hotels</option>
+            <option value="nightlife">Nightlife</option>
+            <option value="transport">Transport</option>
+            <option value="events">Events</option>
           </select>
         </div>
 
         <div>
-        <label for="radiusSelect" class="mb-2 block text-sm font-semibold">
+          <label for="radiusSelect" class="mb-2 block text-sm font-semibold">
             Search radius
-        </label>
+          </label>
 
-        <select
+          <select
             id="radiusSelect"
             class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
-        >
+          >
             <option value="5000">5 km</option>
             <option value="10000" selected>10 km</option>
             <option value="20000">20 km</option>
             <option value="50000">50 km</option>
-        </select>
+          </select>
         </div>
 
-        <!-- Search button -->
         <div class="flex items-end">
           <button
             type="submit"
@@ -155,12 +147,10 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
       </form>
     </section>
 
-    <!-- Status message -->
     <p id="statusMessage" class="mt-6 text-slate-600">
       Enter a city and click Search.
     </p>
 
-    <!-- Results area -->
     <section class="mt-8">
       <div class="mb-4">
         <h2 class="text-2xl font-bold">
@@ -172,21 +162,19 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
         </p>
       </div>
 
-      <!-- JavaScript will insert place cards here later -->
-        <div class="mb-8 overflow-hidden rounded-2xl bg-white p-3 shadow-card ring-1 ring-slate-200">
+      <div class="mb-8 overflow-hidden rounded-2xl bg-white p-3 shadow-card ring-1 ring-slate-200">
         <div id="map"></div>
-        </div>
+      </div>
 
-        <div
+      <div
         id="placesGrid"
         class="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-        >
-        </div>
+      >
+      </div>
     </section>
 
   </main>
 
-  <!-- Optional: load your existing navbar if the file exists -->
   <script>
     fetch("/components/topNavBar.html")
       .then(response => response.text())
@@ -196,12 +184,11 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
           navbar.innerHTML = data;
         }
       })
-      .catch(error => {
+      .catch(() => {
         console.log("Navbar not loaded. This is okay for now.");
       });
   </script>
 
-  <!-- We will create this file in the next step -->
   <script src="/js/searchPlaces.js"></script>
 
 </body>
