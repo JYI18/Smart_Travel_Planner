@@ -476,12 +476,7 @@ function render(hotels){
 
               <button class="btn" onclick="loadHotelDetails('${h.id}')">
     View Details
-</button>
-<button class="btn"
-onclick="bookHotel('${h.id}')"
-style="background:#16a34a;margin-left:8px;">
-    Book Now
-</button>
+
                 <div id="${id}" class="details">
                     <b>Address:</b> ${h.address || 'N/A'} <br>
                     <b>ZIP:</b> ${h.zip || 'N/A'} <br>
@@ -572,7 +567,7 @@ async function loadHotelDetails(hotelId){
                 class="book-btn"
                 onclick="bookHotel('${hotel.id}')">
 
-                Book Now
+                Check Availability
             </button>
         `;
 
@@ -592,18 +587,9 @@ function closeModal(){
 
 function bookHotel(hotelId){
 
-    const checkin =
-        prompt("Check-in date (YYYY-MM-DD)");
-
-    if(!checkin) return;
-
-    const checkout =
-        prompt("Check-out date (YYYY-MM-DD)");
-
-    if(!checkout) return;
-
     window.location.href =
-        `/booking.html?hotelId=${hotelId}&checkin=${checkin}&checkout=${checkout}`;
+        `book.html?hotelId=${hotelId}`;
+
 }
 
 window.onload = loadRec;

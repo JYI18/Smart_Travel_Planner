@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const rooms = require("../data/room.json");
 
 router.get("/", async (req, res) => {
   try {
@@ -40,7 +41,22 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router;router.get("/availability", (req, res) => {
+
+    const { hotelId } = req.query;
+
+    const hotelRooms = rooms.filter(
+        room => room.hotelId === hotelId
+    );
+
+    res.json({
+        success: true,
+        hotelId,
+        rooms: hotelRooms
+    });
+
+});
+
 router.get("/details", async (req, res) => {
   try {
 
