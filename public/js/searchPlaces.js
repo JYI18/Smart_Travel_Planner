@@ -1,9 +1,9 @@
-const radiusSelect = document.getElementById("radiusSelect");
 console.log("searchPlaces.js loaded");
 
 const form = document.getElementById("placeSearchForm");
 const cityInput = document.getElementById("cityInput");
 const categorySelect = document.getElementById("categorySelect");
+const radiusSelect = document.getElementById("radiusSelect");
 const statusMessage = document.getElementById("statusMessage");
 const resultSubtitle = document.getElementById("resultSubtitle");
 const placesGrid = document.getElementById("placesGrid");
@@ -22,6 +22,15 @@ function initMap() {
   markersLayer = L.layerGroup().addTo(map);
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function showPlacesOnMap(places) {
   markersLayer.clearLayers();
 
@@ -35,8 +44,8 @@ function showPlacesOnMap(places) {
     const marker = L.marker([place.lat, place.lon]).addTo(markersLayer);
 
     marker.bindPopup(`
-      <strong>${place.name}</strong><br>
-      ${place.address || "Address not available"}
+      <strong>${escapeHtml(place.name)}</strong><br>
+      ${escapeHtml(place.address || "Address not available")}
     `);
   });
 
@@ -50,7 +59,7 @@ function showPlacesOnMap(places) {
 }
 
 function showLoading() {
-  statusMessage.textContent = "Loading places...";
+  statusMessage.textContent = "Loading results...";
   resultSubtitle.textContent = "Please wait...";
   placesGrid.innerHTML = "";
 }
@@ -63,7 +72,7 @@ function showError(message) {
 
 function formatDistance(distance) {
   if (!distance && distance !== 0) {
-    return "Distance unknown";
+    return "";
   }
 
   if (distance < 1000) {
@@ -73,50 +82,126 @@ function formatDistance(distance) {
   return `${(distance / 1000).toFixed(1)} km away`;
 }
 
+function formatCategoryText(place) {
+  if (place.isEvent) {
+    return "Event";
+  }
+
+  if (place.categoryLabel) {
+    return place.categoryLabel;
+  }
+
+  if (place.selectedCategory) {
+    return place.selectedCategory.replaceAll("_", " ");
+  }
+
+  if (place.categories && place.categories.length > 0) {
+    return place.categories[0].replaceAll("_", " ");
+  }
+
+  return "Place";
+}
+
 function showPlaces(data) {
   const places = data.places || [];
 
   statusMessage.textContent = `Showing ${places.length} results for ${data.city}.`;
   resultSubtitle.textContent = `Category: ${data.selectedCategory || data.category}`;
 
+  if (places.length === 0) {
+    placesGrid.innerHTML = `
+      <div class="col-span-full rounded-2xl bg-white p-6 text-center shadow-card ring-1 ring-slate-200">
+        <p class="font-semibold text-slate-800">No results found.</p>
+        <p class="mt-2 text-sm text-slate-500">
+          Try a different city, category, or a bigger radius.
+        </p>
+      </div>
+    `;
+    showPlacesOnMap([]);
+    return;
+  }
+
   placesGrid.innerHTML = places
     .map((place) => {
-      const categoryText =
-        place.categories && place.categories.length > 0
-          ? place.categories[0]
-          : place.selectedCategory || "Place";
+      const categoryText = formatCategoryText(place);
+      const distanceText = formatDistance(place.distance);
+      const image = place.image || "/img/FlyAway_Background.jpg";
 
       return `
         <article class="overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200">
           <img
-            src="${place.image}"
-            alt="${place.name}"
+            src="${escapeHtml(image)}"
+            alt="${escapeHtml(place.name)}"
             class="h-48 w-full object-cover"
+            onerror="this.src='/img/FlyAway_Background.jpg'"
           />
 
           <div class="p-4">
             <div class="flex items-center justify-between gap-3">
-              <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
-                ${categoryText}
+              <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700 capitalize">
+                ${escapeHtml(categoryText)}
               </span>
 
               <span class="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
-                Score ${place.score}
+                Score ${escapeHtml(place.score)}
               </span>
             </div>
 
             <h3 class="mt-3 text-lg font-bold">
-              ${place.name}
+              ${escapeHtml(place.name)}
             </h3>
 
             <p class="mt-2 text-sm text-slate-600">
-              ${place.address}
+              ${escapeHtml(place.address || "Address not available")}
             </p>
 
-            <p class="mt-3 text-sm font-medium text-sky-700">
-              <i class="fa-solid fa-location-dot mr-1"></i>
-              ${formatDistance(place.distance)}
-            </p>
+            ${
+              place.dateText
+                ? `
+                  <p class="mt-3 text-sm font-medium text-purple-700">
+                    <i class="fa-solid fa-calendar-days mr-1"></i>
+                    ${escapeHtml(place.dateText)}
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              place.description
+                ? `
+                  <p class="mt-3 line-clamp-3 text-sm text-slate-500">
+                    ${escapeHtml(place.description)}
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              distanceText
+                ? `
+                  <p class="mt-3 text-sm font-medium text-sky-700">
+                    <i class="fa-solid fa-location-dot mr-1"></i>
+                    ${escapeHtml(distanceText)}
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              place.url
+                ? `
+                  <a
+                    href="${escapeHtml(place.url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-3 inline-flex items-center text-sm font-semibold text-sky-700 hover:underline"
+                  >
+                    Learn more
+                    <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs"></i>
+                  </a>
+                `
+                : ""
+            }
           </div>
         </article>
       `;
@@ -143,7 +228,7 @@ async function searchPlaces(city, category, radius) {
     showPlaces(data);
   } catch (error) {
     console.error(error);
-    showError(error.message || "Failed to load places. Please try again.");
+    showError(error.message || "Failed to load results. Please try again.");
   }
 }
 

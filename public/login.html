@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Login | Trimly Hair Salon</title>
+  <title>Login | FlyAway Travel Planner</title>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font Awesome Icons -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -36,44 +34,42 @@
 
   <main class="w-full max-w-[420px] rounded-3xl bg-white px-10 py-11 text-center shadow-card">
 
-    <!-- Logo -->
     <img
       src="/img/FlyAway_Logo.png"
       alt="FlyAway_Logo"
       class="mx-auto mb-5 h-[90px] w-[90px] rounded-xl object-contain shadow-md"
     />
 
-    <!-- Title -->
     <h1 class="mb-2 text-[26px] font-bold text-slate-900">
       Welcome to FlyAway Travel Planner
     </h1>
 
     <p class="mb-6 text-[15px] font-medium text-accent">
-      Login
+      User Login
     </p>
 
-    <!-- Flash message example -->
-    <div class="mb-4 hidden rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+    <div
+      id="loginMessage"
+      class="mb-4 hidden rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+    >
       Invalid email or password.
     </div>
 
-    <!-- Login Form -->
     <form method="POST" action="/login" class="space-y-3">
 
-      <!-- Email -->
       <div class="relative">
         <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
 
         <input
-          type="text"
-          name="username"
+          type="email"
+          name="email"
           placeholder="Email"
           required
+          autocomplete="email"
           class="w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
         />
       </div>
 
-      <!-- Password -->
       <div class="relative">
         <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
 
@@ -83,6 +79,7 @@
           id="password"
           placeholder="Password"
           required
+          autocomplete="current-password"
           class="w-full rounded-lg border border-gray-300 py-3 pl-11 pr-12 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
         />
 
@@ -96,7 +93,6 @@
         </button>
       </div>
 
-      <!-- Login Button -->
       <button
         type="submit"
         class="mt-2 w-full rounded-lg bg-accent px-4 py-3 text-base font-semibold text-white transition hover:bg-accentDark"
@@ -104,10 +100,9 @@
         Login
       </button>
 
-      <!-- Google Login Button -->
       <button
         type="button"
-        onclick="window.location='/auth/google'"
+        onclick="signInWithGoogle()"
         class="mt-2 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm transition hover:shadow-md"
       >
         <img
@@ -119,7 +114,6 @@
       </button>
     </form>
 
-    <!-- Extra Links -->
     <div class="mt-6 space-y-1 text-sm leading-7">
       <p class="text-gray-600">
         Don't have an account?
@@ -131,12 +125,6 @@
       <p>
         <a href="/forgot-password" class="font-medium text-accent hover:underline">
           Forgot Password?
-        </a>
-      </p>
-
-      <p>
-        <a href="/admin/login" class="font-medium text-accent hover:underline">
-          Log in as Admin
         </a>
       </p>
     </div>
@@ -159,5 +147,6 @@
     });
   </script>
 
+  <script type="module" src="/js/firebase_auth.js"></script>
 </body>
 </html>
