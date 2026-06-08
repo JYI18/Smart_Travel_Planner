@@ -3,124 +3,296 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlyAway Hotels</title>
 
-<title>Hotel Search</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
+/* ================= BASE ================= */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
+    font-family:'Inter',sans-serif;
 }
 
 body{
-    background:#f5f7fa;
+    background:#f4f7fb;
+    color:#0f172a;
 }
 
-header{
-    background:#0d6efd;
-    color:white;
-    text-align:center;
-    padding:25px;
-}
-
-.search-section{
-    max-width:1200px;
-    margin:20px auto;
+/* ================= HERO (BOLD + PREMIUM) ================= */
+.hero{
+    height:460px;
+    background:url("https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=1600&q=80")
+    center/cover;
     display:flex;
-    gap:10px;
-    padding:0 15px;
-}
-
-.search-section input{
-    flex:1;
-    padding:14px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    font-size:16px;
-}
-
-.search-section button{
-    background:#0d6efd;
+    align-items:center;
+    justify-content:center;
+    position:relative;
     color:white;
-    border:none;
-    padding:14px 25px;
-    border-radius:10px;
-    cursor:pointer;
 }
 
-.search-section button:hover{
-    background:#084db3;
+.hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.5);
 }
 
-#results{
-    max-width:1200px;
-    margin:auto;
+.hero-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    max-width:800px;
     padding:20px;
 }
 
-.hotel-card{
-    background:white;
-    border-radius:15px;
-    overflow:hidden;
-    margin-bottom:25px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+.hero-tag{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    font-size:13px;
+    margin-bottom:15px;
+    font-weight:600;
+    letter-spacing:1px;
 }
 
-.hotel-image{
+.hero-title{
+    font-size:3.6rem;
+    font-weight:800;
+    letter-spacing:-1px;
+    line-height:1.1;
+}
+
+.hero-title span{
+    color:#60a5fa;
+}
+
+.hero-desc{
+    margin-top:12px;
+    font-size:1.1rem;
+    opacity:.9;
+    font-weight:400;
+}
+
+/* ================= SEARCH ================= */
+.search-box{
+    max-width:900px;
+    margin:-40px auto 20px;
+    padding:0 20px;
+}
+
+.search-inner{
+    display:flex;
+    gap:10px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    padding:12px;
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.12);
+}
+
+.search-inner input{
+    flex:1;
+    border:none;
+    outline:none;
+    font-size:16px;
+    padding:14px;
+    background:transparent;
+}
+
+.search-inner button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:14px 22px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+/* ================= RECOMMENDED ================= */
+.section{
+    max-width:1100px;
+    margin:40px auto 10px;
+    padding:0 20px;
+}
+
+.section h2{
+    font-size:1.4rem;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+}
+
+.card{
+    border-radius:18px;
+    overflow:hidden;
+    cursor:pointer;
+    height:150px;
+    position:relative;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+}
+
+.card img{
     width:100%;
-    height:300px;
+    height:100%;
+    object-fit:cover;
+}
+
+.card span{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    background:rgba(0,0,0,0.65);
+    color:white;
+    padding:7px 12px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+}
+
+/* ================= RESULTS ================= */
+#results{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+    display:grid;
+    gap:18px;
+}
+
+.hotel{
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    display:flex;
+    gap:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:.2s;
+}
+
+.hotel:hover{
+    transform:translateY(-3px);
+}
+
+.hotel img{
+    width:180px;
+    height:130px;
     object-fit:cover;
 }
 
 .hotel-content{
-    padding:20px;
+    padding:15px;
+    flex:1;
 }
 
-.hotel-name{
-    font-size:28px;
-    font-weight:bold;
-    margin-bottom:10px;
+.hotel h3{
+    font-size:1.2rem;
+    font-weight:700;
+    margin-bottom:5px;
 }
 
-.badges{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:15px;
+.meta{
+    font-size:13px;
+    color:#64748b;
+    margin-top:4px;
 }
 
-.badge{
-    background:#e8f1ff;
-    color:#0d6efd;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:14px;
-}
-
-.description{
-    margin:15px 0;
-    line-height:1.6;
-    color:#444;
-}
-
-.details{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:10px;
-}
-
-.detail{
-    background:#f8f9fa;
-    padding:10px;
+/* BUTTON */
+.btn{
+    margin-top:10px;
+    padding:8px 12px;
+    border:none;
     border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
 }
 
-.loading{
+/* DETAILS */
+.details{
+    margin-top:10px;
+    font-size:13px;
+    color:#475569;
+    line-height:1.5;
+    display:none;
+}
+
+/* STATES */
+.loading, .empty{
     text-align:center;
-    font-size:22px;
+    padding:40px;
+    color:#64748b;
+    font-size:18px;
+}
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    z-index:999;
+    overflow:auto;
+    padding:40px;
+}
+
+.modal-content{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:20px;
+    top:15px;
+    font-size:30px;
+    cursor:pointer;
+}
+
+.modal-gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px;
+    margin-top:20px;
+}
+
+.modal-gallery img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.book-btn{
+    margin-top:20px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
 }
 
 </style>
@@ -128,206 +300,299 @@ header{
 
 <body>
 
-<header>
-    <h1>🏨 Hotel Search</h1>
-    <p>Search hotels by country</p>
-</header>
+<!-- HERO -->
+<div class="hero">
 
-<div class="search-section">
+    <div class="hero-content">
 
-    <input
-        type="text"
-        id="country"
-        placeholder="Enter Country (Malaysia, Japan, Thailand)"
-    >
+        <div class="hero-tag">
+            FEATURED DESTINATION
+        </div>
 
-    <button onclick="searchHotels()">
-        Search
-    </button>
+        <div class="hero-title" id="heroTitle">
+            Discover <span>Japan</span>
+        </div>
+
+        <div class="hero-desc" id="heroDesc">
+            Neon cities, peaceful temples, unforgettable stays ✨
+        </div>
+
+    </div>
 
 </div>
 
-<div id="results"></div>
+<!-- SEARCH -->
+<div class="search-box">
+    <div class="search-inner">
+        <input id="country" placeholder="Try Malaysia, Japan, Thailand...">
+        <button onclick="searchHotels()">Search</button>
+    </div>
+</div>
+
+<!-- RECOMMENDED -->
+<div class="section">
+    <h2>🌍 Recommended Destinations</h2>
+    <div class="grid" id="rec"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+    <div class="empty">Search or pick a destination ✨</div>
+</div>
+<!-- HOTEL DETAILS MODAL -->
+<div id="hotelModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <div id="modalBody">
+            Loading...
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
-const countryMap = {
+/* ================= MAP ================= */
+const map = {
     malaysia:"MY",
-    singapore:"SG",
-    thailand:"TH",
-    indonesia:"ID",
     japan:"JP",
-    korea:"KR",
-    china:"CN",
-    vietnam:"VN",
+    thailand:"TH",
+    singapore:"SG",
     france:"FR",
-    germany:"DE",
-    italy:"IT",
-    spain:"ES",
-    uk:"GB",
-    england:"GB",
-    usa:"US",
-    "united states":"US",
-    canada:"CA",
-    australia:"AU"
+    germany:"DE"
 };
 
+/* ================= RECOMMENDED ================= */
+const rec = [
+    {n:"Malaysia",c:"MY",i:"https://plus.unsplash.com/premium_photo-1678303397238-76250a5ebf73?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+    {n:"Japan",c:"JP",i:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFwYW58ZW58MHx8MHx8fDA%3D"},
+    {n:"Thailand",c:"TH",i:"https://images.unsplash.com/photo-1528181304800-259b08848526"},
+    {n:"France",c:"FR",i:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"}
+];
+
+/* ================= HERO ROTATION ================= */
+const heroData = [
+    {
+        title:"Discover <span>Japan</span>",
+        desc:"Neon cities, peaceful temples, unforgettable stays ✨",
+        img:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFwYW58ZW58MHx8MHx8fDA%3D"
+    },
+    {
+        title:"Explore <span>Thailand</span>",
+        desc:"Golden beaches, street food & island escapes 🌴",
+        img:"https://images.unsplash.com/photo-1528181304800-259b08848526"
+    },
+    {
+        title:"Experience <span>France</span>",
+        desc:"Romantic cities & timeless architecture 🥐",
+        img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
+    }
+];
+
+let i = 0;
+
+setInterval(()=>{
+
+    i = (i + 1) % heroData.length;
+
+    document.querySelector(".hero").style.backgroundImage =
+        `url(${heroData[i].img}?auto=format&fit=crop&w=1600&q=80)`;
+
+    document.getElementById("heroTitle").innerHTML =
+        heroData[i].title;
+
+    document.getElementById("heroDesc").innerText =
+        heroData[i].desc;
+
+},5000);
+
+/* ================= LOAD REC ================= */
+function loadRec(){
+    const box = document.getElementById("rec");
+
+    rec.forEach(r=>{
+        const d = document.createElement("div");
+        d.className="card";
+        d.onclick=()=>{document.getElementById("country").value=r.n;searchHotels();}
+        d.innerHTML=`
+            <img src="${r.i}">
+            <span>${r.n}</span>
+        `;
+        box.appendChild(d);
+    });
+}
+
+/* ================= SEARCH ================= */
 async function searchHotels(){
 
-    const countryInput =
-    document.getElementById("country")
-    .value
-    .trim()
-    .toLowerCase();
+    const input = document.getElementById("country").value.toLowerCase();
+    const code = map[input] || input.toUpperCase();
 
-    const countryCode =
-    countryMap[countryInput] || countryInput.toUpperCase();
-
-    const results =
-    document.getElementById("results");
-
-    results.innerHTML =
-    `<div class="loading">Loading hotels...</div>`;
+    const box = document.getElementById("results");
+    box.innerHTML = `<div class="loading">Searching hotels...</div>`;
 
     try{
+        const res = await fetch(`/api/hotels?countryCode=${code}&limit=20`);
+        const data = await res.json();
+        render(data.data);
 
-        const response =
-        await fetch(
-        `/api/hotels?countryCode=${countryCode}&limit=20`
-        );
-
-        const data =
-        await response.json();
-
-        renderHotels(data.data);
-
-    }catch(error){
-
-        console.error(error);
-
-        results.innerHTML =
-        "<h2>Error loading hotels.</h2>";
+    }catch(e){
+        box.innerHTML = `<div class="empty">Error loading hotels 😢</div>`;
     }
 }
 
-function renderHotels(hotels){
+/* ================= RENDER ================= */
+function render(hotels){
 
-    const results =
-    document.getElementById("results");
+    const box = document.getElementById("results");
 
-    if(!hotels || hotels.length===0){
-
-        results.innerHTML =
-        "<h2>No hotels found.</h2>";
-
+    if(!hotels || hotels.length === 0){
+        box.innerHTML = `<div class="empty">No hotels found</div>`;
         return;
     }
 
-    results.innerHTML = "";
+    box.innerHTML = "";
 
-    hotels.forEach(hotel=>{
+    hotels.forEach(h=>{
 
-        const card =
-        document.createElement("div");
+        const id = "d" + Math.random().toString(36).slice(2);
 
-        card.className = "hotel-card";
+        const d = document.createElement("div");
+        d.className="hotel";
 
-        card.innerHTML = `
+        d.innerHTML=`
+            <img src="${h.thumbnail || h.main_photo || ''}">
 
-        <img
-        class="hotel-image"
-        src="${hotel.main_photo || hotel.thumbnail}"
-        alt="${hotel.name}"
-        >
+            <div class="hotel-content">
 
-        <div class="hotel-content">
+                <h3>${h.name}</h3>
 
-            <div class="hotel-name">
-                ${hotel.name}
-            </div>
+                <div class="meta">📍 ${h.city || ''}, ${h.country || ''}</div>
+                <div class="meta">⭐ ${h.stars || 'N/A'} • 🏆 ${h.rating || 'N/A'}</div>
 
-            <div class="badges">
+              <button class="btn" onclick="loadHotelDetails('${h.id}')">
+    View Details
 
-                <div class="badge">
-                    ⭐ ${hotel.stars || "N/A"} Stars
-                </div>
-
-                <div class="badge">
-                    🏆 Rating ${hotel.rating || "N/A"}
-                </div>
-
-                <div class="badge">
-                    💬 ${hotel.reviewCount || 0} Reviews
+                <div id="${id}" class="details">
+                    <b>Address:</b> ${h.address || 'N/A'} <br>
+                    <b>ZIP:</b> ${h.zip || 'N/A'} <br>
+                    <b>Chain:</b> ${h.chain || 'Independent'} <br>
+                    <b>Coordinates:</b> ${h.latitude || 'N/A'}, ${h.longitude || 'N/A'} <br>
+                    <b>Facilities:</b> ${h.facilityIds?.length || 0} <br>
+                    <b>ID:</b> ${h.id || 'N/A'} <br><br>
+                    <b>Description:</b><br>
+                    ${h.hotelDescription || 'No description available'}
                 </div>
 
             </div>
+        `;
 
-            <div class="description">
+        box.appendChild(d);
+    });
+}
+
+/* ================= TOGGLE ================= */
+function toggle(id){
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === "block" ? "none" : "block";
+}
+async function loadHotelDetails(hotelId){
+
+    const modal = document.getElementById("hotelModal");
+    const body = document.getElementById("modalBody");
+
+    modal.style.display = "block";
+
+    body.innerHTML = `
+        <div class="loading">
+            Loading hotel details...
+        </div>
+    `;
+
+    try{
+
+        const res = await fetch(
+    `/api/hotels/details?hotelId=${hotelId}`
+);
+        const result = await res.json();
+
+        const hotel = result.data;
+
+        body.innerHTML = `
+
+            <h2>${hotel.name}</h2>
+
+            <p>
+                📍 ${hotel.city},
+                ${hotel.country}
+            </p>
+
+            <br>
+
+            <div>
                 ${hotel.hotelDescription || ""}
             </div>
 
-            <div class="details">
+            <br>
 
-                <div class="detail">
-                    <strong>Country:</strong><br>
-                    ${hotel.country}
-                </div>
+            <h3>Facilities</h3>
 
-                <div class="detail">
-                    <strong>City:</strong><br>
-                    ${hotel.city}
-                </div>
+            <ul>
+                ${
+                    hotel.hotelFacilities
+                    ?.slice(0,15)
+                    .map(f=>`<li>${f}</li>`)
+                    .join("")
+                    || ""
+                }
+            </ul>
 
-                <div class="detail">
-                    <strong>Address:</strong><br>
-                    ${hotel.address}
-                </div>
-
-                <div class="detail">
-                    <strong>ZIP:</strong><br>
-                    ${hotel.zip || "N/A"}
-                </div>
-
-                <div class="detail">
-                    <strong>Chain:</strong><br>
-                    ${hotel.chain || "Independent"}
-                </div>
-
-                <div class="detail">
-                    <strong>Currency:</strong><br>
-                    ${hotel.currency}
-                </div>
-
-                <div class="detail">
-                    <strong>Latitude:</strong><br>
-                    ${hotel.latitude}
-                </div>
-
-                <div class="detail">
-                    <strong>Longitude:</strong><br>
-                    ${hotel.longitude}
-                </div>
-
-                <div class="detail">
-                    <strong>Hotel ID:</strong><br>
-                    ${hotel.id}
-                </div>
-
-                <div class="detail">
-                    <strong>Facilities:</strong><br>
-                    ${hotel.facilityIds?.length || 0} Facilities
-                </div>
-
+            <div class="modal-gallery">
+                ${
+                    hotel.hotelImages
+                    ?.slice(0,12)
+                    .map(img=>
+                        `<img src="${img.url}">`
+                    )
+                    .join("")
+                    || ""
+                }
             </div>
 
-        </div>
+            <button
+                class="book-btn"
+                onclick="bookHotel('${hotel.id}')">
 
+                Book Now
+            </button>
         `;
 
-        results.appendChild(card);
+    }catch(err){
 
-    });
+        body.innerHTML = `
+            <div class="empty">
+                Failed to load details
+            </div>
+        `;
+    }
 }
+
+function closeModal(){
+    document.getElementById("hotelModal").style.display="none";
+}
+
+function bookHotel(hotelId){
+
+    window.location.href =
+        `book.html?hotelId=${hotelId}`;
+
+}
+
+window.onload = loadRec;
 
 </script>
 
