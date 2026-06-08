@@ -1,5 +1,9 @@
-import dns from "node:dns/promises";
-dns.setServers(["8.8.8.8","1.1.1.1"]);
+const dns = require("dns");
+
+dns.setServers([
+  "8.8.8.8",
+  "1.1.1.1"
+]);
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
