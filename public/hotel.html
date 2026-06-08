@@ -3,302 +3,372 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>FlyAway Hotels</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+fontFamily:{
+sans:['Inter','sans-serif'],
+serif:['Playfair Display','serif']
+}
+}
+}
+};
+
+fetch("/components/topNavBar.html")
+.then(response => response.text())
+.then(data => {
+document.getElementById("topnavbar").innerHTML = data;
+})
+.catch(error => {
+console.error("Navbar failed to load:", error);
+});
+</script>
 
 <style>
-
-/* ================= BASE ================= */
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
 }
 
 body{
-    background:#f4f7fb;
-    color:#0f172a;
+background:#0d0f14;
+color:#fff;
+overflow-x:hidden;
 }
 
-/* ================= HERO (BOLD + PREMIUM) ================= */
+/* Background Glow */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top left,
+rgba(245,165,36,.08),
+transparent 40%),
+radial-gradient(circle at bottom right,
+rgba(30,140,200,.08),
+transparent 40%);
+z-index:-1;
+}
+
+/* NAVBAR SPACE */
 .hero{
-    height:460px;
-    background:url("https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=1600&q=80")
-    center/cover;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    color:white;
+margin-top:80px;
 }
 
-.hero::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,0.5);
+/* HERO */
+.hero{
+height:550px;
+background:
+linear-gradient(
+rgba(0,0,0,.45),
+rgba(0,0,0,.7)
+),
+url("https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=1600&q=80");
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
 }
 
 .hero-content{
-    position:relative;
-    z-index:2;
-    text-align:center;
-    max-width:800px;
-    padding:20px;
+text-align:center;
+max-width:900px;
+padding:20px;
 }
 
 .hero-tag{
-    display:inline-block;
-    padding:6px 14px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    font-size:13px;
-    margin-bottom:15px;
-    font-weight:600;
-    letter-spacing:1px;
+display:inline-block;
+padding:8px 18px;
+border-radius:999px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.12);
+color:#F5A524;
+font-weight:700;
+letter-spacing:2px;
+font-size:12px;
+margin-bottom:20px;
 }
 
 .hero-title{
-    font-size:3.6rem;
-    font-weight:800;
-    letter-spacing:-1px;
-    line-height:1.1;
+font-family:'Playfair Display',serif;
+font-size:5rem;
+font-weight:900;
+line-height:1;
 }
 
 .hero-title span{
-    color:#60a5fa;
+background:linear-gradient(
+135deg,
+#F5A524,
+#FFD700
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .hero-desc{
-    margin-top:12px;
-    font-size:1.1rem;
-    opacity:.9;
-    font-weight:400;
+margin-top:15px;
+font-size:1.15rem;
+color:rgba(255,255,255,.8);
 }
 
-/* ================= SEARCH ================= */
+/* SEARCH */
+
 .search-box{
-    max-width:900px;
-    margin:-40px auto 20px;
-    padding:0 20px;
+max-width:1000px;
+margin:-50px auto 30px;
+padding:0 20px;
 }
 
 .search-inner{
-    display:flex;
-    gap:10px;
-    background:rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    padding:12px;
-    border-radius:18px;
-    box-shadow:0 18px 40px rgba(0,0,0,0.12);
+display:flex;
+gap:10px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(16px);
+border:1px solid rgba(255,255,255,.1);
+border-radius:20px;
+padding:12px;
 }
 
 .search-inner input{
-    flex:1;
-    border:none;
-    outline:none;
-    font-size:16px;
-    padding:14px;
-    background:transparent;
+flex:1;
+background:transparent;
+border:none;
+outline:none;
+color:white;
+font-size:16px;
+padding:14px;
+}
+
+.search-inner input::placeholder{
+color:rgba(255,255,255,.45);
 }
 
 .search-inner button{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:14px 22px;
-    border-radius:14px;
-    cursor:pointer;
-    font-weight:700;
+background:linear-gradient(
+135deg,
+#F5A524,
+#e8832a
+);
+border:none;
+color:white;
+padding:14px 24px;
+border-radius:14px;
+font-weight:700;
+cursor:pointer;
 }
 
-/* ================= RECOMMENDED ================= */
+/* SECTION */
+
 .section{
-    max-width:1100px;
-    margin:40px auto 10px;
-    padding:0 20px;
+max-width:1200px;
+margin:40px auto;
+padding:0 20px;
 }
 
 .section h2{
-    font-size:1.4rem;
-    font-weight:700;
-    margin-bottom:15px;
+font-size:1.6rem;
+margin-bottom:20px;
 }
 
+/* DESTINATION CARDS */
+
 .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
 }
 
 .card{
-    border-radius:18px;
-    overflow:hidden;
-    cursor:pointer;
-    height:150px;
-    position:relative;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-    transition:.3s;
+height:180px;
+border-radius:20px;
+overflow:hidden;
+position:relative;
+cursor:pointer;
+transition:.3s;
+border:1px solid rgba(255,255,255,.08);
 }
 
 .card:hover{
-    transform:translateY(-6px);
+transform:translateY(-6px);
 }
 
 .card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.card::after{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(
+transparent,
+rgba(0,0,0,.75)
+);
 }
 
 .card span{
-    position:absolute;
-    bottom:10px;
-    left:10px;
-    background:rgba(0,0,0,0.65);
-    color:white;
-    padding:7px 12px;
-    border-radius:10px;
-    font-size:14px;
-    font-weight:600;
+position:absolute;
+left:15px;
+bottom:15px;
+z-index:2;
+font-weight:700;
+font-size:18px;
 }
 
-/* ================= RESULTS ================= */
+/* HOTEL CARD */
+
 #results{
-    max-width:1100px;
-    margin:30px auto;
-    padding:0 20px;
-    display:grid;
-    gap:18px;
+max-width:1200px;
+margin:40px auto;
+padding:0 20px;
+display:grid;
+gap:20px;
 }
 
 .hotel{
-    background:white;
-    border-radius:18px;
-    overflow:hidden;
-    display:flex;
-    gap:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-    transition:.2s;
+display:flex;
+gap:18px;
+background:rgba(255,255,255,.04);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.08);
+border-radius:20px;
+overflow:hidden;
+transition:.3s;
 }
 
 .hotel:hover{
-    transform:translateY(-3px);
+transform:translateY(-4px);
+border-color:rgba(245,165,36,.25);
 }
 
 .hotel img{
-    width:180px;
-    height:130px;
-    object-fit:cover;
+width:220px;
+height:160px;
+object-fit:cover;
 }
 
 .hotel-content{
-    padding:15px;
-    flex:1;
+padding:18px;
+flex:1;
 }
 
 .hotel h3{
-    font-size:1.2rem;
-    font-weight:700;
-    margin-bottom:5px;
+font-size:1.3rem;
+margin-bottom:6px;
 }
 
 .meta{
-    font-size:13px;
-    color:#64748b;
-    margin-top:4px;
+color:rgba(255,255,255,.7);
+margin-top:4px;
 }
 
 /* BUTTON */
+
 .btn{
-    margin-top:10px;
-    padding:8px 12px;
-    border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-    font-size:13px;
-    font-weight:600;
+margin-top:15px;
+padding:10px 16px;
+border:none;
+border-radius:12px;
+background:linear-gradient(
+135deg,
+#F5A524,
+#e8832a
+);
+color:white;
+font-weight:700;
+cursor:pointer;
 }
 
-/* DETAILS */
-.details{
-    margin-top:10px;
-    font-size:13px;
-    color:#475569;
-    line-height:1.5;
-    display:none;
-}
-
-/* STATES */
-.loading, .empty{
-    text-align:center;
-    padding:40px;
-    color:#64748b;
-    font-size:18px;
-}
-/* ================= MODAL ================= */
+/* MODAL */
 
 .modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.65);
-    z-index:999;
-    overflow:auto;
-    padding:40px;
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+backdrop-filter:blur(10px);
+z-index:9999;
+padding:40px;
 }
 
 .modal-content{
-    max-width:1000px;
-    margin:auto;
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    position:relative;
-}
-
-.close{
-    position:absolute;
-    right:20px;
-    top:15px;
-    font-size:30px;
-    cursor:pointer;
+max-width:1100px;
+margin:auto;
+background:#12151d;
+border:1px solid rgba(255,255,255,.08);
+border-radius:24px;
+padding:30px;
+color:white;
 }
 
 .modal-gallery{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:12px;
-    margin-top:20px;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:15px;
+margin-top:20px;
 }
 
 .modal-gallery img{
-    width:100%;
-    height:140px;
-    object-fit:cover;
-    border-radius:12px;
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:14px;
 }
 
 .book-btn{
-    margin-top:20px;
-    background:#16a34a;
+margin-top:20px;
+background:#16a34a;
+border:none;
+padding:12px 20px;
+border-radius:12px;
+font-weight:700;
+color:white;
+cursor:pointer;
+}
+.close{
+    position:absolute;
+    top:15px;
+    right:20px;
     color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:12px;
+    font-size:32px;
+    font-weight:bold;
     cursor:pointer;
-    font-weight:700;
+    z-index:10000;
+    transition:0.2s;
 }
 
+.close:hover{
+    color:#F5A524;
+    transform:scale(1.1);
+}
 </style>
 </head>
 
+
 <body>
+    <div id="topnavbar"></div>
 
 <!-- HERO -->
 <div class="hero">
@@ -474,21 +544,20 @@ function render(hotels){
                 <div class="meta">📍 ${h.city || ''}, ${h.country || ''}</div>
                 <div class="meta">⭐ ${h.stars || 'N/A'} • 🏆 ${h.rating || 'N/A'}</div>
 
-              <button class="btn" onclick="loadHotelDetails('${h.id}')">
+             <button class="btn" onclick="loadHotelDetails('${h.id}')">
     View Details
+</button>
 
-                <div id="${id}" class="details">
-                    <b>Address:</b> ${h.address || 'N/A'} <br>
-                    <b>ZIP:</b> ${h.zip || 'N/A'} <br>
-                    <b>Chain:</b> ${h.chain || 'Independent'} <br>
-                    <b>Coordinates:</b> ${h.latitude || 'N/A'}, ${h.longitude || 'N/A'} <br>
-                    <b>Facilities:</b> ${h.facilityIds?.length || 0} <br>
-                    <b>ID:</b> ${h.id || 'N/A'} <br><br>
-                    <b>Description:</b><br>
-                    ${h.hotelDescription || 'No description available'}
-                </div>
-
-            </div>
+<div id="${id}" class="details">
+    <b>Address:</b> ${h.address || 'N/A'} <br>
+    <b>ZIP:</b> ${h.zip || 'N/A'} <br>
+    <b>Chain:</b> ${h.chain || 'Independent'} <br>
+    <b>Coordinates:</b> ${h.latitude || 'N/A'}, ${h.longitude || 'N/A'} <br>
+    <b>Facilities:</b> ${h.facilityIds?.length || 0} <br>
+    <b>ID:</b> ${h.id || 'N/A'} <br><br>
+    <b>Description:</b><br>
+    ${h.hotelDescription || 'No description available'}
+</div>
         `;
 
         box.appendChild(d);
@@ -597,4 +666,14 @@ window.onload = loadRec;
 </script>
 
 </body>
+<script>
+fetch("/components/topNavBar.html")
+.then(response => response.text())
+.then(data => {
+document.getElementById("topnavbar").innerHTML = data;
+})
+.catch(error => {
+console.error("Navbar failed to load:", error);
+});
+</script>
 </html>
