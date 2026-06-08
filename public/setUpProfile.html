@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Set Up Profile | FlyAway Travel Planner</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: "#f0a500",
+            accentDark: "#d99100",
+          },
+          boxShadow: {
+            card: "0 8px 24px rgba(0, 0, 0, 0.15)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    .error-msg {
+      font-size: 12px;
+      color: #dc2626;
+      margin-top: 4px;
+      display: none;
+      text-align: left;
+    }
+
+    .helper {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+      text-align: left;
+    }
+
+    .form-control.invalid {
+      border-color: #dc2626;
+    }
+
+    .form-control.valid {
+      border-color: #16a34a;
+    }
+
+    .interest-card {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #fff;
+    }
+
+    .interest-card:hover {
+      border-color: #f0a500;
+      background: #fff8e6;
+    }
+
+    .interest-card input {
+      accent-color: #f0a500;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 py-10 font-sans">
+
+  <main class="w-full max-w-[780px] rounded-3xl bg-white px-8 py-10 text-center shadow-card md:px-10">
+
+    <img
+      src="/img/FlyAway_Logo.png"
+      alt="FlyAway_Logo"
+      class="mx-auto mb-5 h-[90px] w-[90px] rounded-xl object-contain shadow-md"
+    />
+
+    <h1 class="mb-2 text-[26px] font-bold text-slate-900">
+      Set Up Your Profile
+    </h1>
+
+    <p class="mb-6 text-[15px] font-medium text-accent">
+      FlyAway Travel Planner
+    </p>
+
+    <div
+      id="statusMessage"
+      class="mb-4 hidden rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
+    >
+      Please check your profile details and try again.
+    </div>
+
+    <form
+    method="POST"
+    action="/setup-profile"
+    enctype="multipart/form-data"
+    novalidate
+    id="setupProfileForm"
+    class="grid grid-cols-1 gap-4 text-left md:grid-cols-2"
+    >
+
+    <div class="md:col-span-2">
+    <label for="avatar" class="mb-1 block text-sm font-semibold text-slate-700">
+        Profile Image
+    </label>
+
+    <div class="relative">
+        <i class="fa-regular fa-image absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input
+        id="avatar"
+        name="avatar"
+        type="file"
+        accept="image/png, image/jpeg, image/jpg, image/webp"
+        class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accentDark focus:border-accent focus:ring-4 focus:ring-accent/20"
+        />
+    </div>
+
+    <div class="helper">
+        Upload a JPG or PNG image. Leave blank to use the default avatar.
+    </div>
+
+    <div class="error-msg" id="err_avatar">
+        Please upload a valid image file.
+    </div>
+    </div>
+
+      <div class="md:col-span-2">
+        <label for="aboutMe" class="mb-1 block text-sm font-semibold text-slate-700">
+          About Me
+        </label>
+
+        <div class="relative">
+          <i class="fa-regular fa-pen-to-square absolute left-4 top-4 text-gray-400"></i>
+          <textarea
+            id="aboutMe"
+            name="aboutMe"
+            rows="4"
+            maxlength="300"
+            placeholder="Tell us about your travel style..."
+            class="form-control w-full resize-none rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          ></textarea>
+        </div>
+
+        <div class="helper">
+          Maximum 300 characters.
+        </div>
+      </div>
+
+      <div>
+        <label for="preferredCurrency" class="mb-1 block text-sm font-semibold text-slate-700">
+          Preferred Currency
+        </label>
+
+        <div class="relative">
+          <i class="fa-solid fa-money-bill-wave absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select
+            id="preferredCurrency"
+            name="preferredCurrency"
+            class="form-control w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          >
+            <option value="MYR">MYR — Malaysian Ringgit</option>
+            <option value="USD">USD — US Dollar</option>
+            <option value="EUR">EUR — Euro</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="language" class="mb-1 block text-sm font-semibold text-slate-700">
+          Preferred Language
+        </label>
+
+        <div class="relative">
+          <i class="fa-solid fa-language absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select
+            id="language"
+            name="language"
+            class="form-control w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          >
+            <option value="English">English</option>
+            <option value="Bahasa Malaysia">Bahasa Malaysia</option>
+            <option value="Mandarin">Chinese</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="mb-2 block text-sm font-semibold text-slate-700">
+          Travel Interests
+        </label>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Beach" />
+            <span>🏖 Beach</span>
+          </label>
+
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Culture" />
+            <span>🏛 Culture</span>
+          </label>
+
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Food" />
+            <span>🍜 Food</span>
+          </label>
+
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Adventure" />
+            <span>🥾 Adventure</span>
+          </label>
+
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Nature" />
+            <span>🏔 Nature</span>
+          </label>
+
+          <label class="interest-card">
+            <input type="checkbox" name="travelPreferences" value="Nightlife" />
+            <span>🌃 Nightlife</span>
+          </label>
+        </div>
+
+        <div class="helper">
+          Select one or more interests to personalize your travel recommendations.
+        </div>
+      </div>
+
+      <div class="mt-2 space-y-3 md:col-span-2">
+        <button
+          id="submitButton"
+          type="submit"
+          class="w-full rounded-lg bg-accent px-4 py-3 text-base font-semibold text-white transition hover:bg-accentDark"
+        >
+          Save Profile
+        </button>
+
+        <button
+          type="button"
+          onclick="window.location='/profile'"
+          class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-600 shadow-sm transition hover:shadow-md"
+        >
+          Skip for Now
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 text-sm leading-7">
+      <p class="text-gray-600">
+        Want to edit this later?
+        <a href="/profile" class="font-medium text-accent hover:underline">
+          Go to profile
+        </a>
+      </p>
+    </div>
+
+  </main>
+
+  <script src="/js/setup_profile.js" defer></script>
+</body>
+</html>
