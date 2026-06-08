@@ -3,677 +3,701 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>FlyAway Hotels</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script>
 tailwind.config = {
-theme:{
-extend:{
-fontFamily:{
-sans:['Inter','sans-serif'],
-serif:['Playfair Display','serif']
-}
-}
-}
+  theme:{ extend:{ fontFamily:{ sans:['Inter','sans-serif'], serif:['Playfair Display','serif'] } } }
 };
-
 fetch("/components/topNavBar.html")
-.then(response => response.text())
-.then(data => {
-document.getElementById("topnavbar").innerHTML = data;
-})
-.catch(error => {
-console.error("Navbar failed to load:", error);
-});
+  .then(r=>r.text()).then(d=>{ document.getElementById("topnavbar").innerHTML=d; })
+  .catch(e=>{ console.error("Navbar failed to load:",e); });
 </script>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
 
-body{
-background:#0d0f14;
-color:#fff;
-overflow-x:hidden;
-}
+body{ background:#0d0f14; color:#fff; overflow-x:hidden; }
 
-/* Background Glow */
 body::before{
-content:"";
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at top left,
-rgba(245,165,36,.08),
-transparent 40%),
-radial-gradient(circle at bottom right,
-rgba(30,140,200,.08),
-transparent 40%);
-z-index:-1;
-}
-
-/* NAVBAR SPACE */
-.hero{
-margin-top:80px;
+  content:""; position:fixed; inset:0;
+  background: radial-gradient(circle at top left, rgba(245,165,36,.08), transparent 40%),
+              radial-gradient(circle at bottom right, rgba(30,140,200,.08), transparent 40%);
+  z-index:-1;
 }
 
 /* HERO */
 .hero{
-height:550px;
-background:
-linear-gradient(
-rgba(0,0,0,.45),
-rgba(0,0,0,.7)
-),
-url("https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=1600&q=80");
-background-size:cover;
-background-position:center;
-display:flex;
-align-items:center;
-justify-content:center;
-position:relative;
+  margin-top:80px; height:550px;
+  background: linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.7)),
+    url("https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=1600&q=80");
+  background-size:cover; background-position:center;
+  display:flex; align-items:center; justify-content:center; position:relative;
+  transition: background-image .8s ease;
 }
-
-.hero-content{
-text-align:center;
-max-width:900px;
-padding:20px;
-}
-
+.hero-content{ text-align:center; max-width:900px; padding:20px; }
 .hero-tag{
-display:inline-block;
-padding:8px 18px;
-border-radius:999px;
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.12);
-color:#F5A524;
-font-weight:700;
-letter-spacing:2px;
-font-size:12px;
-margin-bottom:20px;
+  display:inline-block; padding:8px 18px; border-radius:999px;
+  background:rgba(255,255,255,.08); backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,.12); color:#F5A524;
+  font-weight:700; letter-spacing:2px; font-size:12px; margin-bottom:20px;
 }
+.hero-title{ font-family:'Playfair Display',serif; font-size:5rem; font-weight:900; line-height:1; }
+.hero-title span{ background:linear-gradient(135deg,#F5A524,#FFD700); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero-desc{ margin-top:15px; font-size:1.15rem; color:rgba(255,255,255,.8); }
 
-.hero-title{
-font-family:'Playfair Display',serif;
-font-size:5rem;
-font-weight:900;
-line-height:1;
+/* LIVE TICKER */
+.ticker-bar{
+  display:flex; align-items:center; justify-content:center; gap:30px;
+  padding:10px 0; background:rgba(245,165,36,.06);
+  border-bottom:1px solid rgba(245,165,36,.1);
+  font-size:.8rem; color:rgba(255,255,255,.5); letter-spacing:.5px;
 }
-
-.hero-title span{
-background:linear-gradient(
-135deg,
-#F5A524,
-#FFD700
-);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.hero-desc{
-margin-top:15px;
-font-size:1.15rem;
-color:rgba(255,255,255,.8);
-}
+.ticker-dot{ width:6px; height:6px; border-radius:50%; background:#F5A524; animation:pulse 2s infinite; }
+@keyframes pulse{ 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.7);} }
 
 /* SEARCH */
-
-.search-box{
-max-width:1000px;
-margin:-50px auto 30px;
-padding:0 20px;
-}
-
+.search-box{ max-width:1000px; margin:-50px auto 30px; padding:0 20px; position:relative; z-index:10; }
 .search-inner{
-display:flex;
-gap:10px;
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(16px);
-border:1px solid rgba(255,255,255,.1);
-border-radius:20px;
-padding:12px;
+  display:flex; gap:10px; background:rgba(255,255,255,.06);
+  backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.12);
+  border-radius:20px; padding:12px; box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
-
 .search-inner input{
-flex:1;
-background:transparent;
-border:none;
-outline:none;
-color:white;
-font-size:16px;
-padding:14px;
+  flex:1; background:transparent; border:none; outline:none;
+  color:white; font-size:16px; padding:14px;
 }
-
-.search-inner input::placeholder{
-color:rgba(255,255,255,.45);
-}
-
+.search-inner input::placeholder{ color:rgba(255,255,255,.35); }
 .search-inner button{
-background:linear-gradient(
-135deg,
-#F5A524,
-#e8832a
-);
-border:none;
-color:white;
-padding:14px 24px;
-border-radius:14px;
-font-weight:700;
-cursor:pointer;
+  background:linear-gradient(135deg,#F5A524,#e8832a);
+  border:none; color:white; padding:14px 28px;
+  border-radius:14px; font-weight:700; cursor:pointer; transition:.2s;
+  white-space:nowrap;
 }
+.search-inner button:hover{ transform:scale(1.03); box-shadow:0 4px 20px rgba(245,165,36,.4); }
 
 /* SECTION */
-
-.section{
-max-width:1200px;
-margin:40px auto;
-padding:0 20px;
-}
-
-.section h2{
-font-size:1.6rem;
-margin-bottom:20px;
-}
+.section{ max-width:1200px; margin:40px auto; padding:0 20px; }
+.section-title{ font-size:1.5rem; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
 
 /* DESTINATION CARDS */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
 .card{
-height:180px;
-border-radius:20px;
-overflow:hidden;
-position:relative;
-cursor:pointer;
-transition:.3s;
-border:1px solid rgba(255,255,255,.08);
+  height:160px; border-radius:18px; overflow:hidden; position:relative;
+  cursor:pointer; transition:.3s; border:1px solid rgba(255,255,255,.08);
+}
+.card:hover{ transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,.5); }
+.card img{ width:100%; height:100%; object-fit:cover; }
+.card::after{ content:""; position:absolute; inset:0; background:linear-gradient(transparent 40%,rgba(0,0,0,.8)); }
+.card span{ position:absolute; left:14px; bottom:12px; z-index:2; font-weight:700; font-size:16px; }
+
+/* MAIN LAYOUT: sidebar + results */
+.browse-layout{
+  max-width:1200px; margin:0 auto 60px; padding:0 20px;
+  display:grid; grid-template-columns:1fr; gap:24px; transition:.4s;
+}
+.browse-layout.has-results{
+  grid-template-columns:300px 1fr;
 }
 
-.card:hover{
-transform:translateY(-6px);
+/* SIDEBAR (popular panel) */
+.sidebar{
+  display:none; flex-direction:column; gap:0;
 }
-
-.card img{
-width:100%;
-height:100%;
-object-fit:cover;
+.browse-layout.has-results .sidebar{
+  display:flex;
 }
-
-.card::after{
-content:"";
-position:absolute;
-inset:0;
-background:linear-gradient(
-transparent,
-rgba(0,0,0,.75)
-);
+.sidebar-header{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px;
 }
+.sidebar-title{ font-size:1rem; font-weight:700; }
+.sidebar-toggle{
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.6); border-radius:8px; padding:4px 10px;
+  font-size:.75rem; cursor:pointer; transition:.2s;
+}
+.sidebar-toggle:hover{ background:rgba(255,255,255,.12); color:#fff; }
 
-.card span{
-position:absolute;
-left:15px;
-bottom:15px;
-z-index:2;
-font-weight:700;
-font-size:18px;
+.sidebar-list{ display:flex; flex-direction:column; gap:10px; overflow-y:auto; max-height:calc(100vh - 280px); padding-right:4px; }
+.sidebar-list::-webkit-scrollbar{ width:3px; }
+.sidebar-list::-webkit-scrollbar-track{ background:transparent; }
+.sidebar-list::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.1); border-radius:999px; }
+
+.pop-row{
+  display:flex; gap:10px; align-items:center;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+  border-radius:14px; overflow:hidden; cursor:pointer; transition:.25s; padding:0;
+}
+.pop-row:hover{ border-color:rgba(245,165,36,.3); background:rgba(245,165,36,.05); transform:translateX(3px); }
+.pop-row img{ width:70px; height:70px; object-fit:cover; flex-shrink:0; }
+.pop-row-body{ padding:8px 10px 8px 0; flex:1; min-width:0; }
+.pop-row-name{ font-size:.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pop-row-loc{ font-size:.72rem; color:rgba(255,255,255,.5); margin-top:2px; }
+.pop-row-rating{
+  display:flex; align-items:center; gap:4px; margin-top:6px;
+}
+.rating-bar-wrap{ flex:1; height:4px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+.rating-bar{ height:100%; background:linear-gradient(90deg,#F5A524,#FFD700); border-radius:999px; transition:width 1s ease; }
+.rating-num{ font-size:.7rem; color:#F5A524; font-weight:700; }
+
+/* POPULAR GRID (pre-search, full width) */
+.popular-full{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
+
+.pop-card{
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:18px; overflow:hidden; cursor:pointer; transition:.3s;
+}
+.pop-card:hover{ transform:translateY(-6px); border-color:rgba(245,165,36,.3); box-shadow:0 12px 40px rgba(245,165,36,.08); }
+.pop-card-img{ position:relative; }
+.pop-card-img img{ width:100%; height:170px; object-fit:cover; }
+.pop-card-badge{
+  position:absolute; top:10px; right:10px;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+  color:#F5A524; font-weight:800; font-size:.78rem;
+  padding:4px 9px; border-radius:999px;
+}
+.pop-card-body{ padding:12px 14px 14px; }
+.pop-card-name{ font-size:.95rem; font-weight:700; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pop-card-loc{ font-size:.78rem; color:rgba(255,255,255,.5); margin-bottom:8px; }
+.rating-row{ display:flex; align-items:center; gap:8px; }
+.rating-row .rating-bar-wrap{ flex:1; height:5px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+.rating-row .rating-bar{ height:100%; background:linear-gradient(90deg,#F5A524,#FFD700); border-radius:999px; width:0; transition:width 1.2s ease; }
+.rating-row .rating-num{ font-size:.75rem; color:#F5A524; font-weight:700; min-width:28px; text-align:right; }
+.stars-row{ margin-top:4px; color:#F5A524; font-size:.78rem; }
+
+/* SKELETON */
+.skeleton{
+  background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
+  background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:10px;
+}
+@keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+.skel-card{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:18px; overflow:hidden; }
+.skel-img{ width:100%; height:170px; }
+.skel-body{ padding:12px 14px; }
+.skel-line{ height:13px; margin-bottom:9px; border-radius:6px; }
+.skel-row{ display:flex; gap:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:14px; overflow:hidden; }
+.skel-row-img{ width:70px; height:70px; flex-shrink:0; }
+.skel-row-body{ padding:10px 10px 10px 0; flex:1; display:flex; flex-direction:column; gap:7px; justify-content:center; }
+
+/* RESULTS */
+.results-area{ display:flex; flex-direction:column; gap:16px; }
+.results-label-row{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:4px;
+}
+.results-label{ font-size:1.1rem; font-weight:600; color:rgba(255,255,255,.7); }
+.back-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  border-radius:999px; padding:6px 14px; font-size:.8rem;
+  color:rgba(255,255,255,.6); cursor:pointer; transition:.2s;
+}
+.back-pill:hover{ background:rgba(255,255,255,.1); color:#fff; }
+.country-pill{
+  display:inline-block; background:rgba(245,165,36,.12);
+  border:1px solid rgba(245,165,36,.25); color:#F5A524;
+  padding:3px 12px; border-radius:999px; font-size:.8rem; font-weight:600; margin-left:6px;
 }
 
 /* HOTEL CARD */
-
-#results{
-max-width:1200px;
-margin:40px auto;
-padding:0 20px;
-display:grid;
-gap:20px;
-}
-
 .hotel{
-display:flex;
-gap:18px;
-background:rgba(255,255,255,.04);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.08);
-border-radius:20px;
-overflow:hidden;
-transition:.3s;
+  display:flex; gap:0; background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08); border-radius:18px;
+  overflow:hidden; transition:.3s; cursor:default;
 }
+.hotel:hover{ transform:translateY(-3px); border-color:rgba(245,165,36,.22); box-shadow:0 10px 30px rgba(0,0,0,.3); }
+.hotel img{ width:200px; height:150px; object-fit:cover; flex-shrink:0; }
+.hotel-content{ padding:16px 18px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+.hotel-top h3{ font-size:1.15rem; font-weight:700; margin-bottom:5px; }
+.meta{ color:rgba(255,255,255,.6); margin-top:3px; font-size:.85rem; }
+.hotel-bottom{ display:flex; align-items:center; justify-content:space-between; margin-top:10px; flex-wrap:wrap; gap:8px; }
+.hotel-rating{ display:flex; align-items:center; gap:8px; }
+.hotel-rating .rating-bar-wrap{ width:80px; height:5px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+.hotel-rating .rating-bar{ height:100%; background:linear-gradient(90deg,#F5A524,#FFD700); border-radius:999px; width:0; transition:width 1s ease; }
+.hotel-rating .rating-num{ font-size:.78rem; color:#F5A524; font-weight:700; }
 
-.hotel:hover{
-transform:translateY(-4px);
-border-color:rgba(245,165,36,.25);
+/* BUTTONS */
+.btn-view{
+  padding:8px 16px; border:none; border-radius:10px;
+  background:linear-gradient(135deg,#F5A524,#e8832a);
+  color:white; font-weight:700; font-size:.82rem; cursor:pointer; transition:.2s;
 }
-
-.hotel img{
-width:220px;
-height:160px;
-object-fit:cover;
-}
-
-.hotel-content{
-padding:18px;
-flex:1;
-}
-
-.hotel h3{
-font-size:1.3rem;
-margin-bottom:6px;
-}
-
-.meta{
-color:rgba(255,255,255,.7);
-margin-top:4px;
-}
-
-/* BUTTON */
-
-.btn{
-margin-top:15px;
-padding:10px 16px;
-border:none;
-border-radius:12px;
-background:linear-gradient(
-135deg,
-#F5A524,
-#e8832a
-);
-color:white;
-font-weight:700;
-cursor:pointer;
-}
+.btn-view:hover{ transform:scale(1.04); box-shadow:0 4px 16px rgba(245,165,36,.35); }
 
 /* MODAL */
-
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.75);
-backdrop-filter:blur(10px);
-z-index:9999;
-padding:40px;
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(10px);
+  z-index:9999; padding:40px; overflow-y:auto;
 }
-
 .modal-content{
-max-width:1100px;
-margin:auto;
-background:#12151d;
-border:1px solid rgba(255,255,255,.08);
-border-radius:24px;
-padding:30px;
-color:white;
+  max-width:900px; margin:auto; background:#12151d;
+  border:1px solid rgba(255,255,255,.08); border-radius:24px;
+  padding:28px; color:white; position:relative;
 }
+.modal-header{ padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:18px; }
+.modal-header h2{ font-size:1.5rem; font-weight:800; margin-bottom:10px; }
+.modal-meta-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.modal-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  border-radius:999px; padding:4px 12px; font-size:.8rem; color:rgba(255,255,255,.75);
+}
+.modal-badge.gold{ background:rgba(245,165,36,.12); border-color:rgba(245,165,36,.3); color:#F5A524; font-weight:700; }
+.modal-desc{ color:rgba(255,255,255,.6); font-size:.88rem; line-height:1.65; margin-bottom:16px; }
+.modal-facilities h3{ font-size:.95rem; font-weight:700; margin-bottom:10px; color:rgba(255,255,255,.8); }
+.facility-tags{ display:flex; flex-wrap:wrap; gap:7px; }
+.facility-tag{
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+  border-radius:8px; padding:4px 10px; font-size:.76rem; color:rgba(255,255,255,.65);
+}
+.modal-gallery{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:18px; }
+.modal-gallery img{ width:100%; height:160px; object-fit:cover; border-radius:12px; }
 
-.modal-gallery{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:15px;
-margin-top:20px;
+/* CHECK BTN — compact, right-aligned */
+.modal-footer{ display:flex; justify-content:flex-end; margin-top:20px; padding-top:18px; border-top:1px solid rgba(255,255,255,.07); }
+.check-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:11px 22px; background:linear-gradient(135deg,#16a34a,#15803d);
+  border:none; border-radius:12px; font-size:.9rem; font-weight:700;
+  color:white; cursor:pointer; transition:.2s;
 }
+.check-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(22,163,74,.35); }
 
-.modal-gallery img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:14px;
-}
-
-.book-btn{
-margin-top:20px;
-background:#16a34a;
-border:none;
-padding:12px 20px;
-border-radius:12px;
-font-weight:700;
-color:white;
-cursor:pointer;
-}
 .close{
-    position:absolute;
-    top:15px;
-    right:20px;
-    color:white;
-    font-size:32px;
-    font-weight:bold;
-    cursor:pointer;
-    z-index:10000;
-    transition:0.2s;
+  position:absolute; top:14px; right:18px; color:rgba(255,255,255,.5);
+  font-size:28px; font-weight:bold; cursor:pointer; z-index:10000; transition:.2s; line-height:1;
 }
+.close:hover{ color:#F5A524; transform:scale(1.1); }
 
-.close:hover{
-    color:#F5A524;
-    transform:scale(1.1);
-}
+/* SCROLL REVEAL */
+.reveal{ opacity:0; transform:translateY(20px); transition:opacity .5s ease, transform .5s ease; }
+.reveal.visible{ opacity:1; transform:translateY(0); }
+
+/* EMPTY STATE */
+.empty-state{ text-align:center; padding:60px 20px; color:rgba(255,255,255,.3); }
+.empty-state .icon{ font-size:3rem; margin-bottom:12px; }
 </style>
 </head>
 
-
 <body>
-    <div id="topnavbar"></div>
+<div id="topnavbar"></div>
 
 <!-- HERO -->
 <div class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">FEATURED DESTINATION</div>
+    <div class="hero-title" id="heroTitle">Discover <span>Japan</span></div>
+    <div class="hero-desc" id="heroDesc">Neon cities, peaceful temples, unforgettable stays ✨</div>
+  </div>
+</div>
 
-    <div class="hero-content">
-
-        <div class="hero-tag">
-            FEATURED DESTINATION
-        </div>
-
-        <div class="hero-title" id="heroTitle">
-            Discover <span>Japan</span>
-        </div>
-
-        <div class="hero-desc" id="heroDesc">
-            Neon cities, peaceful temples, unforgettable stays ✨
-        </div>
-
-    </div>
-
+<!-- LIVE TICKER -->
+<div class="ticker-bar">
+  <span><span class="ticker-dot" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>LIVE</span>
+  <span id="tickerText">Loading live data...</span>
+  <span>🌐 Hotels across 100+ countries</span>
+  <span>✈️ Best prices guaranteed</span>
 </div>
 
 <!-- SEARCH -->
 <div class="search-box">
-    <div class="search-inner">
-        <input id="country" placeholder="Try Malaysia, Japan, Thailand...">
-        <button onclick="searchHotels()">Search</button>
+  <div class="search-inner">
+    <input id="country" placeholder="Try Malaysia, Japan, Thailand, France..." onkeydown="if(event.key==='Enter')searchHotels()">
+    <button onclick="searchHotels()">🔍 Search</button>
+  </div>
+</div>
+
+<!-- RECOMMENDED DESTINATIONS -->
+<div class="section reveal">
+  <div class="section-title">🌍 Recommended Destinations</div>
+  <div class="grid" id="rec"></div>
+</div>
+
+<!-- POPULAR HOTELS (full width, pre-search) -->
+<div class="section reveal" id="popularSection">
+  <div class="section-title">🔥 Top Rated Hotels Right Now</div>
+  <div id="popularGrid" class="popular-full"></div>
+</div>
+
+<!-- MAIN LAYOUT: sidebar + results (post-search) -->
+<div class="browse-layout" id="browseLayout">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">🔥 Top Picks</div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()">Hide ×</button>
     </div>
+    <div class="sidebar-list" id="sidebarList"></div>
+  </div>
+  <!-- RESULTS -->
+  <div class="results-area" id="results" style="display:none">
+    <div class="results-label-row">
+      <div class="results-label" id="resultsLabel"></div>
+      <div class="back-pill" onclick="backToBrowse()">← Back to browse</div>
+    </div>
+    <div id="resultsList"></div>
+  </div>
 </div>
 
-<!-- RECOMMENDED -->
-<div class="section">
-    <h2>🌍 Recommended Destinations</h2>
-    <div class="grid" id="rec"></div>
-</div>
-
-<!-- RESULTS -->
-<div id="results">
-    <div class="empty">Search or pick a destination ✨</div>
-</div>
 <!-- HOTEL DETAILS MODAL -->
 <div id="hotelModal" class="modal">
-
-    <div class="modal-content">
-
-        <span class="close" onclick="closeModal()">&times;</span>
-
-        <div id="modalBody">
-            Loading...
-        </div>
-
-    </div>
-
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="modalBody">Loading...</div>
+  </div>
 </div>
 
 <script>
-
-/* ================= MAP ================= */
-const map = {
-    malaysia:"MY",
-    japan:"JP",
-    thailand:"TH",
-    singapore:"SG",
-    france:"FR",
-    germany:"DE"
+/* ===== MAP ===== */
+const countryMap = {
+  malaysia:"MY", japan:"JP", thailand:"TH",
+  singapore:"SG", france:"FR", germany:"DE",
+  italy:"IT", spain:"ES", usa:"US", uk:"GB"
 };
 
-/* ================= RECOMMENDED ================= */
+/* ===== REC DESTINATIONS ===== */
 const rec = [
-    {n:"Malaysia",c:"MY",i:"https://plus.unsplash.com/premium_photo-1678303397238-76250a5ebf73?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
-    {n:"Japan",c:"JP",i:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFwYW58ZW58MHx8MHx8fDA%3D"},
-    {n:"Thailand",c:"TH",i:"https://images.unsplash.com/photo-1528181304800-259b08848526"},
-    {n:"France",c:"FR",i:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"}
+  {n:"Malaysia",c:"MY",i:"https://plus.unsplash.com/premium_photo-1678303397238-76250a5ebf73?q=80&w=687&auto=format&fit=crop"},
+  {n:"Japan",c:"JP",i:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=60"},
+  {n:"Thailand",c:"TH",i:"https://images.unsplash.com/photo-1528181304800-259b08848526"},
+  {n:"France",c:"FR",i:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"}
 ];
 
-/* ================= HERO ROTATION ================= */
+/* ===== HERO ROTATION ===== */
 const heroData = [
-    {
-        title:"Discover <span>Japan</span>",
-        desc:"Neon cities, peaceful temples, unforgettable stays ✨",
-        img:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFwYW58ZW58MHx8MHx8fDA%3D"
-    },
-    {
-        title:"Explore <span>Thailand</span>",
-        desc:"Golden beaches, street food & island escapes 🌴",
-        img:"https://images.unsplash.com/photo-1528181304800-259b08848526"
-    },
-    {
-        title:"Experience <span>France</span>",
-        desc:"Romantic cities & timeless architecture 🥐",
-        img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
-    }
+  { title:"Discover <span>Japan</span>", desc:"Neon cities, peaceful temples, unforgettable stays ✨", img:"https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1600&auto=format&fit=crop&q=80" },
+  { title:"Explore <span>Thailand</span>", desc:"Golden beaches, street food & island escapes 🌴", img:"https://images.unsplash.com/photo-1528181304800-259b08848526?w=1600&auto=format&fit=crop&q=80" },
+  { title:"Experience <span>France</span>", desc:"Romantic cities & timeless architecture 🥐", img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&auto=format&fit=crop&q=80" }
 ];
-
-let i = 0;
-
+let heroIdx = 0;
 setInterval(()=>{
+  heroIdx = (heroIdx+1) % heroData.length;
+  document.querySelector(".hero").style.backgroundImage =
+    `linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.7)), url(${heroData[heroIdx].img})`;
+  document.getElementById("heroTitle").innerHTML = heroData[heroIdx].title;
+  document.getElementById("heroDesc").innerText = heroData[heroIdx].desc;
+}, 5000);
 
-    i = (i + 1) % heroData.length;
+/* ===== TICKER ===== */
+const tickerMsgs = [
+  "⚡ 1,248 people browsing hotels right now",
+  "🏨 Over 500,000 hotels available",
+  "🌟 Updated ratings every 24 hours",
+  "💡 Tip: Search by country name or code"
+];
+let tickerIdx = 0;
+setInterval(()=>{
+  tickerIdx = (tickerIdx+1) % tickerMsgs.length;
+  document.getElementById("tickerText").innerText = tickerMsgs[tickerIdx];
+}, 3000);
+document.getElementById("tickerText").innerText = tickerMsgs[0];
 
-    document.querySelector(".hero").style.backgroundImage =
-        `url(${heroData[i].img}?auto=format&fit=crop&w=1600&q=80)`;
-
-    document.getElementById("heroTitle").innerHTML =
-        heroData[i].title;
-
-    document.getElementById("heroDesc").innerText =
-        heroData[i].desc;
-
-},5000);
-
-/* ================= LOAD REC ================= */
+/* ===== LOAD REC ===== */
 function loadRec(){
-    const box = document.getElementById("rec");
-
-    rec.forEach(r=>{
-        const d = document.createElement("div");
-        d.className="card";
-        d.onclick=()=>{document.getElementById("country").value=r.n;searchHotels();}
-        d.innerHTML=`
-            <img src="${r.i}">
-            <span>${r.n}</span>
-        `;
-        box.appendChild(d);
-    });
+  const box = document.getElementById("rec");
+  rec.forEach(r=>{
+    const d = document.createElement("div");
+    d.className = "card";
+    d.onclick = ()=>{ document.getElementById("country").value = r.n; searchHotels(); };
+    d.innerHTML = `<img src="${r.i}" loading="lazy"><span>${r.n}</span>`;
+    box.appendChild(d);
+  });
 }
 
-/* ================= SEARCH ================= */
-async function searchHotels(){
+/* ===== RATING BAR HELPER ===== */
+function ratingBarHTML(rating, max=10){
+  const pct = rating ? Math.min(parseFloat(rating)/max*100, 100) : 0;
+  return `<div class="rating-bar" style="width:${pct}%"></div>`;
+}
+function animateBars(){
+  // Trigger CSS transitions after render
+  setTimeout(()=>{
+    document.querySelectorAll('.rating-bar').forEach(b=>{
+      const w = b.style.width;
+      b.style.width = '0';
+      setTimeout(()=>{ b.style.width = w; }, 50);
+    });
+  }, 100);
+}
 
-    const input = document.getElementById("country").value.toLowerCase();
-    const code = map[input] || input.toUpperCase();
+/* ===== POPULAR HOTELS (full grid, pre-search) ===== */
+let popularHotels = [];
+const POPULAR_COUNTRIES = ["JP","TH","FR","MY"];
 
-    const box = document.getElementById("results");
-    box.innerHTML = `<div class="loading">Searching hotels...</div>`;
+async function loadPopularHotels(){
+  const grid = document.getElementById("popularGrid");
+  grid.innerHTML = Array(8).fill(0).map(()=>`
+    <div class="skel-card">
+      <div class="skeleton skel-img"></div>
+      <div class="skel-body">
+        <div class="skeleton skel-line" style="width:70%"></div>
+        <div class="skeleton skel-line" style="width:50%"></div>
+        <div class="skeleton skel-line" style="width:40%"></div>
+      </div>
+    </div>`).join("");
 
+  const all = [];
+  await Promise.all(POPULAR_COUNTRIES.map(async code=>{
     try{
-        const res = await fetch(`/api/hotels?countryCode=${code}&limit=20`);
-        const data = await res.json();
-        render(data.data);
+      const r = await fetch(`/api/hotels?countryCode=${code}&limit=5`);
+      const d = await r.json();
+      if(d.data) all.push(...d.data.slice(0,3));
+    }catch(e){}
+  }));
 
-    }catch(e){
-        box.innerHTML = `<div class="empty">Error loading hotels 😢</div>`;
-    }
+  popularHotels = all
+    .filter(h=>h.thumbnail||h.main_photo)
+    .sort((a,b)=>(parseFloat(b.rating)||0)-(parseFloat(a.rating)||0))
+    .slice(0,8);
+
+  if(popularHotels.length===0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🏨</div>No hotels found right now</div>`;
+    return;
+  }
+
+  grid.innerHTML = "";
+  popularHotels.forEach(h=>{
+    const stars = h.stars ? "★".repeat(Math.min(parseInt(h.stars),5)) : "";
+    const rating = parseFloat(h.rating)||0;
+    const pct = Math.min(rating/10*100,100);
+    const card = document.createElement("div");
+    card.className = "pop-card reveal";
+    card.onclick = ()=>loadHotelDetails(h.id);
+    card.innerHTML = `
+      <div class="pop-card-img">
+        <img src="${h.thumbnail||h.main_photo}" alt="${h.name}" loading="lazy" onerror="this.style.background='rgba(255,255,255,.05)'">
+        ${h.rating ? `<div class="pop-card-badge">⭐ ${h.rating}</div>` : ''}
+      </div>
+      <div class="pop-card-body">
+        <div class="pop-card-name">${h.name}</div>
+        <div class="pop-card-loc">📍 ${h.city||''}, ${h.country||''}</div>
+        <div class="rating-row">
+          <div class="rating-bar-wrap"><div class="rating-bar" style="width:${pct}%"></div></div>
+          <div class="rating-num">${h.rating||'—'}</div>
+        </div>
+        ${stars ? `<div class="stars-row">${stars}</div>` : ''}
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  observeReveal();
+  animateBars();
+
+  // Also fill sidebar list
+  buildSidebarList();
 }
 
-/* ================= RENDER ================= */
-function render(hotels){
-
-    const box = document.getElementById("results");
-
-    if(!hotels || hotels.length === 0){
-        box.innerHTML = `<div class="empty">No hotels found</div>`;
-        return;
-    }
-
-    box.innerHTML = "";
-
-    hotels.forEach(h=>{
-
-        const id = "d" + Math.random().toString(36).slice(2);
-
-        const d = document.createElement("div");
-        d.className="hotel";
-
-        d.innerHTML=`
-            <img src="${h.thumbnail || h.main_photo || ''}">
-
-            <div class="hotel-content">
-
-                <h3>${h.name}</h3>
-
-                <div class="meta">📍 ${h.city || ''}, ${h.country || ''}</div>
-                <div class="meta">⭐ ${h.stars || 'N/A'} • 🏆 ${h.rating || 'N/A'}</div>
-
-             <button class="btn" onclick="loadHotelDetails('${h.id}')">
-    View Details
-</button>
-
-<div id="${id}" class="details">
-    <b>Address:</b> ${h.address || 'N/A'} <br>
-    <b>ZIP:</b> ${h.zip || 'N/A'} <br>
-    <b>Chain:</b> ${h.chain || 'Independent'} <br>
-    <b>Coordinates:</b> ${h.latitude || 'N/A'}, ${h.longitude || 'N/A'} <br>
-    <b>Facilities:</b> ${h.facilityIds?.length || 0} <br>
-    <b>ID:</b> ${h.id || 'N/A'} <br><br>
-    <b>Description:</b><br>
-    ${h.hotelDescription || 'No description available'}
-</div>
-        `;
-
-        box.appendChild(d);
-    });
+/* ===== BUILD SIDEBAR LIST ===== */
+function buildSidebarList(){
+  const list = document.getElementById("sidebarList");
+  list.innerHTML = "";
+  popularHotels.forEach(h=>{
+    const rating = parseFloat(h.rating)||0;
+    const pct = Math.min(rating/10*100,100);
+    const row = document.createElement("div");
+    row.className = "pop-row";
+    row.onclick = ()=>loadHotelDetails(h.id);
+    row.innerHTML = `
+      <img src="${h.thumbnail||h.main_photo}" alt="${h.name}" loading="lazy" onerror="this.style.background='rgba(255,255,255,.05)'">
+      <div class="pop-row-body">
+        <div class="pop-row-name">${h.name}</div>
+        <div class="pop-row-loc">📍 ${h.city||''}, ${h.country||''}</div>
+        <div class="pop-row-rating">
+          <div class="rating-bar-wrap"><div class="rating-bar" style="width:${pct}%"></div></div>
+          <div class="rating-num">${h.rating||'—'}</div>
+        </div>
+      </div>`;
+    list.appendChild(row);
+  });
 }
 
-/* ================= TOGGLE ================= */
-function toggle(id){
-    const el = document.getElementById(id);
-    el.style.display = el.style.display === "block" ? "none" : "block";
+/* ===== SIDEBAR TOGGLE ===== */
+let sidebarVisible = true;
+function toggleSidebar(){
+  const sb = document.getElementById("sidebar");
+  const btn = document.querySelector(".sidebar-toggle");
+  sidebarVisible = !sidebarVisible;
+  if(sidebarVisible){
+    sb.style.display = "flex";
+    document.getElementById("browseLayout").style.gridTemplateColumns = "300px 1fr";
+    btn.textContent = "Hide ×";
+  } else {
+    sb.style.display = "none";
+    document.getElementById("browseLayout").style.gridTemplateColumns = "1fr";
+    btn.textContent = "Show picks";
+  }
 }
+
+/* ===== SEARCH ===== */
+async function searchHotels(){
+  const input = document.getElementById("country").value.toLowerCase().trim();
+  if(!input) return;
+  const code = countryMap[input] || input.toUpperCase();
+
+  // Switch layout
+  document.getElementById("popularSection").style.display = "none";
+  const layout = document.getElementById("browseLayout");
+  layout.classList.add("has-results");
+  document.getElementById("sidebar").style.display = "flex";
+  document.getElementById("results").style.display = "block";
+
+  // Label
+  document.getElementById("resultsLabel").innerHTML =
+    `Hotels in <span class="country-pill">${document.getElementById("country").value}</span>`;
+
+  // Skeleton
+  const list = document.getElementById("resultsList");
+  list.innerHTML = Array(5).fill(0).map(()=>`
+    <div class="hotel" style="pointer-events:none;margin-bottom:16px">
+      <div class="skeleton" style="width:200px;height:150px;border-radius:0;flex-shrink:0"></div>
+      <div class="hotel-content" style="flex:1">
+        <div class="skeleton skel-line" style="width:55%;height:17px;margin-bottom:14px"></div>
+        <div class="skeleton skel-line" style="width:38%"></div>
+        <div class="skeleton skel-line" style="width:30%"></div>
+      </div>
+    </div>`).join("");
+
+  try{
+    const r = await fetch(`/api/hotels?countryCode=${code}&limit=20`);
+    const d = await r.json();
+    renderSearchResults(d.data);
+  }catch(e){
+    list.innerHTML = `<div class="empty-state"><div class="icon">😢</div>Error loading hotels</div>`;
+  }
+}
+
+/* ===== RENDER SEARCH RESULTS ===== */
+function renderSearchResults(hotels){
+  const list = document.getElementById("resultsList");
+  if(!hotels||hotels.length===0){
+    list.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No hotels found for this destination</div>`;
+    return;
+  }
+  list.innerHTML = "";
+  hotels.forEach(h=>{
+    const rating = parseFloat(h.rating)||0;
+    const pct = Math.min(rating/10*100,100);
+    const d = document.createElement("div");
+    d.className = "hotel reveal";
+    d.innerHTML = `
+      <img src="${h.thumbnail||h.main_photo||''}" onerror="this.style.background='rgba(255,255,255,.05)'" alt="${h.name}" loading="lazy">
+      <div class="hotel-content">
+        <div class="hotel-top">
+          <h3>${h.name}</h3>
+          <div class="meta">📍 ${h.city||''}, ${h.country||''}</div>
+          ${h.address ? `<div class="meta">🏢 ${h.address}</div>` : ''}
+        </div>
+        <div class="hotel-bottom">
+          <div class="hotel-rating">
+            <div class="rating-bar-wrap"><div class="rating-bar" style="width:${pct}%"></div></div>
+            <div class="rating-num">${h.rating||'N/A'}</div>
+            <div class="meta" style="font-size:.78rem">&nbsp;• ⭐ ${h.stars||'N/A'} stars</div>
+          </div>
+          <button class="btn-view" onclick="loadHotelDetails('${h.id}')">View Details →</button>
+        </div>
+      </div>`;
+    list.appendChild(d);
+  });
+  observeReveal();
+  animateBars();
+}
+
+/* ===== BACK TO BROWSE ===== */
+function backToBrowse(){
+  document.getElementById("popularSection").style.display = "";
+  document.getElementById("browseLayout").classList.remove("has-results");
+  document.getElementById("sidebar").style.display = "none";
+  document.getElementById("results").style.display = "none";
+  document.getElementById("country").value = "";
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===== HOTEL MODAL ===== */
 async function loadHotelDetails(hotelId){
+  const modal = document.getElementById("hotelModal");
+  const body = document.getElementById("modalBody");
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
 
-    const modal = document.getElementById("hotelModal");
-    const body = document.getElementById("modalBody");
+  body.innerHTML = `<div style="text-align:center;padding:60px 0;color:rgba(255,255,255,.4)">
+    <div style="font-size:2.5rem;margin-bottom:14px">⏳</div>Loading hotel details...</div>`;
 
-    modal.style.display = "block";
+  try{
+    const r = await fetch(`/api/hotels/details?hotelId=${hotelId}`);
+    const result = await r.json();
+    const hotel = result.data;
+    const stars = hotel.stars ? "★".repeat(Math.min(parseInt(hotel.stars),5)) : "";
 
     body.innerHTML = `
-        <div class="loading">
-            Loading hotel details...
+      <div class="modal-header">
+        <h2>${hotel.name}</h2>
+        <div class="modal-meta-row">
+          <span class="modal-badge">📍 ${hotel.city||''}, ${hotel.country||''}</span>
+          ${hotel.stars ? `<span class="modal-badge gold">${stars} ${hotel.stars}-Star</span>` : ''}
+          ${hotel.rating ? `<span class="modal-badge gold">⭐ ${hotel.rating} / 10</span>` : ''}
+          ${hotel.chain ? `<span class="modal-badge">🏨 ${hotel.chain}</span>` : ''}
         </div>
-    `;
+      </div>
 
-    try{
+      ${hotel.hotelDescription ? `<div class="modal-desc">${hotel.hotelDescription}</div>` : ''}
 
-        const res = await fetch(
-    `/api/hotels/details?hotelId=${hotelId}`
-);
-        const result = await res.json();
+      ${hotel.hotelFacilities?.length ? `
+        <div class="modal-facilities">
+          <h3>✨ Facilities</h3>
+          <div class="facility-tags">
+            ${hotel.hotelFacilities.slice(0,20).map(f=>`<span class="facility-tag">${f}</span>`).join('')}
+          </div>
+        </div>` : ''}
 
-        const hotel = result.data;
+      ${hotel.hotelImages?.length ? `
+        <div class="modal-gallery">
+          ${hotel.hotelImages.slice(0,12).map(img=>`<img src="${img.url}" alt="Hotel photo" loading="lazy">`).join('')}
+        </div>` : ''}
 
-        body.innerHTML = `
-
-            <h2>${hotel.name}</h2>
-
-            <p>
-                📍 ${hotel.city},
-                ${hotel.country}
-            </p>
-
-            <br>
-
-            <div>
-                ${hotel.hotelDescription || ""}
-            </div>
-
-            <br>
-
-            <h3>Facilities</h3>
-
-            <ul>
-                ${
-                    hotel.hotelFacilities
-                    ?.slice(0,15)
-                    .map(f=>`<li>${f}</li>`)
-                    .join("")
-                    || ""
-                }
-            </ul>
-
-            <div class="modal-gallery">
-                ${
-                    hotel.hotelImages
-                    ?.slice(0,12)
-                    .map(img=>
-                        `<img src="${img.url}">`
-                    )
-                    .join("")
-                    || ""
-                }
-            </div>
-
-            <button
-                class="book-btn"
-                onclick="bookHotel('${hotel.id}')">
-
-                Book Now
-            </button>
-        `;
-
-    }catch(err){
-
-        body.innerHTML = `
-            <div class="empty">
-                Failed to load details
-            </div>
-        `;
-    }
+      <div class="modal-footer">
+        <button class="check-btn" onclick="checkAvailability('${hotel.id}')">
+          🗓️ Check Availability
+        </button>
+      </div>`;
+  }catch(err){
+    body.innerHTML = `<div class="empty-state"><div class="icon">😢</div>Failed to load hotel details</div>`;
+  }
 }
 
 function closeModal(){
-    document.getElementById("hotelModal").style.display="none";
+  document.getElementById("hotelModal").style.display = "none";
+  document.body.style.overflow = "";
 }
-
-function bookHotel(hotelId){
-
-    window.location.href =
-        `book.html?hotelId=${hotelId}`;
-
-}
-
-window.onload = loadRec;
-
-</script>
-
-</body>
-<script>
-fetch("/components/topNavBar.html")
-.then(response => response.text())
-.then(data => {
-document.getElementById("topnavbar").innerHTML = data;
-})
-.catch(error => {
-console.error("Navbar failed to load:", error);
+document.getElementById("hotelModal").addEventListener("click", function(e){
+  if(e.target===this) closeModal();
 });
+
+function checkAvailability(hotelId){
+  window.location.href = `book.html?hotelId=${hotelId}`;
+}
+
+/* ===== SCROLL REVEAL ===== */
+function observeReveal(){
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, {threshold:.1});
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>obs.observe(el));
+}
+
+/* ===== INIT ===== */
+window.onload = ()=>{
+  loadRec();
+  loadPopularHotels();
+  observeReveal();
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+};
 </script>
+</body>
 </html>
