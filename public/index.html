@@ -9,20 +9,22 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- Google Font -->
+  <!-- Google Fonts: Inter + Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'ui-sans-serif', 'system-ui']
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            serif: ['Playfair Display', 'Georgia', 'serif']
           },
           colors: {
             background: '#f7f5f0',
@@ -73,277 +75,624 @@
   </script>
 
   <style>
-    .bg-gradient-primary {
-      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
-    }
-
-    .bg-gradient-sunset {
-      background-image: linear-gradient(135deg, hsl(25 95% 60%), hsl(340 85% 65%));
-    }
-
-    .bg-gradient-card {
-      background-image: linear-gradient(180deg, hsl(0 0% 100%), hsl(200 40% 97%));
-    }
-
-    .shadow-soft {
-      box-shadow: 0 4px 20px -4px hsl(195 60% 30% / 0.12);
-    }
-
-    .shadow-glow {
-      box-shadow: 0 10px 40px -10px hsl(195 85% 41% / 0.35);
-    }
-
-    .shadow-card {
-      box-shadow: 0 8px 30px -8px hsl(210 40% 20% / 0.1);
-    }
-
-    .transition-smooth {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .hero-bg {
-      background-image:
-        linear-gradient(135deg, hsl(35 85% 45% / 0.7), hsl(220 25% 18% / 0.85)),
-        url("/img/FlyAway_Background.jpg");
-      background-size: cover;
-      background-position: center;
-    }
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
+      background: #0d0f14;
+      color: #e8eaf0;
+      overflow-x: hidden;
     }
 
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1d25; }
+    ::-webkit-scrollbar-thumb { background: #f5a524; border-radius: 10px; }
+
+    /* ── Fixed star-field background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245,165,36,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30,140,200,0.07) 0%, transparent 60%),
+        #0d0f14;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── Hero ── */
+    .hero-bg {
+      background-image:
+        linear-gradient(to bottom, rgba(13,15,20,0.35) 0%, rgba(13,15,20,0.80) 70%, rgba(13,15,20,1) 100%),
+        url("/img/FlyAway_Background.jpg");
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+    }
+
+    /* ── Gradient utilities ── */
+    .bg-gradient-primary {
+      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
+    }
+    .bg-gradient-sunset {
+      background-image: linear-gradient(135deg, hsl(25 95% 60%), hsl(340 85% 65%));
+    }
+    .bg-gradient-card {
+      background-image: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+    .gold-gradient {
+      background: linear-gradient(135deg, #F5A524 0%, #FFD700 50%, #F5A524 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ── Glass card ── */
+    .glass-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 1.25rem;
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .glass-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(245,165,36,0.35);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,165,36,0.15);
+    }
+
+    /* ── Trip card header gradient per destination ── */
+    .card-header-paris  { background: linear-gradient(135deg, #1a6fa8 0%, #2bb5d8 100%); }
+    .card-header-tokyo  { background: linear-gradient(135deg, #b5481a 0%, #e8832a 100%); }
+    .card-header-icy    { background: linear-gradient(135deg, #1a4f8a 0%, #5ab4e8 100%); }
+
+    /* ── Shadows ── */
+    .shadow-soft  { box-shadow: 0 4px 20px -4px rgba(245,165,36,0.15); }
+    .shadow-glow  { box-shadow: 0 10px 40px -10px rgba(245,165,36,0.40); }
+    .shadow-card  { box-shadow: 0 8px 30px -8px rgba(0,0,0,0.4); }
+
+    /* ── Transition ── */
+    .transition-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* ── Inputs ── */
     .input-base {
       display: flex;
-      height: 2.5rem;
+      height: 2.75rem;
       width: 100%;
-      border-radius: 0.5rem;
-      border: 1px solid hsl(200 25% 88%);
-      background: hsl(0 0% 100%);
-      padding: 0.5rem 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: #e8eaf0;
+      padding: 0.5rem 0.875rem;
       font-size: 0.875rem;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
+    .input-base::placeholder { color: rgba(255,255,255,0.35); }
     .input-base:focus {
-      box-shadow: 0 0 0 2px hsl(195 85% 41% / 0.4);
+      border-color: rgba(245,165,36,0.5);
+      box-shadow: 0 0 0 3px rgba(245,165,36,0.12);
     }
 
+    /* ── Badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.125rem 0.625rem;
+      padding: 0.2rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .badge-gold {
+      background: rgba(245,165,36,0.15);
+      color: #F5A524;
+      border: 1px solid rgba(245,165,36,0.3);
+    }
+    .badge-muted {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #F5A524;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Animated glow pulse on hero buttons ── */
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(245,165,36,0.4); }
+      50%       { box-shadow: 0 0 32px rgba(245,165,36,0.7); }
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #F5A524, #e8832a);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      animation: glowPulse 3s ease-in-out infinite;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.92; transform: scale(1.04); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.25);
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.15); transform: scale(1.04); }
+
+    /* ── Search pill ── */
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.5rem 0.75rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .search-pill:focus-within {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(245,165,36,0.45);
+      box-shadow: 0 0 0 3px rgba(245,165,36,0.1);
+    }
+
+    /* ── Quick-link reservation buttons ── */
+    .res-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      border-radius: 0.875rem;
+      padding: 0.75rem 0.5rem;
+      color: rgba(255,255,255,0.55);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .res-btn:hover {
+      background: rgba(245,165,36,0.08);
+      border-color: rgba(245,165,36,0.25);
+      color: #F5A524;
+      transform: translateY(-2px);
+    }
+
+    /* ── API badge row ── */
+    .api-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: 0.875rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ── Weather section ── */
+    .weather-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+    }
+    .weather-result {
+      border-radius: 1.25rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 1.5rem;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 2rem 0;
+    }
+
+    /* ── Floating particles ── */
+    @keyframes particleFloat {
+      0%   { transform: translateY(0)   rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+    .particle {
+      position: fixed;
+      width: 3px; height: 3px;
+      background: rgba(245,165,36,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s linear infinite;
+      z-index: 0;
     }
   </style>
 </head>
 
-<body class="bg-background text-foreground antialiased">
+<body class="antialiased">
+
+  <!-- Floating particles -->
+  <div id="particles-hero"></div>
+  <script>
+    const pc = document.getElementById('particles-hero');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = (Math.random() * 80 + 10) + 'vh';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      pc.appendChild(p);
+    }
+  </script>
 
   <!-- HERO -->
-  <header class="hero-bg relative min-h-[610px] w-full overflow-hidden">
+  <header class="hero-bg relative min-h-[620px] w-full overflow-hidden">
     <div id="topnavbar"></div>
 
-    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-2 text-center">
-      <span class="badge w-fit bg-white/20 text-white backdrop-blur mb-4">
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-8 pb-16 text-center">
+
+      <!-- Badge -->
+      <span class="badge badge-gold mb-5">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         Smart Travel Planner
       </span>
 
-      <h1 class="max-w-2xl text-3xl font-bold leading-tight text-white md:text-4xl">
+      <h1 class="font-serif max-w-2xl text-4xl font-black leading-tight text-white md:text-6xl" style="text-shadow:0 2px 30px rgba(0,0,0,0.5)">
         Plan Your Dream Holidays Now
       </h1>
 
-      <p class="mt-4 max-w-xl text-lg text-white/85">
+      <p class="mt-5 max-w-xl text-lg text-white/75 font-light">
         Save destinations, organize travel notes — all in one simple platform.
       </p>
 
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="PlanNewTrip.html" class="bg-gradient-primary text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+        <a href="#new" class="bg-gradient-primary text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
           <i class="fa-solid fa-plus mr-2"></i>
           Plan a New Trip
         </a>
-
-        <a href="#trips" class="bg-white/10 text-white border border-white/40 backdrop-blur px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-smooth">
-          <i class="fa-solid fa-list mr-2"></i>
-          View Trips
+        <a href="#trips" class="btn-ghost">
+          <i class="fa-solid fa-list mr-2"></i>View Trips
         </a>
       </div>
 
-      <!-- SEARCH + TRIP TYPE CARD -->
-      <div class="relative mx-auto mt-10 w-full max-w-3xl overflow-visible rounded-2xl bg-white/95 text-left shadow-card ring-1 ring-black/5 backdrop-blur">
+    <!-- SEARCH + TRIP TYPE CARD -->
+    <div class="mx-auto mt-10 w-full max-w-3xl overflow-hidden rounded-2xl bg-white/95 text-left shadow-card ring-1 ring-black/5 backdrop-blur">
 
-        <!-- Search row -->
-        <div class="p-3 sm:p-4">
-          <label class="group flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-200 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/60">
-            <i class="fa-solid fa-magnifying-glass pl-2 text-slate-400 group-focus-within:text-primary"></i>
-            <input
-              type="text"
-              placeholder="Where to? Try ‘Lisbon’ or ‘Penang’"
-              class="flex-1 bg-transparent px-2 py-2 text-base font-medium text-slate-800 placeholder:text-slate-400 outline-none"
-            />
-            <button type="button" title="Use current location" class="hidden h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary transition sm:inline-flex">
-              <i class="fa-solid fa-location-dot"></i>
-            </button>
-            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">
-              <i class="fa-solid fa-arrow-right"></i>
-              <span class="hidden sm:inline">Search</span>
-            </button>
-          </label>
+      <!-- Search row: unified pill -->
+      <div class="p-3 sm:p-4">
+        <label class="group flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-200 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/60">
+          <i class="fa-solid fa-magnifying-glass pl-2 text-slate-400 group-focus-within:text-primary"></i>
+          <input
+            type="text"
+            placeholder="Where to? Try ‘Lisbon’ or ‘Tokyo’"
+            class="flex-1 bg-transparent px-2 py-2 text-base font-medium text-slate-800 placeholder:text-slate-400 outline-none"
+          />
+          <button type="button" title="Use current location" class="hidden h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary transition sm:inline-flex">
+            <i class="fa-solid fa-location-dot"></i>
+          </button>
+          <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span class="hidden sm:inline">Search</span>
+          </button>
+        </label>
+      </div>
+
+      <!-- Trip type row -->
+      <div class="border-t border-slate-100 px-4 pb-4 pt-3 sm:px-5">
+        <div class="mb-2 flex items-center justify-between">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Reservations & attachments
+          </h3>
         </div>
 
-        <!-- Trip type row -->
-        <div class="border-t border-slate-100 px-4 pb-4 pt-3 sm:px-5">
-          <div class="mb-2 flex items-center justify-between">
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Reservations & attachments
-            </h3>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 sm:grid-cols-6">
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-plane text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Flight</span>
-            </button>
-
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-bed text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Accommodations</span>
-            </button>
-
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-car text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Transport</span>
-            </button>
-
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-utensils text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Food</span>
-            </button>
-
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-paperclip text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Attractions</span>
-            </button>
-
-            <!-- Other tab opens dropdown first -->
-            <div class="relative z-50">
-              <button
-                id="openOtherDropdown"
-                type="button"
-                class="group flex w-full flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100"
-              >
-                <i class="fa-solid fa-ellipsis text-lg transition group-hover:-translate-y-0.5"></i>
-                <span class="text-[11px] font-medium">Tools</span>
-              </button>
-
-              <!-- Dropdown shown immediately below Other -->
-              <div
-                id="otherDropdown"
-                class="absolute left-1/2 bottom-full z-[999] mb-2 hidden w-44 -translate-x-1/2 rounded-2xl bg-white p-2 text-left shadow-xl ring-1 ring-slate-200"
-              >
-                <button
-                  type="button"
-                  data-open-tool="weather"
-                  class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-700"
-                >
-                  <i class="fa-solid fa-cloud-sun w-5 text-sky-600"></i>
-                  Weather
-                </button>
-
-                <button
-                  type="button"
-                  data-open-tool="currency"
-                  class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-700"
-                >
-                  <i class="fa-solid fa-money-bill-transfer w-5 text-sky-600"></i>
-                  Currency
-                </button>
-              </div>
-            </div>
-          </div>
+        <div class="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          <!-- repeat button pattern -->
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-plane text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Flight</span>
+          </button>
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-bed text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Accommodations</span>
+          </button>
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-car text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Rental car</span>
+          </button>
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-utensils text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Restaurant</span>
+          </button>
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-paperclip text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Attractions</span>
+          </button>
+          <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <i class="fa-solid fa-ellipsis text-lg transition group-hover:-translate-y-0.5"></i>
+            <span class="text-[11px] font-medium">Other</span>
+          </button>
         </div>
       </div>
+    </div>
+
     </div>
   </header>
 
   <main class="mx-auto max-w-6xl px-6 py-12 space-y-20">
-
-    <!-- EXPLORE -->
+    
+    <!-- TRIPS -->
     <section id="trips">
-      <div class="flex items-end justify-between mb-8">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
-          <span class="badge bg-muted text-foreground mb-3">
-            <i class="fa-solid fa-briefcase"></i>
-            Recommended For You
-          </span>
-
-          <h2 class="text-3xl font-bold">Explore</h2>
-
-          <p class="mt-2 text-muted-foreground">
-            Get Inspired on Your Next Trip
-          </p>
+          <p class="section-label"><i class="fa-solid fa-briefcase"></i> Recommended For You</p>
+          <h2 class="text-4xl font-serif font-black gold-gradient">Explore</h2>
+          <p class="mt-2 text-white/50 text-sm">Get Inspired on Your Next Trip</p>
         </div>
 
-        <div class="hidden lg:flex flex-wrap items-center justify-end gap-2">
-          <select id="destinationRegion" class="input-base w-32 cursor-pointer">
-            <option value="">Region</option>
-          </select>
-
-          <select id="destinationCountry" class="input-base w-36 cursor-pointer" disabled>
-            <option value="">Country</option>
-          </select>
-
-          <select id="destinationCity" class="input-base w-36 cursor-pointer" disabled>
-            <option value="">City</option>
-          </select>
-
-          <div class="relative">
-            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
-            <input id="exploreSearchInput" placeholder="Search trips..." class="input-base pl-9 w-56" />
-          </div>
+        <div class="relative hidden md:block">
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
         </div>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
         <!-- Trip card 1 -->
-        <article data-region="Europe" data-country="France" data-city="Paris" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
           <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
+              </div>
+
+              <i class="fa-solid fa-cloud text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                18°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                65%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                12 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> June 15, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Visit the Eiffel Tower, try local cafes, and explore museums.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Culture</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-cloud mr-1"></i>Partly cloudy</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Trip card 2 -->
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+          <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
+              </div>
+
+              <i class="fa-solid fa-sun text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                24°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                70%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                8 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> July 3, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Explore Shibuya, visit temples, and try Japanese street food.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Shopping</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-sun mr-1"></i>Sunny</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Trip card 3 -->
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+          <div class="bg-gradient-primary p-5 text-white">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
+                </div>
+
+                <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
+              </div>
+
+              <i class="fa-solid fa-snowflake text-3xl"></i>
+            </div>
+
+            <div class="mt-4 flex items-center gap-4 text-sm">
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                7°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                78%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                22 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> September 5, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Northern lights, Blue Lagoon, Golden Circle tour.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Adventure</span>
+              <span class="badge badge-muted">Nature</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-snowflake mr-1"></i>Snowy</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+        <!-- TRIPS -->
+    <section id="trips">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <span class="badge bg-muted text-foreground mb-3">
+            <i class="fa-solid fa-briefcase"></i>
+            02 — Manage
+          </span>
+
+          <h2 class="text-3xl font-bold">Your Trips</h2>
+
+          <p class="mt-2 text-muted-foreground">
+            Live weather data is fetched from OpenWeatherMap for each destination.
+          </p>
+        </div>
+        <div class="relative hidden md:block">
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></i>
+          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
+        </div>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Trip card 1 -->
+        <article class="glass-card overflow-hidden">
+          <div class="card-header-paris p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
               </div>
+
               <i class="fa-solid fa-cloud text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>18°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>65%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>12 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                18°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                65%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                12 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              June 15, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Visit the Eiffel Tower, try local cafes, and explore museums.
-            </p>
-
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> June 15, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Visit the Eiffel Tower, try local cafes, and explore museums.</p>
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Culture</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
+              <span class="badge badge-muted">Culture</span>
+              <span class="badge badge-muted">Food</span>
             </div>
 
             <div class="flex items-center justify-between border-t border-border pt-4">
@@ -366,39 +715,44 @@
         </article>
 
         <!-- Trip card 2 -->
-        <article data-region="Asia" data-country="Japan" data-city="Tokyo" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
+        <article class="glass-card overflow-hidden">
+          <div class="card-header-tokyo p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
               </div>
+
               <i class="fa-solid fa-sun text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>24°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>70%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>8 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                24°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                70%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                8 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              July 3, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Explore Shibuya, visit temples, and try Japanese street food.
-            </p>
-
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> July 3, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Explore Shibuya, visit temples, and try Japanese street food.</p>
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Shopping</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
+              <span class="badge badge-muted">Shopping</span>
+              <span class="badge badge-muted">Food</span>
             </div>
 
             <div class="flex items-center justify-between border-t border-border pt-4">
@@ -421,39 +775,44 @@
         </article>
 
         <!-- Trip card 3 -->
-        <article data-region="Europe" data-country="Iceland" data-city="Reykjavik" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
+        <article class="glass-card overflow-hidden">
+          <div class="card-header-icy p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
               </div>
+
               <i class="fa-solid fa-snowflake text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>7°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>78%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>22 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                7°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                78%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                22 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              September 5, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Northern lights, Blue Lagoon, Golden Circle tour.
-            </p>
-
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> September 5, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Northern lights, Blue Lagoon, Golden Circle tour.</p>
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Adventure</span>
-              <span class="badge bg-muted text-foreground font-normal">Nature</span>
+              <span class="badge badge-muted">Adventure</span>
+              <span class="badge badge-muted">Nature</span>
             </div>
 
             <div class="flex items-center justify-between border-t border-border pt-4">
@@ -478,968 +837,153 @@
       </div>
     </section>
 
-    <!-- MANAGE TRIPS -->
-    <section id="manage-trips">
-      <div class="flex items-end justify-between mb-8">
-        <div>
-          <span class="badge bg-muted text-foreground mb-3">
-            <i class="fa-solid fa-briefcase"></i>
-            02 — Manage
+    <!-- WEATHER -->
+    <section class="py-16 bg-slate-50">
+      <div class="max-w-3xl mx-auto px-4">
+        <div class="text-center mb-8">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-sky-600">
+            <i class="fa-solid fa-bolt"></i> 03 — Real-time
           </span>
-
-          <h2 class="text-3xl font-bold">Your Trips</h2>
-
-          <p class="mt-2 text-muted-foreground">
-            Itenaries Planned
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-slate-900">Live weather, anywhere</h2>
+          <p class="mt-3 text-slate-600">
+            Combine your saved trips with live data from OpenWeatherMap.
           </p>
         </div>
 
-        <div class="relative hidden md:block">
-          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
-          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
+        <!-- Search bar -->
+        <form class="group relative flex items-center w-full rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 focus-within:ring-2 focus-within:ring-sky-500 focus-within:shadow-md transition">
+          <span class="pl-5 text-slate-400 group-focus-within:text-sky-500">
+            <i class="fa-solid fa-location-dot text-lg"></i>
+          </span>
+
+          <input
+            type="text"
+            placeholder="Search any city — e.g. Lisbon, Kyoto, Cape Town"
+            class="flex-1 bg-transparent px-4 py-4 text-slate-900 placeholder:text-slate-400 focus:outline-none text-base"
+            aria-label="City name"
+          />
+
+          <button
+            type="submit"
+            class="m-1.5 inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold px-5 py-3 transition shadow-sm"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="hidden sm:inline">Search</span>
+          </button>
+        </form>
+
+        <!-- Quick suggestions -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+          <span class="text-slate-500">Try:</span>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Paris</button>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Tokyo</button>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Reykjavik</button>
+        </div>
+
+        <!-- Result card -->
+        <div class="mt-8 rounded-2xl bg-white ring-1 ring-slate-200 p-6 flex items-center justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-wider text-slate-500">Currently in</p>
+            <h3 class="mt-1 text-xl font-semibold text-slate-900">Paris, France</h3>
+            <p class="text-slate-600 text-sm mt-1">
+              <i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i> Partly cloudy
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-4xl font-bold text-slate-900">18°</p>
+            <p class="text-xs text-slate-500">feels like 17°</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ADD TRIP -->
+    <section id="new" class="grid gap-8 md:grid-cols-[1.1fr_1fr]">
+      <div>
+        <span class="badge bg-muted text-foreground mb-3">
+          <i class="fa-solid fa-circle-plus"></i>
+          01 — Create
+        </span>
+
+        <h2 class="text-3xl font-bold">Add a new trip</h2>
+
+        <p class="mt-3 text-muted-foreground">
+          Capture your destination, dates, preferences and personal notes.
+        </p>
+
+        <div class="mt-6 space-y-3">
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">POST</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">GET</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">PUT</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">DELETE</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
         </div>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div class="bg-gradient-card rounded-lg border border-border shadow-card">
+        <div class="p-6 pb-0">
+          <h3 class="text-2xl font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-plus text-primary"></i>
+            New trip
+          </h3>
+        </div>
 
-        <!-- Trip card 1 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
-                </div>
-                <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
-              </div>
-              <i class="fa-solid fa-cloud text-3xl"></i>
+        <form class="p-6 space-y-4" onsubmit="event.preventDefault(); alert('POST /api/trips');">
+          <div class="space-y-2">
+            <label for="dest" class="text-sm font-medium">Destination</label>
+            <input id="dest" class="input-base" placeholder="e.g. Kyoto, Japan" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label for="date" class="text-sm font-medium">Travel date</label>
+              <input id="date" type="date" class="input-base" />
             </div>
 
-            <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>18°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>65%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>12 km/h</div>
+            <div class="space-y-2">
+              <label for="pref" class="text-sm font-medium">Preferences</label>
+              <input id="pref" class="input-base" placeholder="Food, Culture" />
             </div>
           </div>
 
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              June 15, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Visit the Eiffel Tower, try local cafes, and explore museums.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Culture</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Trip card 2 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
-                </div>
-                <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
-              </div>
-              <i class="fa-solid fa-sun text-3xl"></i>
-            </div>
-
-            <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>24°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>70%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>8 km/h</div>
-            </div>
+          <div class="space-y-2">
+            <label for="notes" class="text-sm font-medium">Notes</label>
+            <textarea id="notes" rows="4" class="input-base" style="height:auto;" placeholder="Things to do, places to see..."></textarea>
           </div>
 
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              July 3, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Explore Shibuya, visit temples, and try Japanese street food.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Shopping</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Trip card 3 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
-                </div>
-                <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
-              </div>
-              <i class="fa-solid fa-snowflake text-3xl"></i>
-            </div>
-
-            <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>7°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>78%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>22 km/h</div>
-            </div>
-          </div>
-
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              September 5, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Northern lights, Blue Lagoon, Golden Circle tour.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Adventure</span>
-              <span class="badge bg-muted text-foreground font-normal">Nature</span>
-            </div>
-          </div>
-        </article>
-
+          <button type="submit" class="w-full bg-gradient-primary text-white py-2.5 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>
+            Save Trip
+          </button>
+        </form>
       </div>
     </section>
 
+
+
+
+
   </main>
-
-  <!-- OTHER POPUP MODAL -->
-  <div
-    id="weatherModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4"
-  >
-    <div class="relative max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-slate-50 shadow-2xl">
-
-      <button
-        id="closeWeatherModal"
-        type="button"
-        class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-500 shadow hover:bg-slate-100 hover:text-slate-900"
-        aria-label="Close popup"
-      >
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <section class="py-16 bg-slate-50">
-        <div class="max-w-3xl mx-auto px-4">
-
-          <!-- WEATHER TAB -->
-          <div id="weatherToolPanel">
-
-            <div class="text-center mb-8">
-              <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-sky-600">
-                <i class="fa-solid fa-bolt"></i> Real-time
-              </span>
-              <h3 class="mt-3 text-2xl sm:text-3xl font-bold text-slate-900">Live weather, anywhere</h3>
-              <p class="mt-3 text-slate-600">
-                Search any city and get live weather data.
-              </p>
-            </div>
-
-            <!-- Search bar -->
-            <form id="weatherForm" class="group relative flex items-center w-full rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 focus-within:ring-2 focus-within:ring-sky-500 focus-within:shadow-md transition">
-              <span class="pl-5 text-slate-400 group-focus-within:text-sky-500">
-                <i class="fa-solid fa-location-dot text-lg"></i>
-              </span>
-
-              <input
-                id="cityInput"
-                type="text"
-                value="Penang, Malaysia"
-                placeholder="Search any city — e.g. Penang, Kyoto, Cape Town"
-                class="flex-1 bg-transparent px-4 py-4 text-slate-900 placeholder:text-slate-400 focus:outline-none text-base"
-                aria-label="City name"
-              />
-
-              <input
-                id="weatherDateInput"
-                type="date"
-                class="hidden sm:block bg-transparent px-3 py-4 text-slate-700 focus:outline-none text-sm border-l border-slate-200"
-                aria-label="Weather date"
-              />
-
-              <button
-                type="submit"
-                class="m-1.5 inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold px-5 py-3 transition shadow-sm"
-              >
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span class="hidden sm:inline">Search</span>
-              </button>
-            </form>
-
-            <!-- Quick suggestions -->
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-              <span class="text-slate-500">Try:</span>
-              <button type="button" data-city="Paris" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Paris</button>
-              <button type="button" data-city="Penang, Malaysia" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Penang</button>
-              <button type="button" data-city="Tokyo" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Reykjavik</button>
-            </div>
-
-            <!-- Result card -->
-            <div class="mt-8 rounded-2xl bg-white ring-1 ring-slate-200 p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-xs uppercase tracking-wider text-slate-500">Currently in</p>
-                  <h3 id="weatherCity" class="mt-1 text-xl font-semibold text-slate-900">Penang, Malaysia</h3>
-                  <p id="weatherCondition" class="text-slate-600 text-sm mt-1">
-                    <i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i> Loading...
-                  </p>
-                </div>
-
-                <div class="text-right">
-                  <p id="weatherTemp" class="text-4xl font-bold text-slate-900">--°</p>
-                  <p id="weatherFeelsLike" class="text-xs text-slate-500">feels like --°</p>
-                </div>
-              </div>
-
-              <!-- Extra weather info -->
-              <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-droplet mr-1"></i>
-                    Humidity
-                  </p>
-                  <p id="weatherHumidity" class="mt-1 font-semibold text-slate-900">--%</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-wind mr-1"></i>
-                    Wind Speed
-                  </p>
-                  <p id="weatherWind" class="mt-1 font-semibold text-slate-900">-- km/h</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-compass mr-1"></i>
-                    Wind Direction
-                  </p>
-                  <p id="weatherWindDir" class="mt-1 font-semibold text-slate-900">--</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-sun mr-1"></i>
-                    UV Index
-                  </p>
-                  <p id="weatherUV" class="mt-1 font-semibold text-slate-900">--</p>
-                </div>
-              </div>
-
-              <!-- Daily forecast -->
-              <div class="mt-6 border-t border-slate-100 pt-5">
-                <h4 class="text-sm font-semibold text-slate-900">
-                  <i class="fa-solid fa-calendar-days text-sky-600 mr-1"></i>
-                  3-Day Forecast
-                </h4>
-
-                <div id="weatherDailyForecast" class="mt-3 grid gap-3 sm:grid-cols-3"></div>
-              </div>
-
-              <!-- Hourly forecast -->
-              <div class="mt-6 border-t border-slate-100 pt-5">
-                <h4 class="text-sm font-semibold text-slate-900">
-                  <i class="fa-solid fa-clock text-sky-600 mr-1"></i>
-                  Next Hours
-                </h4>
-
-                <div id="weatherHourlyForecast" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CURRENCY TAB -->
-          <div id="currencyToolPanel" class="hidden">
-
-            <div class="text-center mb-8">
-              <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-sky-600">
-                <i class="fa-solid fa-money-bill-transfer"></i> Currency
-              </span>
-
-              <h3 class="mt-3 text-2xl sm:text-3xl font-bold text-slate-900">
-                Currency converter
-              </h3>
-
-              <p class="mt-3 text-slate-600">
-                Convert travel money between popular currencies.
-              </p>
-            </div>
-
-            <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
-              <form id="currencyForm" class="space-y-5">
-
-                <div>
-                  <label for="currencyAmount" class="block text-sm font-semibold text-slate-700 mb-2">
-                    Amount
-                  </label>
-                  <input
-                    id="currencyAmount"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value="100"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div class="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
-                  <div>
-                    <label for="fromCurrency" class="block text-sm font-semibold text-slate-700 mb-2">
-                      From
-                    </label>
-                    <select
-                      id="fromCurrency"
-                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    >
-                      <option value="MYR">MYR — Malaysian Ringgit</option>
-                      <option value="JPY">JPY — Japanese Yen</option>
-                      <option value="USD">USD — US Dollar</option>
-                      <option value="EUR">EUR — Euro</option>
-                      <option value="GBP">GBP — British Pound</option>
-                      <option value="SGD">SGD — Singapore Dollar</option>
-                      <option value="KRW">KRW — Korean Won</option>
-                      <option value="CNY">CNY — Chinese Yuan</option>
-                      <option value="AUD">AUD — Australian Dollar</option>
-                      <option value="CAD">CAD — Canadian Dollar</option>
-                      <option value="CHF">CHF — Swiss Franc</option>
-                      <option value="THB">THB — Thai Baht</option>
-                      <option value="IDR">IDR — Indonesian Rupiah</option>
-                      <option value="PHP">PHP — Philippine Peso</option>
-                      <option value="NZD">NZD — New Zealand Dollar</option>
-                      <option value="HKD">HKD — Hong Kong Dollar</option>
-                      <option value="ISK">ISK — Icelandic Króna</option>
-                    </select>
-                  </div>
-
-                  <button
-                    id="swapCurrency"
-                    type="button"
-                    class="h-11 w-11 rounded-full bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition"
-                    title="Swap currencies"
-                  >
-                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                  </button>
-
-                  <div>
-                    <label for="toCurrency" class="block text-sm font-semibold text-slate-700 mb-2">
-                      To
-                    </label>
-                    <select
-                      id="toCurrency"
-                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    >
-                      <option value="JPY">JPY — Japanese Yen</option>
-                      <option value="MYR">MYR — Malaysian Ringgit</option>
-                      <option value="USD">USD — US Dollar</option>
-                      <option value="EUR">EUR — Euro</option>
-                      <option value="GBP">GBP — British Pound</option>
-                      <option value="SGD">SGD — Singapore Dollar</option>
-                      <option value="KRW">KRW — Korean Won</option>
-                      <option value="CNY">CNY — Chinese Yuan</option>
-                      <option value="AUD">AUD — Australian Dollar</option>
-                      <option value="CAD">CAD — Canadian Dollar</option>
-                      <option value="CHF">CHF — Swiss Franc</option>
-                      <option value="THB">THB — Thai Baht</option>
-                      <option value="IDR">IDR — Indonesian Rupiah</option>
-                      <option value="PHP">PHP — Philippine Peso</option>
-                      <option value="NZD">NZD — New Zealand Dollar</option>
-                      <option value="HKD">HKD — Hong Kong Dollar</option>
-                      <option value="ISK">ISK — Icelandic Króna</option>
-                    </select>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  class="w-full rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white hover:bg-sky-700 active:bg-sky-800 transition"
-                >
-                  <i class="fa-solid fa-calculator mr-2"></i>
-                  Convert
-                </button>
-              </form>
-
-              <div id="currencyResultBox" class="mt-6 hidden rounded-2xl bg-slate-50 p-5">
-                <p class="text-xs uppercase tracking-wider text-slate-500">Result</p>
-                <p id="currencyResult" class="mt-2 text-3xl font-bold text-slate-900">--</p>
-                <p id="currencyRateInfo" class="mt-2 text-sm text-slate-500">--</p>
-              </div>
-
-              <p id="currencyError" class="mt-4 hidden text-sm text-red-600"></p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-    </div>
-  </div>
 
   <footer class="border-t border-border bg-muted/40 py-8">
     <div class="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
-      SmartTrip — Web API Development Assignment · Node.js · Express · MongoDB · WeatherAPI
+      SmartTrip — Web API Development Assignment · Node.js · Express · MySQL · OpenWeatherMap
     </div>
   </footer>
-
-  <script>
-    const weatherForm = document.getElementById("weatherForm");
-    const cityInput = document.getElementById("cityInput");
-    const weatherDateInput = document.getElementById("weatherDateInput");
-
-    const weatherCity = document.getElementById("weatherCity");
-    const weatherCondition = document.getElementById("weatherCondition");
-    const weatherTemp = document.getElementById("weatherTemp");
-    const weatherFeelsLike = document.getElementById("weatherFeelsLike");
-    const weatherHumidity = document.getElementById("weatherHumidity");
-    const weatherWind = document.getElementById("weatherWind");
-    const weatherWindDir = document.getElementById("weatherWindDir");
-    const weatherUV = document.getElementById("weatherUV");
-
-    const weatherDailyForecast = document.getElementById("weatherDailyForecast");
-    const weatherHourlyForecast = document.getElementById("weatherHourlyForecast");
-
-    const openOtherDropdown = document.getElementById("openOtherDropdown");
-    const otherDropdown = document.getElementById("otherDropdown");
-    const closeWeatherModal = document.getElementById("closeWeatherModal");
-    const weatherModal = document.getElementById("weatherModal");
-
-    const weatherToolPanel = document.getElementById("weatherToolPanel");
-    const currencyToolPanel = document.getElementById("currencyToolPanel");
-
-    const currencyForm = document.getElementById("currencyForm");
-    const currencyAmount = document.getElementById("currencyAmount");
-    const fromCurrency = document.getElementById("fromCurrency");
-    const toCurrency = document.getElementById("toCurrency");
-    const swapCurrency = document.getElementById("swapCurrency");
-    const currencyResultBox = document.getElementById("currencyResultBox");
-    const currencyResult = document.getElementById("currencyResult");
-    const currencyRateInfo = document.getElementById("currencyRateInfo");
-    const currencyError = document.getElementById("currencyError");
-
-    function showSelectedTool(toolName) {
-      if (toolName === "weather") {
-        weatherToolPanel.classList.remove("hidden");
-        currencyToolPanel.classList.add("hidden");
-      }
-
-      if (toolName === "currency") {
-        currencyToolPanel.classList.remove("hidden");
-        weatherToolPanel.classList.add("hidden");
-      }
-    }
-
-    function openModal(toolName = "weather") {
-      showSelectedTool(toolName);
-
-      weatherModal.classList.remove("hidden");
-      weatherModal.classList.add("flex");
-      otherDropdown.classList.add("hidden");
-      document.body.classList.add("overflow-hidden");
-    }
-
-    function closeModal() {
-      weatherModal.classList.add("hidden");
-      weatherModal.classList.remove("flex");
-      document.body.classList.remove("overflow-hidden");
-    }
-
-    openOtherDropdown.addEventListener("click", function (event) {
-      event.stopPropagation();
-      otherDropdown.classList.toggle("hidden");
-    });
-
-    document.querySelectorAll("[data-open-tool]").forEach((button) => {
-      button.addEventListener("click", function () {
-        const selectedTool = this.dataset.openTool;
-        openModal(selectedTool);
-      });
-    });
-
-    closeWeatherModal.addEventListener("click", function () {
-      closeModal();
-    });
-
-    weatherModal.addEventListener("click", function (event) {
-      if (event.target === weatherModal) {
-        closeModal();
-      }
-    });
-
-    document.addEventListener("click", function (event) {
-      if (
-        !openOtherDropdown.contains(event.target) &&
-        !otherDropdown.contains(event.target)
-      ) {
-        otherDropdown.classList.add("hidden");
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        otherDropdown.classList.add("hidden");
-        closeModal();
-      }
-    });
-
-    function applyWeatherData(data) {
-      weatherCity.textContent = `${data.location.name}, ${data.location.country}`;
-
-      weatherCondition.innerHTML = `
-        <i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i>
-        ${data.current.condition.text}
-      `;
-
-      weatherTemp.textContent = `${Math.round(data.current.temp_c)}°`;
-      weatherFeelsLike.textContent = `feels like ${Math.round(data.current.feelslike_c)}°`;
-      weatherHumidity.textContent = `${data.current.humidity}%`;
-      weatherWind.textContent = `${Math.round(data.current.wind_kph)} km/h`;
-      weatherWindDir.textContent = data.current.wind_dir;
-      weatherUV.textContent = data.current.uv;
-
-      renderDailyForecast(data.forecast.forecastday);
-      renderHourlyForecast(data);
-    }
-
-    async function getWeather(city) {
-      try {
-        weatherCity.textContent = "Loading...";
-        weatherCondition.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Fetching weather...`;
-        weatherTemp.textContent = "--°";
-        weatherFeelsLike.textContent = "feels like --°";
-        weatherHumidity.textContent = "--%";
-        weatherWind.textContent = "-- km/h";
-        weatherWindDir.textContent = "--";
-        weatherUV.textContent = "--";
-
-        weatherDailyForecast.innerHTML = "";
-        weatherHourlyForecast.innerHTML = "";
-
-        const selectedDate = weatherDateInput.value;
-
-        let weatherApiUrl = `/api/weather?city=${encodeURIComponent(city)}`;
-
-        if (selectedDate) {
-          weatherApiUrl += `&date=${encodeURIComponent(selectedDate)}`;
-        }
-
-        const response = await fetch(weatherApiUrl);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch weather");
-        }
-
-        applyWeatherData(data);
-
-      } catch (error) {
-        weatherCity.textContent = "Weather unavailable";
-        weatherCondition.textContent = error.message;
-        weatherTemp.textContent = "--°";
-        weatherFeelsLike.textContent = "";
-
-        weatherHumidity.textContent = "--%";
-        weatherWind.textContent = "-- km/h";
-        weatherWindDir.textContent = "--";
-        weatherUV.textContent = "--";
-
-        weatherDailyForecast.innerHTML = "";
-        weatherHourlyForecast.innerHTML = "";
-
-        console.error(error);
-      }
-    }
-
-    weatherForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const city = cityInput.value.trim();
-
-      if (!city) {
-        alert("Please enter a city name.");
-        return;
-      }
-
-      getWeather(city);
-    });
-
-    function renderDailyForecast(forecastDays) {
-      weatherDailyForecast.innerHTML = forecastDays.map((day) => {
-        const date = new Date(day.date).toLocaleDateString(undefined, {
-          weekday: "short",
-          month: "short",
-          day: "numeric"
-        });
-
-        return `
-          <div class="rounded-xl bg-slate-50 p-4 text-sm">
-            <p class="font-semibold text-slate-900">${date}</p>
-            <p class="mt-1 text-slate-600">${day.day.condition.text}</p>
-            <p class="mt-2 text-slate-900 font-semibold">
-              ${Math.round(day.day.maxtemp_c)}° / ${Math.round(day.day.mintemp_c)}°
-            </p>
-            <p class="mt-1 text-xs text-slate-500">
-              Rain: ${day.day.daily_chance_of_rain}%
-            </p>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderHourlyForecast(data) {
-      const currentTime = data.location.localtime_epoch;
-
-      const nextHours = data.forecast.forecastday
-        .flatMap((day) => day.hour)
-        .filter((hour) => hour.time_epoch >= currentTime)
-        .slice(0, 6);
-
-      weatherHourlyForecast.innerHTML = nextHours.map((hour) => {
-        const time = new Date(hour.time.replace(" ", "T")).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-
-        return `
-          <div class="rounded-xl bg-slate-50 p-4 text-sm">
-            <p class="font-semibold text-slate-900">${time}</p>
-            <p class="mt-1 text-slate-600">${hour.condition.text}</p>
-            <p class="mt-2 text-slate-900 font-semibold">
-              ${Math.round(hour.temp_c)}°
-            </p>
-            <p class="mt-1 text-xs text-slate-500">
-              Rain: ${hour.chance_of_rain}%
-            </p>
-          </div>
-        `;
-      }).join("");
-    }
-
-    document.querySelectorAll(".weather-suggestion").forEach((button) => {
-      button.addEventListener("click", function () {
-        const city = this.dataset.city;
-        cityInput.value = city;
-        getWeather(city);
-      });
-    });
-
-    async function convertCurrency() {
-      try {
-        currencyError.classList.add("hidden");
-        currencyResultBox.classList.add("hidden");
-
-        const amount = Number(currencyAmount.value);
-        const from = fromCurrency.value;
-        const to = toCurrency.value;
-
-        if (!amount || amount <= 0) {
-          throw new Error("Please enter an amount greater than 0.");
-        }
-
-        currencyResult.textContent = "Converting...";
-        currencyRateInfo.textContent = "";
-        currencyResultBox.classList.remove("hidden");
-
-        const url = `/api/currency?amount=${encodeURIComponent(amount)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to fetch currency rate.");
-        }
-
-        currencyResult.textContent = `${data.result.toFixed(2)} ${to}`;
-        currencyRateInfo.textContent = `1 ${from} = ${data.rate.toFixed(4)} ${to}`;
-
-        if (data.date) {
-          currencyRateInfo.textContent += ` · Updated: ${data.date}`;
-        }
-
-      } catch (error) {
-        currencyResultBox.classList.add("hidden");
-        currencyError.textContent = error.message;
-        currencyError.classList.remove("hidden");
-        console.error(error);
-      }
-    }
-
-    currencyForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      convertCurrency();
-    });
-
-    swapCurrency.addEventListener("click", function () {
-      const oldFrom = fromCurrency.value;
-      fromCurrency.value = toCurrency.value;
-      toCurrency.value = oldFrom;
-      convertCurrency();
-    });
-
-    function setCurrencySelectValue(selectElement, currencyCode) {
-      const exists = Array.from(selectElement.options).some((option) => {
-        return option.value === currencyCode;
-      });
-
-      if (exists) {
-        selectElement.value = currencyCode;
-      }
-    }
-
-    function getUserCurrentLocationDefaults() {
-      if (!navigator.geolocation) {
-        cityInput.value = "Penang, Malaysia";
-        setCurrencySelectValue(fromCurrency, "MYR");
-        getWeather("Penang, Malaysia");
-        convertCurrency();
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async function (position) {
-          try {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            weatherCity.textContent = "Detecting your location...";
-            weatherCondition.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Fetching local weather...`;
-
-            const response = await fetch(`/api/location-defaults?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
-            const data = await response.json();
-
-            if (!response.ok) {
-              throw new Error(data.error || "Failed to get location defaults");
-            }
-
-            applyWeatherData(data.weather);
-
-            cityInput.value = data.weather.location.name;
-
-            if (data.currencyCode) {
-              setCurrencySelectValue(fromCurrency, data.currencyCode);
-            }
-
-            convertCurrency();
-
-          } catch (error) {
-            console.error(error);
-            cityInput.value = "Penang, Malaysia";
-            setCurrencySelectValue(fromCurrency, "MYR");
-            getWeather("Penang, Malaysia");
-            convertCurrency();
-          }
-        },
-        function (error) {
-          console.log("Location permission denied or unavailable:", error.message);
-          cityInput.value = "Penang, Malaysia";
-          setCurrencySelectValue(fromCurrency, "MYR");
-          getWeather("Penang, Malaysia");
-          convertCurrency();
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 8000,
-          maximumAge: 10 * 60 * 1000
-        }
-      );
-    }
-
-    const destinationRegion = document.getElementById("destinationRegion");
-    const destinationCountry = document.getElementById("destinationCountry");
-    const destinationCity = document.getElementById("destinationCity");
-    const exploreSearchInput = document.getElementById("exploreSearchInput");
-
-    function resetSelect(selectElement, placeholder, disabled = false) {
-      if (!selectElement) return;
-
-      selectElement.innerHTML = `<option value="">${placeholder}</option>`;
-      selectElement.disabled = disabled;
-    }
-
-    function setSelectLoading(selectElement, message) {
-      if (!selectElement) return;
-
-      selectElement.innerHTML = `<option value="">${message}</option>`;
-      selectElement.disabled = true;
-    }
-
-    function addOptions(selectElement, options) {
-      options.forEach((option) => {
-        const value = typeof option === "string" ? option : option.name;
-        const item = document.createElement("option");
-        item.value = value;
-        item.textContent = value;
-        selectElement.appendChild(item);
-      });
-    }
-
-    async function fetchDestinationJson(url) {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Destination API request failed");
-      }
-
-      return data;
-    }
-
-    function setExploreSearchFromDropdowns() {
-      if (!exploreSearchInput) return;
-
-      const region = destinationRegion?.value || "";
-      const country = destinationCountry?.value || "";
-      const city = destinationCity?.value || "";
-
-      if (city && country) {
-        exploreSearchInput.value = `${city}, ${country}`;
-      } else if (country) {
-        exploreSearchInput.value = country;
-      } else if (region) {
-        exploreSearchInput.value = region;
-      } else {
-        exploreSearchInput.value = "";
-      }
-    }
-
-    function filterExploreTrips() {
-      const cards = document.querySelectorAll("#trips article[data-region]");
-      const selectedRegion = destinationRegion?.value || "";
-      const selectedCountry = destinationCountry?.value || "";
-      const selectedCity = destinationCity?.value || "";
-      const searchText = (exploreSearchInput?.value || "").trim().toLowerCase();
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const regionMatches = !selectedRegion || card.dataset.region === selectedRegion;
-        const countryMatches = !selectedCountry || card.dataset.country === selectedCountry;
-        const cityMatches = !selectedCity || card.dataset.city === selectedCity;
-
-        const cardText = `${card.dataset.region} ${card.dataset.country} ${card.dataset.city} ${card.textContent}`.toLowerCase();
-        const searchMatches = !searchText || cardText.includes(searchText);
-        const isVisible = regionMatches && countryMatches && cityMatches && searchMatches;
-
-        card.classList.toggle("hidden", !isVisible);
-
-        if (isVisible) {
-          visibleCount += 1;
-        }
-      });
-
-      let emptyState = document.getElementById("exploreEmptyState");
-      const grid = document.querySelector("#trips .grid");
-
-      if (!emptyState && grid) {
-        emptyState = document.createElement("p");
-        emptyState.id = "exploreEmptyState";
-        emptyState.className = "hidden rounded-xl bg-white p-5 text-sm text-slate-500 ring-1 ring-slate-200 md:col-span-2 lg:col-span-3";
-        emptyState.textContent = "No matching trips yet. Try another destination or add a new trip.";
-        grid.appendChild(emptyState);
-      }
-
-      emptyState?.classList.toggle("hidden", visibleCount > 0);
-    }
-
-    async function loadDestinationRegions() {
-      const fallbackRegions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
-
-      try {
-        setSelectLoading(destinationRegion, "Loading...");
-        const data = await fetchDestinationJson("/api/destinations/regions");
-
-        resetSelect(destinationRegion, "Region", false);
-        addOptions(destinationRegion, data.regions || fallbackRegions);
-      } catch (error) {
-        console.error(error);
-        resetSelect(destinationRegion, "Region", false);
-        addOptions(destinationRegion, fallbackRegions);
-      }
-    }
-
-    async function loadCountriesByRegion(region) {
-      resetSelect(destinationCountry, "Country", true);
-      resetSelect(destinationCity, "City", true);
-
-      if (!region) return;
-
-      try {
-        setSelectLoading(destinationCountry, "Loading...");
-        const data = await fetchDestinationJson(`/api/destinations/countries?region=${encodeURIComponent(region)}`);
-
-        resetSelect(destinationCountry, "Country", false);
-        addOptions(destinationCountry, data.countries || []);
-      } catch (error) {
-        console.error(error);
-        resetSelect(destinationCountry, "Could not load", true);
-      }
-    }
-
-    async function loadCitiesByCountry(country) {
-      resetSelect(destinationCity, "City", true);
-
-      if (!country) return;
-
-      try {
-        setSelectLoading(destinationCity, "Loading...");
-        const data = await fetchDestinationJson(`/api/destinations/cities?country=${encodeURIComponent(country)}`);
-
-        resetSelect(destinationCity, "City", false);
-        addOptions(destinationCity, data.cities || []);
-      } catch (error) {
-        console.error(error);
-        resetSelect(destinationCity, "Could not load", true);
-      }
-    }
-
-    async function initialiseDestinationDropdowns() {
-      if (!destinationRegion || !destinationCountry || !destinationCity) return;
-
-      await loadDestinationRegions();
-
-      destinationRegion.addEventListener("change", async function () {
-        const region = destinationRegion.value;
-
-        setExploreSearchFromDropdowns();
-        filterExploreTrips();
-        await loadCountriesByRegion(region);
-      });
-
-      destinationCountry.addEventListener("change", async function () {
-        const country = destinationCountry.value;
-
-        setExploreSearchFromDropdowns();
-        filterExploreTrips();
-        await loadCitiesByCountry(country);
-      });
-
-      destinationCity.addEventListener("change", function () {
-        setExploreSearchFromDropdowns();
-        filterExploreTrips();
-      });
-
-      exploreSearchInput?.addEventListener("input", filterExploreTrips);
-    }
-
-    initialiseDestinationDropdowns();
-
-    showSelectedTool("weather");
-    getUserCurrentLocationDefaults();
-  </script>
 
 </body>
 </html>
