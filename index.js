@@ -6,12 +6,13 @@ const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const session = require("express-session");
+const connectDB = require("./config/db");
+const hotelRoutes = require("./routes/hotel_routes");
+const weatherRoutes = require("./routes/weater_routes");
+const cors = require("cors");
+
 
 dotenv.config();
-
-const connectDB = require("./config/db");
-const signupRoutes = require("./routes/signup");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,400 +21,19 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(express.json());
-
-// Session middleware
-// This must be added BEFORE app.use("/", signupRoutes)
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "flyaway-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
-  })
-);
-
-// Static files
 app.use(express.static(path.join(__dirname, "public")));
-
-// Use signup routes
-app.use("/", signupRoutes);
+app.use("/api/hotels", hotelRoutes);
+app.use("/api/weather", weatherRoutes);
 
 // Test API route
 app.get("/api/test", (req, res) => {
   res.json({
     message: "API is working",
-    mongodb: mongoose.connection.readyState === 1 ? "connected" : "not connected",
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "not connected"
   });
 });
-
-// Destination dropdown API routes
-// Uses free public APIs with no API key required.
-const destinationCache = new Map();
-const destinationCacheTtlMs = 1000 * 60 * 60 * 24; // 24 hours
-
-function getCachedDestinationData(key) {
-  const cached = destinationCache.get(key);
-
-  if (!cached) return null;
-
-  if (Date.now() - cached.createdAt > destinationCacheTtlMs) {
-    destinationCache.delete(key);
-    return null;
-  }
-
-  return cached.value;
-}
-
-function setCachedDestinationData(key, value) {
-  destinationCache.set(key, {
-    value,
-    createdAt: Date.now(),
-  });
-}
-
-async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 10000) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.message || data.msg || `Request failed with status ${response.status}`
-      );
-    }
-
-    return data;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-app.get("/api/destinations/regions", (req, res) => {
-  res.json({
-    regions: ["Africa", "Americas", "Asia", "Europe", "Oceania"],
-  });
-});
-
-app.get("/api/destinations/countries", async (req, res) => {
-  try {
-    const region = req.query.region;
-
-    if (!region) {
-      return res.status(400).json({
-        error: "Missing region",
-      });
-    }
-
-    const cacheKey = `countries:${region}`;
-    const cachedCountries = getCachedDestinationData(cacheKey);
-
-    if (cachedCountries) {
-      return res.json({ countries: cachedCountries });
-    }
-
-    const countriesUrl = new URL(
-      `https://restcountries.com/v3.1/region/${encodeURIComponent(region)}`
-    );
-    countriesUrl.searchParams.set("fields", "name,cca2,region");
-
-    const countriesData = await fetchJsonWithTimeout(countriesUrl);
-
-    const countries = countriesData
-      .map((country) => ({
-        name: country.name?.common,
-        code: country.cca2,
-        region: country.region,
-      }))
-      .filter((country) => country.name)
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    setCachedDestinationData(cacheKey, countries);
-
-    res.json({ countries });
-  } catch (error) {
-    console.error("Destination countries error:", error);
-
-    res.status(500).json({
-      error: error.message || "Failed to fetch countries",
-    });
-  }
-});
-
-app.get("/api/destinations/cities", async (req, res) => {
-  try {
-    const country = req.query.country;
-
-    if (!country) {
-      return res.status(400).json({
-        error: "Missing country",
-      });
-    }
-
-    const cacheKey = `cities:${country}`;
-    const cachedCities = getCachedDestinationData(cacheKey);
-
-    if (cachedCities) {
-      return res.json({ cities: cachedCities });
-    }
-
-    const citiesData = await fetchJsonWithTimeout(
-      "https://countriesnow.space/api/v0.1/countries/cities",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ country }),
-      }
-    );
-
-    if (citiesData.error) {
-      return res.status(404).json({
-        error: citiesData.msg || "Cities not found",
-      });
-    }
-
-    const cities = (citiesData.data || [])
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b));
-
-    setCachedDestinationData(cacheKey, cities);
-
-    res.json({ cities });
-  } catch (error) {
-    console.error("Destination cities error:", error);
-
-    res.status(500).json({
-      error: error.message || "Failed to fetch cities",
-    });
-  }
-});
-
-// Weather API route
-app.get("/api/weather", async (req, res) => {
-  try {
-    const city = req.query.city || "Tokyo";
-    const date = req.query.date;
-
-    if (!process.env.WEATHER_API_KEY) {
-      return res.status(500).json({
-        error: "Missing WEATHER_API_KEY in .env file",
-      });
-    }
-
-    const weatherUrl = new URL("https://api.weatherapi.com/v1/forecast.json");
-
-    weatherUrl.searchParams.set("key", process.env.WEATHER_API_KEY);
-    weatherUrl.searchParams.set("q", city);
-    weatherUrl.searchParams.set("aqi", "no");
-    weatherUrl.searchParams.set("alerts", "no");
-
-    if (date) {
-      weatherUrl.searchParams.set("dt", date);
-    } else {
-      weatherUrl.searchParams.set("days", "3");
-    }
-
-    const weatherResponse = await fetch(weatherUrl);
-
-    if (!weatherResponse.ok) {
-      return res.status(weatherResponse.status).json({
-        error: `WeatherAPI failed with status ${weatherResponse.status}`,
-      });
-    }
-
-    const weatherData = await weatherResponse.json();
-
-    res.json(weatherData);
-  } catch (error) {
-    console.error("Weather API error:", error);
-
-    res.status(500).json({
-      error: error.message || "Failed to fetch weather data",
-    });
-  }
-});
-
-app.get("/api/currency", async (req, res) => {
-  try {
-    const amount = Number(req.query.amount || 1);
-    const from = req.query.from || "MYR";
-    const to = req.query.to || "JPY";
-
-    if (!process.env.CURRENCY_API_KEY) {
-      return res.status(500).json({
-        error: "Missing CURRENCY_API_KEY in .env file",
-      });
-    }
-
-    if (!amount || amount <= 0) {
-      return res.status(400).json({
-        error: "Amount must be greater than 0",
-      });
-    }
-
-    if (from === to) {
-      return res.json({
-        amount,
-        from,
-        to,
-        rate: 1,
-        result: amount,
-        date: new Date().toISOString(),
-      });
-    }
-
-    const currencyUrl = new URL("https://api.currencyapi.com/v3/latest");
-
-    currencyUrl.searchParams.set("base_currency", from);
-    currencyUrl.searchParams.set("currencies", to);
-
-    const currencyResponse = await fetch(currencyUrl, {
-      headers: {
-        apikey: process.env.CURRENCY_API_KEY,
-      },
-    });
-
-    const currencyData = await currencyResponse.json();
-
-    if (!currencyResponse.ok) {
-      return res.status(currencyResponse.status).json({
-        error: currencyData.message || "CurrencyAPI request failed",
-      });
-    }
-
-    const rate = currencyData.data?.[to]?.value;
-
-    if (!rate) {
-      return res.status(404).json({
-        error: "Currency rate not found",
-      });
-    }
-
-    res.json({
-      amount,
-      from,
-      to,
-      rate,
-      result: amount * rate,
-      date: currencyData.meta?.last_updated_at || null,
-    });
-  } catch (error) {
-    console.error("Currency API error:", error);
-
-    res.status(500).json({
-      error: error.message || "Failed to fetch currency data",
-    });
-  }
-});
-
-app.get("/api/location-defaults", async (req, res) => {
-  try {
-    const lat = req.query.lat;
-    const lon = req.query.lon;
-
-    if (!lat || !lon) {
-      return res.status(400).json({
-        error: "Missing lat or lon",
-      });
-    }
-
-    if (!process.env.WEATHER_API_KEY) {
-      return res.status(500).json({
-        error: "Missing WEATHER_API_KEY in .env file",
-      });
-    }
-
-    const weatherUrl = new URL("https://api.weatherapi.com/v1/forecast.json");
-
-    weatherUrl.searchParams.set("key", process.env.WEATHER_API_KEY);
-    weatherUrl.searchParams.set("q", `${lat},${lon}`);
-    weatherUrl.searchParams.set("days", "3");
-    weatherUrl.searchParams.set("aqi", "no");
-    weatherUrl.searchParams.set("alerts", "no");
-
-    const weatherResponse = await fetch(weatherUrl);
-    const weatherData = await weatherResponse.json();
-
-    if (!weatherResponse.ok) {
-      return res.status(weatherResponse.status).json({
-        error: weatherData.error?.message || "WeatherAPI request failed",
-      });
-    }
-
-    const countryName = weatherData.location.country;
-    const currencyCode = await getCurrencyCodeFromCountry(countryName);
-
-    res.json({
-      weather: weatherData,
-      currencyCode: currencyCode || "USD",
-    });
-  } catch (error) {
-    console.error("Location defaults error:", error);
-
-    res.status(500).json({
-      error: error.message || "Failed to get location defaults",
-    });
-  }
-});
-
-async function getCurrencyCodeFromCountry(countryName) {
-  const fallbackMap = {
-    Malaysia: "MYR",
-    Japan: "JPY",
-    Singapore: "SGD",
-    "United States of America": "USD",
-    "United States": "USD",
-    "United Kingdom": "GBP",
-    France: "EUR",
-    Germany: "EUR",
-    Italy: "EUR",
-    Spain: "EUR",
-    China: "CNY",
-    "South Korea": "KRW",
-    Australia: "AUD",
-    Canada: "CAD",
-    Switzerland: "CHF",
-    Thailand: "THB",
-    Indonesia: "IDR",
-    Philippines: "PHP",
-    "New Zealand": "NZD",
-    "Hong Kong": "HKD",
-    Iceland: "ISK",
-  };
-
-  if (fallbackMap[countryName]) {
-    return fallbackMap[countryName];
-  }
-
-  try {
-    const countryUrl = `https://restcountries.com/v3.1/name/${encodeURIComponent(
-      countryName
-    )}`;
-    const response = await fetch(countryUrl);
-    const data = await response.json();
-
-    if (!response.ok || !Array.isArray(data) || !data[0]?.currencies) {
-      return null;
-    }
-
-    return Object.keys(data[0].currencies)[0] || null;
-  } catch (error) {
-    console.error("Country currency lookup error:", error);
-    return null;
-  }
-}
 
 function getGeoapifyCategories(category) {
   const categoryMap = {
@@ -430,14 +50,14 @@ function getGeoapifyCategories(category) {
       "accommodation.hotel",
       "natural",
       "beach",
-      "public_transport",
+      "public_transport"
     ],
 
     must_see: [
       "tourism.sights",
       "tourism.attraction",
       "tourism.attraction.viewpoint",
-      "heritage",
+      "heritage"
     ],
 
     culture: [
@@ -446,32 +66,50 @@ function getGeoapifyCategories(category) {
       "tourism.sights.memorial",
       "tourism.sights.building",
       "tourism.attraction.artwork",
-      "religion",
+      "religion"
     ],
 
-    museums: ["entertainment.museum"],
+    museums: [
+      "entertainment.museum"
+    ],
 
-    food: ["catering.restaurant", "catering.cafe", "catering.fast_food"],
+    food: [
+      "catering.restaurant",
+      "catering.cafe",
+      "catering.fast_food"
+    ],
 
     shopping: [
       "commercial.shopping_mall",
       "commercial.marketplace",
       "commercial.department_store",
-      "commercial.supermarket",
+      "commercial.supermarket"
     ],
 
-    nature: ["natural", "beach", "leisure.park", "tourism.attraction.viewpoint"],
+    nature: [
+      "natural",
+      "beach",
+      "leisure.park",
+      "tourism.attraction.viewpoint"
+    ],
 
     hotels: [
       "accommodation.hotel",
       "accommodation.hostel",
       "accommodation.guest_house",
-      "accommodation.apartment",
+      "accommodation.apartment"
     ],
 
-    nightlife: ["catering.bar", "catering.pub", "entertainment"],
+    nightlife: [
+      "catering.bar",
+      "catering.pub",
+      "entertainment"
+    ],
 
-    transport: ["public_transport", "airport"],
+    transport: [
+      "public_transport",
+      "airport"
+    ]
   };
 
   return (categoryMap[category] || categoryMap.must_see).join(",");
@@ -517,8 +155,8 @@ async function getUnsplashImage(query) {
   const response = await fetch(url, {
     headers: {
       Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-      "Accept-Version": "v1",
-    },
+      "Accept-Version": "v1"
+    }
   });
 
   if (!response.ok) {
@@ -544,7 +182,7 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!process.env.GEOAPIFY_API_KEY) {
       return res.status(500).json({
-        error: "Missing GEOAPIFY_API_KEY in .env file",
+        error: "Missing GEOAPIFY_API_KEY in .env file"
       });
     }
 
@@ -562,7 +200,7 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!geocodeResponse.ok) {
       return res.status(500).json({
-        error: `Geoapify geocode failed with status ${geocodeResponse.status}`,
+        error: `Geoapify geocode failed with status ${geocodeResponse.status}`
       });
     }
 
@@ -571,7 +209,7 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!cityResult) {
       return res.status(404).json({
-        error: "City not found",
+        error: "City not found"
       });
     }
 
@@ -590,7 +228,7 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!placesResponse.ok) {
       return res.status(500).json({
-        error: `Geoapify places failed with status ${placesResponse.status}`,
+        error: `Geoapify places failed with status ${placesResponse.status}`
       });
     }
 
@@ -616,7 +254,7 @@ app.get("/api/search-places", async (req, res) => {
           distance: place.properties.distance,
           lat: place.properties.lat,
           lon: place.properties.lon,
-          image: image,
+          image: image
         };
       })
     );
@@ -626,7 +264,7 @@ app.get("/api/search-places", async (req, res) => {
     const categoriesFound = [
       ...new Set(
         placesData.features.flatMap((place) => place.properties.categories || [])
-      ),
+      )
     ].sort();
 
     res.json({
@@ -634,13 +272,13 @@ app.get("/api/search-places", async (req, res) => {
       selectedCategory: category,
       radius: radius,
       categoriesFound: categoriesFound,
-      places: places,
+      places: places
     });
   } catch (error) {
     console.error("Search places error:", error);
 
     res.status(500).json({
-      error: error.message || "Failed to search places",
+      error: error.message || "Failed to search places"
     });
   }
 });
