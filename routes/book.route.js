@@ -1,47 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const Booking = require("../models/book");
-const jwt = require("jsonwebtoken");
 
-/* 🔐 AUTH MIDDLEWARE */
-function auth(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1];
+const rooms = require("../data/room.json");
 
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-
+/**
+ * GET ROOMS BY HOTEL
+ */
+router.get("/", (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
-  }
-}
+    const { hotelId } = req.query;
 
-/* 🧾 CREATE BOOKING */
-router.post("/create", auth, async (req, res) => {
-  try {
-    const { hotelId, checkIn, checkOut, guests } = req.body;
+    if (!hotelId) {
+      return res.status(400).json({
+        success: false,
+        message: "hotelId is required",
+      });
+    }
 
-    const booking = await Booking.create({
-      userId: req.user.id,
-      hotelId,
-      checkIn,
-      checkOut,
-      guests
-    });
+    const filteredRooms = rooms.filter(
+      (room) => room.hotelId === hotelId
+    );
 
     res.json({
       success: true,
-      booking
+      data: filteredRooms,
     });
 
   } catch (err) {
+    console.error(err);
+
     res.status(500).json({
       success: false,
-      message: err.message
+      message: "Failed to load rooms",
     });
   }
 });

@@ -11,7 +11,7 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const hotelRoutes = require("./routes/hotel_routes");
 const weatherRoutes = require("./routes/weater_routes");
-const bookingRoutes = require("./routes/bookingRoutes");
+const bookingRoutes = require("./routes/book.route");
 const cors = require("cors");
 
 
