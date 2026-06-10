@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const hotelRoutes = require("./routes/hotel_routes");
 const weatherRoutes = require("./routes/weater_routes");
+const bookingRoutes = require("./routes/book.route");
 const cors = require("cors");
 
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Test API route
 app.get("/api/test", (req, res) => {

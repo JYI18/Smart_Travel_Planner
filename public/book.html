@@ -1,177 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>FlyAway Booking</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet">
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
-}
-
-body{
-    background:#f4f7fb;
-}
-
-.container{
-    max-width:1000px;
-    margin:40px auto;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-input,select{
-
-    width:100%;
-    padding:14px;
-    margin-top:8px;
-    margin-bottom:20px;
-
-    border:1px solid #dbe2ea;
-    border-radius:12px;
-}
-
-button{
-
-    background:#2563eb;
-    color:white;
-
-    border:none;
-    padding:14px 20px;
-
-    border-radius:12px;
-    cursor:pointer;
-
-    font-weight:700;
-}
-
-.hotel-header{
-
-    display:flex;
-    gap:20px;
-    margin-bottom:25px;
-}
-
-.hotel-header img{
-
-    width:260px;
-    height:180px;
-    object-fit:cover;
-    border-radius:16px;
-}
-
-</style>
+  <title>Select Room</title>
 </head>
-
 <body>
 
-<div class="container">
+<h1>Available Rooms</h1>
 
-    <div class="card">
-
-        <div id="hotelInfo">
-            Loading hotel...
-        </div>
-
-        <hr style="margin:25px 0">
-
-        <h2>Select Dates</h2>
-
-        <br>
-
-        <label>Check In</label>
-        <input type="date" id="checkin">
-
-        <label>Check Out</label>
-        <input type="date" id="checkout">
-
-        <label>Guests</label>
-        <select id="guests">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-        </select>
-
-        <button onclick="searchRooms()">
-            Check Availability
-        </button>
-
-        <div id="rooms"></div>
-
-    </div>
-
-</div>
+<div id="roomContainer"></div>
 
 <script>
 
 const params =
-    new URLSearchParams(
-        window.location.search
-    );
+new URLSearchParams(
+  window.location.search
+);
 
 const hotelId =
-    params.get("hotelId");
+params.get("hotelId");
 
-loadHotel();
+async function loadRooms() {
 
-async function loadHotel(){
+  const response =
+  await fetch(
+    `/api/hotels/availability?hotelId=${hotelId}`
+  );
 
-    const res =
-        await fetch(
-            `/api/hotels/details?hotelId=${hotelId}`
-        );
+  const data =
+  await response.json();
 
-    const result =
-        await res.json();
+  displayRooms(data.rooms);
 
-    const hotel =
-        result.data;
-
-    document.getElementById(
-        "hotelInfo"
-    ).innerHTML = `
-
-        <div class="hotel-header">
-
-            <img src="${hotel.main_photo}">
-
-            <div>
-
-                <h1>${hotel.name}</h1>
-
-                <p>
-                    ${hotel.city},
-                    ${hotel.country}
-                </p>
-
-                <br>
-
-                <p>
-                    ⭐ ${hotel.starRating}
-                </p>
-
-            </div>
-
-        </div>
-    `;
 }
+
+function displayRooms(rooms) {
+
+  const container =
+  document.getElementById(
+    "roomContainer"
+  );
+
+  container.innerHTML = "";
+
+  rooms.forEach(room => {
+
+    container.innerHTML += `
+
+      <div style="
+      border:1px solid #ddd;
+      padding:20px;
+      margin:10px">
+
+        <img
+        src="${room.image}"
+        width="250">
+
+        <h2>${room.roomType}</h2>
+
+        <p>
+          RM ${room.price}
+        </p>
+
+        <p>
+          Guests:
+          ${room.maxGuests}
+        </p>
+
+        <p>
+          Available:
+          ${room.availableRooms}
+        </p>
+
+        <button
+        onclick="
+        bookRoom('${room._id}')
+        ">
+          Book Now
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+function bookRoom(roomId){
+
+  localStorage.setItem(
+    "selectedRoom",
+    roomId
+  );
+
+  window.location.href =
+  `checkout.html?hotelId=${hotelId}&roomId=${roomId}`;
+
+}
+
+loadRooms();
 
 </script>
 
