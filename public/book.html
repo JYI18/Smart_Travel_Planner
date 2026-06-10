@@ -1,241 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>FlyAway Booking</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet">
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
-}
-
-body{
-    background:#f4f7fb;
-}
-
-.container{
-    max-width:1000px;
-    margin:40px auto;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-input,select{
-    width:100%;
-    padding:14px;
-    margin-top:8px;
-    margin-bottom:20px;
-    border:1px solid #dbe2ea;
-    border-radius:12px;
-}
-
-button{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:14px 20px;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:700;
-}
-
-.hotel-header{
-    display:flex;
-    gap:20px;
-    margin-bottom:25px;
-}
-
-.hotel-header img{
-    width:260px;
-    height:180px;
-    object-fit:cover;
-    border-radius:16px;
-}
-</style>
-
+  <title>Select Room</title>
 </head>
-
 <body>
 
-<div class="container">
+<h1>Available Rooms</h1>
 
-    <div class="card">
-
-        <div id="hotelInfo">Loading hotel...</div>
-
-        <hr style="margin:25px 0">
-
-        <h2>Select Dates</h2>
-
-        <label>Check In</label>
-        <input type="date" id="checkin">
-
-        <label>Check Out</label>
-        <input type="date" id="checkout">
-
-        <label>Guests</label>
-        <select id="guests">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-        </select>
-
-        <button onclick="searchRooms()">
-            Check Availability
-        </button>
-
-        <div id="rooms"></div>
-
-    </div>
-
-</div>
+<div id="roomContainer"></div>
 
 <script>
-let hotel = null;
 
-const params = new URLSearchParams(window.location.search);
-const hotelId = params.get("hotelId");
+const params =
+new URLSearchParams(
+  window.location.search
+);
 
-loadHotel();
+const hotelId =
+params.get("hotelId");
 
-/* -----------------------------
-   LOAD HOTEL
------------------------------ */
-async function loadHotel() {
-    const res = await fetch(`/api/hotels/details?hotelId=${hotelId}`);
-    const result = await res.json();
+async function loadRooms() {
 
-    hotel = result.data;
+  const response =
+  await fetch(
+    `/api/hotels/availability?hotelId=${hotelId}`
+  );
 
-    document.getElementById("hotelInfo").innerHTML = `
-        <div class="hotel-header">
-            <img src="${hotel.main_photo}">
-            <div>
-                <h1>${hotel.name}</h1>
-                <p>${hotel.city}, ${hotel.country}</p>
-                <br>
-                <p>⭐ ${hotel.starRating || hotel.stars || "N/A"}</p>
-            </div>
-        </div>
+  const data =
+  await response.json();
+
+  displayRooms(data.rooms);
+
+}
+
+function displayRooms(rooms) {
+
+  const container =
+  document.getElementById(
+    "roomContainer"
+  );
+
+  container.innerHTML = "";
+
+  rooms.forEach(room => {
+
+    container.innerHTML += `
+
+      <div style="
+      border:1px solid #ddd;
+      padding:20px;
+      margin:10px">
+
+        <img
+        src="${room.image}"
+        width="250">
+
+        <h2>${room.roomType}</h2>
+
+        <p>
+          RM ${room.price}
+        </p>
+
+        <p>
+          Guests:
+          ${room.maxGuests}
+        </p>
+
+        <p>
+          Available:
+          ${room.availableRooms}
+        </p>
+
+        <button
+        onclick="
+        bookRoom('${room._id}')
+        ">
+          Book Now
+        </button>
+
+      </div>
+
     `;
+
+  });
+
 }
 
-/* -----------------------------
-   SEARCH ROOMS
------------------------------ */
-async function searchRooms() {
-    const checkIn = document.getElementById("checkin").value;
-    const checkOut = document.getElementById("checkout").value;
+function bookRoom(roomId){
 
-    if (!checkIn || !checkOut) {
-        alert("Please select dates.");
-        return;
-    }
+  localStorage.setItem(
+    "selectedRoom",
+    roomId
+  );
 
-    const res = await fetch(`/api/rooms?hotelId=${hotelId}`);
+  window.location.href =
+  `checkout.html?hotelId=${hotelId}&roomId=${roomId}`;
 
-    if (!res.ok) {
-        alert("Failed to load rooms");
-        return;
-    }
-
-    const result = await res.json();
-    renderRooms(result.data);
 }
 
-/* -----------------------------
-   RENDER ROOMS
------------------------------ */
-function renderRooms(rooms) {
-    const container = document.getElementById("rooms");
-    container.innerHTML = "";
+loadRooms();
 
-    rooms.forEach(room => {
-        container.innerHTML += `
-            <div style="
-                border:1px solid #ddd;
-                border-radius:16px;
-                padding:20px;
-                margin-top:20px;
-            ">
-                <h3>${room.roomType}</h3>
-
-                <br>
-
-                <p>👥 Guests: ${room.guests}</p>
-
-                <p>🍳 Breakfast: ${room.breakfast ? "Included" : "Not Included"}</p>
-
-                <p>💰 Price: ${room.price} per night</p>
-
-                <br>
-
-                <button onclick="bookRoom(
-                    '${room.roomId}',
-                    '${room.roomType}',
-                    ${room.price}
-                )">
-                    Book Room
-                </button>
-            </div>
-        `;
-    });
-}
-
-/* -----------------------------
-   BOOK ROOM (FIXED)
------------------------------ */
-async function bookRoom(roomId, roomType, pricePerNight) {
-
-    const checkIn = document.getElementById("checkin").value;
-    const checkOut = document.getElementById("checkout").value;
-    const guests = document.getElementById("guests").value;
-
-    if (!checkIn || !checkOut) {
-        alert("Please select check-in and check-out dates");
-        return;
-    }
-
-    const response = await fetch("/api/bookings/create", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            hotelId: hotel.hotelId || hotel._id || hotelId,
-            hotelName: hotel.name,
-            roomId,
-            roomType,
-            pricePerNight,
-            guests: Number(guests),
-            checkIn,
-            checkOut
-        }),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-        alert(`Booking Confirmed 🎉\nTotal: ${result.booking.totalPrice}`);
-    } else {
-        alert(result.message || "Booking failed");
-    }
-}
 </script>
 
 </body>

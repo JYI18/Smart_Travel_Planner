@@ -1,39 +1,76 @@
 const express = require("express");
 const router = express.Router();
 
-const rooms = require("../data/room.json");
+const Booking = require("../models/book");
+const Room = require("../models/room");
 
-/**
- * GET ROOMS BY HOTEL
- */
-router.get("/", (req, res) => {
+router.post("/", async (req, res) => {
+
   try {
-    const { hotelId } = req.query;
 
-    if (!hotelId) {
-      return res.status(400).json({
+    const {
+      hotelId,
+      roomId,
+      customerName,
+      email,
+      checkIn,
+      checkOut
+    } = req.body;
+
+    const room = await Room.findById(roomId);
+
+    if (!room) {
+      return res.status(404).json({
         success: false,
-        message: "hotelId is required",
+        message: "Room not found"
       });
     }
 
-    const filteredRooms = rooms.filter(
-      (room) => room.hotelId === hotelId
-    );
+    if (room.availableRooms <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No rooms available"
+      });
+    }
+
+    const booking = await Booking.create({
+
+      hotelId,
+
+      roomId,
+
+      customerName,
+
+      email,
+
+      checkIn,
+
+      checkOut,
+
+      totalPrice: room.price
+
+    });
+
+    room.availableRooms--;
+
+    await room.save();
 
     res.json({
       success: true,
-      data: filteredRooms,
+      booking
     });
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       success: false,
-      message: "Failed to load rooms",
+      message: "Booking failed"
     });
+
   }
+
 });
 
 module.exports = router;
