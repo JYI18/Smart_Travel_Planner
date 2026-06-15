@@ -391,7 +391,30 @@
         Fill in the details — your journey, beautifully organized.
       </p>
     </div>
+      <h1 class="font-serif text-5xl md:text-6xl font-black text-slate-100 leading-tight">
+        Design your next<br>
+        <span class="gold-gradient-text">smart getaway</span>
+      </h1>
 
+      <p class="text-slate-300 max-w-2xl mx-auto mt-4 text-base font-medium bg-slate-900/55 backdrop-blur-sm rounded-full py-2 px-6 inline-block">
+        Fill in the details — your journey, beautifully organized.
+      </p>
+    </div>
+
+    <div class="glass-card max-w-4xl mx-auto p-6 md:p-8 transition-all duration-300">
+      <div class="flex items-center gap-3 border-b border-amber-500/25 pb-5 mb-6">
+        <div class="h-11 w-11 rounded-2xl bg-amber-400/15 flex items-center justify-center shadow-inner">
+          <i class="fa-solid fa-map-location-dot text-amber-300 text-xl"></i>
+        </div>
+
+        <h2 class="text-2xl font-serif font-bold text-slate-100">
+          Trip blueprint
+        </h2>
+
+        <span class="text-xs text-amber-300 ml-auto bg-amber-400/10 px-3 py-1 rounded-full">
+          <i class="fa-regular fa-pen-to-square mr-1"></i>
+          new expedition
+        </span>
     <div class="glass-card max-w-4xl mx-auto p-6 md:p-8 transition-all duration-300">
       <div class="flex items-center gap-3 border-b border-amber-500/25 pb-5 mb-6">
         <div class="h-11 w-11 rounded-2xl bg-amber-400/15 flex items-center justify-center shadow-inner">
@@ -702,6 +725,34 @@
             Save Trip
           </button>
         </div>
+
+        <div id="tripShareSection" class="hidden mt-6 rounded-2xl border border-amber-500/20 bg-amber-400/10/70 p-4 text-slate-200">
+          <p class="font-semibold mb-2">
+            Invite friends with this trip link
+          </p>
+
+          <div class="flex gap-2 flex-wrap">
+            <input
+              id="tripShareUrl"
+              type="text"
+              readonly
+              class="input-light flex-1 min-w-[220px] bg-slate-900/90"
+              placeholder="Save trip to generate invite link"
+            >
+
+            <button
+              type="button"
+              onclick="copyTripLink()"
+              class="btn-outline-light px-4 py-2.5 whitespace-nowrap"
+            >
+              <i class="fas fa-link mr-1"></i>
+              Copy Link
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-2">
+            Send this to trip members to open the shared itinerary without extra setup.
+          </p>
 
         <div id="tripShareSection" class="hidden mt-6 rounded-2xl border border-amber-500/20 bg-amber-400/10/70 p-4 text-slate-200">
           <p class="font-semibold mb-2">

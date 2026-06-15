@@ -13,6 +13,13 @@ const bookingRoutes = require("./routes/book.route");
 const flightRoutes = require("./routes/flight_route");
 const cors = require("cors");
 
+const connectDB = require("./config/db");
+const hotelRoutes = require("./routes/hotel_routes");
+const weatherRoutes = require("./routes/weater_routes");
+const bookingRoutes = require("./routes/book.route");
+const flightRoutes = require("./routes/flight_route");
+const cors = require("cors");
+
 
 dotenv.config();
 
@@ -32,6 +39,25 @@ const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
 connectDB();
+
+// ==========================================
+// MONGOOSE SCHEMA & MODEL FOR TRIPS
+// ==========================================
+const tripSchema = new mongoose.Schema({
+  trip_name: { type: String, required: true },
+  destination: { type: String, required: true },
+  departure_date: String,
+  return_date: String,
+  trip_style: String,
+  travelers: Number,
+  budget: Number,
+  currency: String,
+  notes: String,
+  status: { type: String, default: 'planned' },
+  favorite: { type: Boolean, default: false }
+}, { timestamps: true });
+
+const Trip = mongoose.model('Trip', tripSchema);
 
 // ==========================================
 // MONGOOSE SCHEMA & MODEL FOR TRIPS
@@ -111,10 +137,10 @@ app.get("/api/auth/me", (req, res) => {
 
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
-
-// Use signup routes
-app.use("/", signupRoutes);
-
+app.use("/api/hotels", hotelRoutes);
+app.use("/api/weather", weatherRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/flights", flightRoutes);
 // Use food routes
 app.use("/api", foodRoutes);
 
@@ -865,6 +891,7 @@ app.get("/api/search-places", async (req, res) => {
     if (!process.env.GEOAPIFY_API_KEY) {
       return res.status(500).json({
         error: "Missing GEOAPIFY_API_KEY in .env file"
+        error: "Missing GEOAPIFY_API_KEY in .env file"
       });
     }
 
@@ -941,8 +968,7 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!placesResponse.ok) {
       return res.status(500).json({
-        error: `Geoapify places failed with status ${placesResponse.status}`
->>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        error: `Geoapify places failed with status ${placesResponse.status}`,
       });
     }
 
@@ -1035,6 +1061,7 @@ app.get("/api/search-places", async (req, res) => {
     const categoriesFound = [
       ...new Set(
         placesData.features.flatMap((place) => place.properties.categories || [])
+      )
       )
     ].sort();
 
@@ -1345,6 +1372,231 @@ app.get("/api/explore/anywhere", async (req, res) => {
 
 =======
 >>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+// ==========================================
+// PART A: RESTful API ENDPOINTS (CRUD)
+// ==========================================
+
+// 1. CREATE: POST /api/trips
+app.post('/api/trips', async (req, res) => {
+  try {
+    const newTrip = new Trip(req.body);
+    const savedTrip = await newTrip.save();
+    res.status(201).json(savedTrip); 
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// 2. READ ALL: GET /api/trips
+app.get('/api/trips', async (req, res) => {
+  try {
+    const trips = await Trip.find();
+    res.json(trips);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 3. READ ONE: GET /api/trips/:id
+app.get('/api/trips/:id', async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+    res.json(trip);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. UPDATE: PUT /api/trips/:id
+app.put('/api/trips/:id', async (req, res) => {
+  try {
+    const updatedTrip = await Trip.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true, runValidators: true } 
+    );
+    if (!updatedTrip) return res.status(404).json({ error: 'Trip not found' });
+    res.json(updatedTrip);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// 5. DELETE: DELETE /api/trips/:id
+app.delete('/api/trips/:id', async (req, res) => {
+  try {
+    const deletedTrip = await Trip.findByIdAndDelete(req.params.id);
+    if (!deletedTrip) return res.status(404).json({ error: 'Trip not found' });
+    res.json({ message: 'Trip deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// TRAVEL BUDDY & SUGGESTIONS (MODELS)
+// ==========================================
+const buddySchema = new mongoose.Schema({
+  tripId: { type: mongoose.Schema.Types.ObjectId, ref: 'Trip', required: true },
+  name: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+const Buddy = mongoose.model('Buddy', buddySchema);
+const suggestionSchema = new mongoose.Schema({
+  tripId: { type: mongoose.Schema.Types.ObjectId, ref: 'Trip', required: true },
+  placeName: { type: String, required: true },
+  votes: { type: Number, default: 0 },
+  voters: { type: [String], default: [] },
+  createdAt: { type: Date, default: Date.now },
+});
+const Suggestion = mongoose.model('Suggestion', suggestionSchema);
+
+function getValidatedTripId(req, res) {
+  const tripId = req.query.tripId || req.body.tripId;
+  if (!tripId) {
+    res.status(400).json({ error: 'Missing tripId' });
+    return null;
+  }
+  if (!mongoose.isValidObjectId(tripId)) {
+    res.status(400).json({ error: 'Invalid tripId' });
+    return null;
+  }
+  return tripId;
+}
+
+// ==========================================
+// TRAVEL BUDDY (API ENDPOINTS)
+// ==========================================
+// Get all friends for a shared trip
+app.get('/api/buddies', async (req, res) => {
+  const tripId = getValidatedTripId(req, res);
+  if (!tripId) return;
+  const buddies = await Buddy.find({ tripId }).sort({ createdAt: 1 });
+  res.json(buddies);
+});
+// Add a friend to a shared trip
+app.post('/api/buddies', async (req, res) => {
+  const tripId = getValidatedTripId(req, res);
+  const { name } = req.body;
+  if (!tripId) return;
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+
+  const newBuddy = new Buddy({ tripId, name: name.trim() });
+  await newBuddy.save();
+  res.json(newBuddy);
+});
+// Remove a friend
+app.delete('/api/buddies/:id', async (req, res) => {
+  await Buddy.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+// Get all suggestions for a shared trip
+app.get('/api/suggestions', async (req, res) => {
+  const tripId = getValidatedTripId(req, res);
+  if (!tripId) return;
+  const suggestions = await Suggestion.find({ tripId }).sort({ votes: -1, createdAt: 1 });
+  res.json(suggestions);
+});
+// Add a suggestion to a shared trip
+app.post('/api/suggestions', async (req, res) => {
+  const tripId = getValidatedTripId(req, res);
+  const { placeName } = req.body;
+  if (!tripId) return;
+  if (!placeName || !placeName.trim()) {
+    return res.status(400).json({ error: 'Place name is required' });
+  }
+
+  const newSuggestion = new Suggestion({ tripId, placeName: placeName.trim() });
+  await newSuggestion.save();
+  res.json(newSuggestion);
+});
+// Vote for a suggestion in a shared trip
+app.put('/api/suggestions/:id/vote', async (req, res) => {
+  const tripId = getValidatedTripId(req, res);
+  if (!tripId) return;
+
+  const suggestion = await Suggestion.findOne({ _id: req.params.id, tripId });
+  if (!suggestion) {
+    return res.status(404).json({ error: 'Suggestion not found' });
+  }
+
+  const voterKey = req.sessionID || 'anonymous';
+  if (suggestion.voters.includes(voterKey)) {
+    return res.status(400).json({ error: 'You already voted for this place.' });
+  }
+
+  suggestion.votes += 1;
+  suggestion.voters.push(voterKey);
+  await suggestion.save();
+  res.json(suggestion);
+});
+
+// ==========================================
+// TRAVEL ADVISORIES (MODEL & AUTO-SEED)
+// ==========================================
+const advisorySchema = new mongoose.Schema({
+  country: { type: String, required: true, unique: true },
+  level: String,
+  msg: String
+});
+const Advisory = mongoose.model('Advisory', advisorySchema);
+
+// Auto-seed the database if it is empty so you don't have to type them all manually!
+async function seedAdvisories() {
+  try {
+    const count = await Advisory.countDocuments();
+    if (count === 0) {
+      console.log("Seeding Travel Advisories into MongoDB...");
+      const initialData = [
+        { country: "ukraine", level: "EXTREME", msg: "WAR ZONE: Active conflict, avoid travel." },
+        { country: "russia", level: " HIGH", msg: "Geopolitical tensions, travel advisory." },
+        { country: "israel", level: " ELEVATED", msg: "Regional conflict, stay vigilant." },
+        { country: "afghanistan", level: " EXTREME", msg: "Do not travel — extreme danger." },
+        { country: "syria", level: " EXTREME", msg: "War zone, no travel advised." },
+        { country: "mexico", level: " MEDIUM", msg: "Certain regions: increased caution." },
+        { country: "thailand", level: " LOW", msg: "Generally safe, watch for petty theft." },
+        { country: "japan", level: " VERY LOW", msg: "Extremely safe, earthquake aware." },
+        { country: "indonesia", level: " LOW", msg: "Natural disaster prep recommended." },
+        { country: "philippines", level: " MEDIUM", msg: "Some areas have restrictions." },
+        { country: "brazil", level: " MEDIUM", msg: "Urban crime in major cities." },
+        { country: "usa", level: " LOW", msg: "General precautions, weather alerts." },
+        { country: "spain", level: " LOW", msg: "Pickpocket alert, but safe." },
+        { country: "france", level: " LOW", msg: "Strike disruptions possible." }
+      ];
+      await Advisory.insertMany(initialData);
+      console.log("Advisories successfully saved to database!");
+    }
+  } catch (err) {
+    console.log("Seed error:", err);
+  }
+}
+seedAdvisories();
+
+// ==========================================
+// TRAVEL ADVISORY (API ENDPOINT)
+// ==========================================
+
+// Get a specific country's advisory
+app.get('/api/advisories/:country', async (req, res) => {
+  try {
+    const countryQuery = req.params.country.toLowerCase();
+    // Search MongoDB for the specific country
+    const advisory = await Advisory.findOne({ country: countryQuery });
+    
+    if (advisory) {
+      res.json(advisory); // Found in database
+    } else {
+      // Not found in database, default to safe
+      res.json({ level: "LOW", msg: `No major warnings for ${req.params.country}. Stay aware.` });
+    }
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ==========================================
 // PART A: RESTful API ENDPOINTS (CRUD)
 // ==========================================
