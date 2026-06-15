@@ -67,7 +67,14 @@
     fetch("/components/topNavBar.html")
       .then(response => response.text())
       .then(data => {
-        document.getElementById("topnavbar").innerHTML = data;
+        const nav = document.getElementById("topnavbar");
+        if (nav) {
+          nav.innerHTML = data;
+          const scripts = nav.getElementsByTagName("script");
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
+        }
       })
       .catch(error => {
         console.error("Navbar failed to load:", error);
@@ -333,7 +340,6 @@
     }
   </style>
 </head>
-
 <body class="antialiased">
 
   <!-- Floating particles -->
