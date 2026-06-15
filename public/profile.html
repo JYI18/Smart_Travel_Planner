@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Profile · FlyAway</title>
-  <meta name="description" content="Manage your personal details, travel preferences, and account security all in one place." />
+  <title>Profile</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -37,8 +36,14 @@
 </head>
 
 <body class="min-h-screen bg-cream font-sans text-ink">
+  <div id="topnavbar"></div>
 
   <div class="mx-auto max-w-6xl px-6 py-10">
+
+    <h1 class="mb-6 font-display text-4xl font-bold text-navy">
+      Your Profile
+    </h1>
+
     <div class="grid gap-6 lg:grid-cols-[260px_1fr]">
 
       <!-- Sidebar -->
@@ -47,22 +52,30 @@
         <!-- Avatar card -->
         <div class="rounded-2xl bg-white p-6 text-center shadow-sm">
           <div class="relative mx-auto h-24 w-24">
-            <div class="h-24 w-24 overflow-hidden rounded-full ring-4 ring-amber-500">
+            <div class="h-24 w-24 overflow-hidden rounded-full ring-4 ring-amber-500 bg-amber-500/15">
               <img
                 id="avatarImage"
-                src="https://i.pravatar.cc/160?img=47"
+                src=""
                 alt="Profile image"
-                class="h-full w-full object-cover"
+                class="hidden h-full w-full object-cover"
               />
+
+              <div
+                id="defaultAvatarIcon"
+                class="flex h-full w-full items-center justify-center text-4xl text-amber-600"
+              >
+                <i class="fa-solid fa-user"></i>
+              </div>
             </div>
 
-            <a
-              href="/setup-profile"
+            <button
+              id="avatarEditButton"
+              type="button"
               class="absolute bottom-0 right-0 grid h-7 w-7 place-items-center rounded-full bg-amber-500 text-white ring-2 ring-white"
-              title="Edit profile"
+              title="Edit profile photo"
             >
               <i class="fa-solid fa-pen text-[10px]"></i>
-            </a>
+            </button>
           </div>
 
           <h2 id="sidebarName" class="mt-4 font-display text-xl font-semibold text-navy">
@@ -77,7 +90,7 @@
             id="sidebarBadge"
             class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-3 py-1 text-[11px] font-semibold text-amber-600"
           >
-            <i class="fa-solid fa-plus text-[9px]"></i> Bronze · 0 Trips
+            Bronze · 0 Trips
           </span>
         </div>
 
@@ -122,6 +135,17 @@
             joined recently
           </p>
         </div>
+
+        <!-- Logout -->
+        <form method="POST" action="/logout">
+          <button
+            type="submit"
+            class="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+          </button>
+        </form>
       </aside>
 
       <!-- Main -->
@@ -130,33 +154,35 @@
         <!-- Status -->
         <div
           id="statusMessage"
-          class="hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600"
-        >
-          Unable to load profile.
-        </div>
+          class="hidden rounded-xl border px-4 py-3 text-sm font-semibold"
+        ></div>
 
-        <!-- Header -->
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Account Settings
-            </p>
-
-            <h1 class="mt-1 font-display text-4xl font-bold text-navy">
-              Your Profile
-            </h1>
-
-            <p class="mt-2 max-w-lg text-sm text-slate-500">
-              Manage your personal details, travel preferences, and account security all in one place.
-            </p>
-          </div>
-
-          <a
-            href="/setup-profile"
-            class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600"
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-3">
+          <button
+            id="editButton"
+            type="button"
+            class="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600"
           >
-            <i class="fa-solid fa-plus"></i> Edit Profile
-          </a>
+            <i class="fa-solid fa-pen mr-1"></i>
+            Edit Profile
+          </button>
+
+          <button
+            id="cancelButton"
+            type="button"
+            class="hidden rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="saveButton"
+            type="button"
+            class="hidden rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
+          >
+            Save Changes
+          </button>
         </div>
 
         <!-- Stat cards -->
@@ -223,13 +249,26 @@
           </div>
 
           <div class="mt-6 grid gap-5 sm:grid-cols-2">
+
+            <div class="sm:col-span-2 hidden" id="avatarUploadWrap">
+              <label class="text-xs font-semibold text-slate-600">Profile Photo</label>
+              <input
+                id="avatarInput"
+                name="avatar"
+                type="file"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm text-navy file:mr-4 file:rounded-md file:border-0 file:bg-amber-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-amber-600"
+              />
+              <p class="mt-1 text-xs text-slate-400">Upload JPG, PNG, or WEBP. Max 2MB.</p>
+            </div>
+
             <div>
               <label class="text-xs font-semibold text-slate-600">Full Name</label>
               <input
                 id="nameInput"
                 type="text"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="profile-field mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
@@ -239,18 +278,22 @@
                 id="dobInput"
                 type="date"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="profile-field mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
             <div>
               <label class="text-xs font-semibold text-slate-600">Gender</label>
-              <input
+              <select
                 id="genderInput"
-                type="text"
-                readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-              />
+                disabled
+                class="profile-select mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
             </div>
 
             <div>
@@ -259,7 +302,7 @@
                 id="emailInput"
                 type="email"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm font-medium text-slate-500"
               />
             </div>
 
@@ -269,7 +312,7 @@
                 id="contactInput"
                 type="tel"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="profile-field mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
@@ -279,7 +322,7 @@
                 id="countryInput"
                 type="text"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="profile-field mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
@@ -289,7 +332,7 @@
                 id="cityInput"
                 type="text"
                 readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                class="profile-field mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
@@ -299,7 +342,8 @@
                 id="aboutMeInput"
                 rows="3"
                 readonly
-                class="mt-1.5 w-full resize-y rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                maxlength="300"
+                class="profile-field mt-1.5 w-full resize-y rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               ></textarea>
             </div>
           </div>
@@ -311,31 +355,63 @@
             Travel Preferences
           </h3>
 
-          <div id="travelPreferencesContainer" class="mt-5 flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-cream px-3.5 py-1.5 text-xs font-semibold text-slate-700">
-              No interests selected yet
-            </span>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Beach" disabled class="preference-checkbox accent-amber-500" />
+              🏖 Beach
+            </label>
+
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Culture" disabled class="preference-checkbox accent-amber-500" />
+              🏛 Culture
+            </label>
+
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Food" disabled class="preference-checkbox accent-amber-500" />
+              🍜 Food
+            </label>
+
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Adventure" disabled class="preference-checkbox accent-amber-500" />
+              🥾 Adventure
+            </label>
+
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Nature" disabled class="preference-checkbox accent-amber-500" />
+              🏔 Nature
+            </label>
+
+            <label class="preference-card flex items-center gap-3 rounded-lg border border-slate-200 bg-paper px-4 py-3 text-sm font-medium text-slate-700">
+              <input type="checkbox" name="travelPreferences" value="Nightlife" disabled class="preference-checkbox accent-amber-500" />
+              🌃 Nightlife
+            </label>
           </div>
 
           <div class="mt-6 grid gap-5 sm:grid-cols-2">
             <div>
               <label class="text-xs font-semibold text-slate-600">Preferred Currency</label>
-              <input
+              <select
                 id="currencyInput"
-                type="text"
-                readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-              />
+                disabled
+                class="profile-select mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+              >
+                <option value="MYR">MYR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
             </div>
 
             <div>
               <label class="text-xs font-semibold text-slate-600">Language</label>
-              <input
+              <select
                 id="languageInput"
-                type="text"
-                readonly
-                class="mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-              />
+                disabled
+                class="profile-select mt-1.5 w-full rounded-lg border border-slate-200 bg-paper px-3 py-2.5 text-sm font-medium text-navy focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+              >
+                <option value="English">English</option>
+                <option value="Bahasa Malaysia">Bahasa Malaysia</option>
+                <option value="Mandarin">Mandarin</option>
+              </select>
             </div>
           </div>
         </div>
@@ -354,6 +430,7 @@
             </div>
 
             <button
+              id="deleteAccountButton"
               type="button"
               class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
             >
@@ -367,10 +444,26 @@
   </div>
 
   <script>
-    function showStatus(message) {
+    let currentUser = null;
+
+    function showStatus(message, type = "error") {
       const statusMessage = document.getElementById("statusMessage");
       statusMessage.textContent = message;
       statusMessage.classList.remove("hidden");
+
+      if (type === "success") {
+        statusMessage.className =
+          "rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700";
+      } else {
+        statusMessage.className =
+          "rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600";
+      }
+    }
+
+    function hideStatus() {
+      const statusMessage = document.getElementById("statusMessage");
+      statusMessage.textContent = "";
+      statusMessage.className = "hidden rounded-xl border px-4 py-3 text-sm font-semibold";
     }
 
     function setInputValue(id, value) {
@@ -428,114 +521,247 @@
       });
     }
 
-    function getInterestIcon(interest) {
-      const icons = {
-        Beach: "fa-umbrella-beach",
-        Culture: "fa-landmark",
-        Food: "fa-utensils",
-        Adventure: "fa-mountain",
-        Nature: "fa-tree",
-        Nightlife: "fa-martini-glass",
-      };
+    function setAvatar(avatarUrl) {
+      const avatarImage = document.getElementById("avatarImage");
+      const defaultAvatarIcon = document.getElementById("defaultAvatarIcon");
 
-      return icons[interest] || "fa-plane";
+      if (!avatarImage || !defaultAvatarIcon) return;
+
+      if (avatarUrl && avatarUrl.trim() !== "") {
+        avatarImage.src = avatarUrl;
+        avatarImage.classList.remove("hidden");
+        defaultAvatarIcon.classList.add("hidden");
+
+        avatarImage.onerror = () => {
+          avatarImage.classList.add("hidden");
+          defaultAvatarIcon.classList.remove("hidden");
+        };
+      } else {
+        avatarImage.src = "";
+        avatarImage.classList.add("hidden");
+        defaultAvatarIcon.classList.remove("hidden");
+      }
     }
 
-    function renderTravelPreferences(preferences) {
-      const container = document.getElementById("travelPreferencesContainer");
+    function setPreferenceCheckboxes(preferences = []) {
+      const checkboxes = document.querySelectorAll(".preference-checkbox");
 
-      if (!container) return;
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = preferences.includes(checkbox.value);
+      });
+    }
 
-      container.innerHTML = "";
+    function getSelectedPreferences() {
+      return Array.from(document.querySelectorAll(".preference-checkbox:checked"))
+        .map((checkbox) => checkbox.value);
+    }
 
-      if (!preferences || preferences.length === 0) {
-        container.innerHTML = `
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-cream px-3.5 py-1.5 text-xs font-semibold text-slate-700">
-            No interests selected yet
-          </span>
-        `;
-        return;
-      }
+    function setEditMode(enabled) {
+      const fields = document.querySelectorAll(".profile-field");
+      const selects = document.querySelectorAll(".profile-select");
+      const checkboxes = document.querySelectorAll(".preference-checkbox");
 
-      preferences.forEach((preference, index) => {
-        const badge = document.createElement("span");
-
-        const baseClass =
-          "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold";
-
-        if (index === 0) {
-          badge.className = `${baseClass} bg-amber-500 text-white shadow-sm`;
-        } else if (index === 1) {
-          badge.className = `${baseClass} bg-navy text-white`;
-        } else {
-          badge.className = `${baseClass} bg-cream text-slate-700`;
-        }
-
-        badge.innerHTML = `
-          <i class="fa-solid ${getInterestIcon(preference)} ${index > 1 ? "text-amber-500" : ""}"></i>
-          ${preference}
-        `;
-
-        container.appendChild(badge);
+      fields.forEach((field) => {
+        field.readOnly = !enabled;
+        field.classList.toggle("bg-white", enabled);
+        field.classList.toggle("bg-paper", !enabled);
       });
 
-      const addInterest = document.createElement("a");
-      addInterest.href = "/setup-profile";
-      addInterest.className =
-        "inline-flex items-center gap-1.5 rounded-full border border-dashed border-slate-300 px-3.5 py-1.5 text-xs font-semibold text-slate-500 hover:border-amber-500 hover:text-amber-600";
-      addInterest.textContent = "+ Add Interest";
+      selects.forEach((select) => {
+        select.disabled = !enabled;
+        select.classList.toggle("bg-white", enabled);
+        select.classList.toggle("bg-paper", !enabled);
+      });
 
-      container.appendChild(addInterest);
+      checkboxes.forEach((checkbox) => {
+        checkbox.disabled = !enabled;
+      });
+
+      document.getElementById("avatarUploadWrap").classList.toggle("hidden", !enabled);
+      document.getElementById("editButton").classList.toggle("hidden", enabled);
+      document.getElementById("saveButton").classList.toggle("hidden", !enabled);
+      document.getElementById("cancelButton").classList.toggle("hidden", !enabled);
+    }
+
+    function fillProfile(user) {
+      currentUser = user;
+
+      setAvatar(user.avatarUrl);
+
+      const totalTrips = user.totalTrips ?? 0;
+      const countriesVisited = user.countriesVisited ?? 0;
+      const memberTier = user.memberTier || "Bronze";
+
+      setText("sidebarName", user.name || "Traveler");
+      setText("sidebarEmail", user.email || "traveler@example.com");
+      setText("sidebarBadge", `${memberTier} · ${totalTrips} Trips`);
+      setText("countriesVisitedSidebar", `${countriesVisited} Countries`);
+      setText(
+        "joinedSidebar",
+        user.createdAt
+          ? `joined since ${new Date(user.createdAt).getFullYear()}`
+          : "joined recently"
+      );
+
+      setText("totalTrips", `${totalTrips} trips`);
+      setText("memberTier", memberTier);
+      setText("joinedDate", formatJoinedDate(user.createdAt));
+      setText("lastUpdated", `Last updated · ${formatFullDate(user.updatedAt)}`);
+
+      setInputValue("nameInput", user.name);
+      setInputValue("dobInput", formatDateForInput(user.dob));
+      setInputValue("genderInput", user.gender || "Prefer not to say");
+      setInputValue("emailInput", user.email);
+      setInputValue("contactInput", user.contact);
+      setInputValue("countryInput", user.current_country);
+      setInputValue("cityInput", user.current_city);
+      setInputValue("aboutMeInput", user.aboutMe || "");
+
+      setInputValue("currencyInput", user.preferredCurrency || "MYR");
+      setInputValue("languageInput", user.language || "English");
+
+      setPreferenceCheckboxes(user.travelPreferences || []);
     }
 
     async function loadProfile() {
       try {
         const response = await fetch("/api/profile");
 
+        if (response.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+
         if (!response.ok) {
           throw new Error("Failed to load profile");
         }
 
         const user = await response.json();
-
-        const avatarImage = document.getElementById("avatarImage");
-        avatarImage.src = user.avatarUrl || "https://i.pravatar.cc/160?img=47";
-
-        const totalTrips = user.totalTrips ?? 0;
-        const countriesVisited = user.countriesVisited ?? 0;
-        const memberTier = user.memberTier || "Bronze";
-
-        setText("sidebarName", user.name || "Traveler");
-        setText("sidebarEmail", user.email || "traveler@example.com");
-        setText("sidebarBadge", `${memberTier} · ${totalTrips} Trips`);
-        setText("countriesVisitedSidebar", `${countriesVisited} Countries`);
-        setText("joinedSidebar", user.createdAt ? `joined since ${new Date(user.createdAt).getFullYear()}` : "joined recently");
-
-        setText("totalTrips", `${totalTrips} trips`);
-        setText("memberTier", memberTier);
-        setText("joinedDate", formatJoinedDate(user.createdAt));
-        setText("lastUpdated", `Last updated · ${formatFullDate(user.updatedAt)}`);
-
-        setInputValue("nameInput", user.name);
-        setInputValue("dobInput", formatDateForInput(user.dob));
-        setInputValue("genderInput", user.gender);
-        setInputValue("emailInput", user.email);
-        setInputValue("contactInput", user.contact);
-        setInputValue("countryInput", user.current_country);
-        setInputValue("cityInput", user.current_city);
-        setInputValue("aboutMeInput", user.aboutMe || "No profile description added yet.");
-
-        setInputValue("currencyInput", user.preferredCurrency || "MYR");
-        setInputValue("languageInput", user.language || "English");
-
-        renderTravelPreferences(user.travelPreferences);
+        fillProfile(user);
       } catch (error) {
         console.error("Profile load error:", error);
         showStatus("Unable to load profile. Please log in again.");
       }
     }
 
+    async function saveProfile() {
+      try {
+        hideStatus();
+
+        const formData = new FormData();
+
+        formData.append("name", document.getElementById("nameInput").value.trim());
+        formData.append("dob", document.getElementById("dobInput").value);
+        formData.append("gender", document.getElementById("genderInput").value);
+        formData.append("contact", document.getElementById("contactInput").value.trim());
+        formData.append("current_country", document.getElementById("countryInput").value.trim());
+        formData.append("current_city", document.getElementById("cityInput").value.trim());
+        formData.append("aboutMe", document.getElementById("aboutMeInput").value.trim());
+        formData.append("preferredCurrency", document.getElementById("currencyInput").value);
+        formData.append("language", document.getElementById("languageInput").value);
+
+        getSelectedPreferences().forEach((preference) => {
+          formData.append("travelPreferences", preference);
+        });
+
+        const avatarFile = document.getElementById("avatarInput").files[0];
+
+        if (avatarFile) {
+          formData.append("avatar", avatarFile);
+        }
+
+        const response = await fetch("/api/profile/update", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to update profile.");
+        }
+
+        fillProfile(data.user);
+        setEditMode(false);
+        document.getElementById("avatarInput").value = "";
+
+        showStatus("Profile updated successfully.", "success");
+      } catch (error) {
+        console.error("Save profile error:", error);
+        showStatus(error.message || "Failed to update profile.");
+      }
+    }
+
+    async function deleteAccount() {
+      const confirmed = confirm(
+        "Are you sure you want to delete your account? This cannot be undone."
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch("/api/profile", {
+          method: "DELETE",
+        });
+
+        if (response.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to delete account.");
+        }
+
+        window.location.href = "/signup";
+      } catch (error) {
+        console.error("Delete account error:", error);
+        showStatus(error.message || "Failed to delete account.");
+      }
+    }
+
+    document.getElementById("editButton").addEventListener("click", () => {
+      hideStatus();
+      setEditMode(true);
+    });
+
+    document.getElementById("avatarEditButton").addEventListener("click", () => {
+      hideStatus();
+      setEditMode(true);
+      document.getElementById("avatarInput").click();
+    });
+
+    document.getElementById("cancelButton").addEventListener("click", () => {
+      hideStatus();
+
+      if (currentUser) {
+        fillProfile(currentUser);
+      }
+
+      document.getElementById("avatarInput").value = "";
+      setEditMode(false);
+    });
+
+    document.getElementById("saveButton").addEventListener("click", saveProfile);
+    document.getElementById("deleteAccountButton").addEventListener("click", deleteAccount);
+
     loadProfile();
+
+    fetch("/components/topNavBar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("topnavbar").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Navbar failed to load:", error);
+      });
   </script>
 
 </body>

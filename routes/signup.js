@@ -388,4 +388,139 @@ router.post("/logout", (req, res) => {
   });
 });
 
+/* -----------------------------
+   Update Profile API route
+----------------------------- */
+
+router.post("/api/profile/update", (req, res) => {
+  upload.single("avatar")(req, res, async (uploadError) => {
+    try {
+      if (uploadError) {
+        return res.status(400).json({
+          error: uploadError.message,
+        });
+      }
+
+      if (!req.session || !req.session.userId) {
+        return res.status(401).json({
+          error: "Not logged in.",
+        });
+      }
+
+      const {
+        name,
+        dob,
+        gender,
+        contact,
+        current_country,
+        current_city,
+        aboutMe,
+        preferredCurrency,
+        language,
+        travelPreferences,
+      } = req.body;
+
+      const preferences = Array.isArray(travelPreferences)
+        ? travelPreferences
+        : travelPreferences
+        ? [travelPreferences]
+        : [];
+
+      const updateData = {
+        name: name ? name.trim() : "",
+        dob: dob || undefined,
+        gender: gender || "Prefer not to say",
+        contact: contact ? contact.trim() : "",
+        current_country: current_country ? current_country.trim() : "",
+        current_city: current_city ? current_city.trim() : "",
+        aboutMe: aboutMe ? aboutMe.trim() : "",
+        preferredCurrency: preferredCurrency || "MYR",
+        language: language || "English",
+        travelPreferences: preferences,
+        profileCompleted: true,
+      };
+
+      if (req.file) {
+        updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        req.session.userId,
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).select("-password");
+
+      if (!updatedUser) {
+        return res.status(404).json({
+          error: "User not found.",
+        });
+      }
+
+      res.json({
+        success: true,
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.error("Update profile error:", error);
+
+      res.status(500).json({
+        error: "Server error while updating profile.",
+      });
+    }
+  });
+});
+
+/* -----------------------------
+   Delete Profile API route
+----------------------------- */
+
+router.delete("/api/profile", async (req, res) => {
+  try {
+    if (!req.session || !req.session.userId) {
+      return res.status(401).json({
+        error: "Not logged in.",
+      });
+    }
+
+    const user = await User.findById(req.session.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found.",
+      });
+    }
+
+    if (user.avatarUrl && user.avatarUrl.startsWith("/uploads/avatars/")) {
+      const avatarPath = path.join(__dirname, "..", "public", user.avatarUrl);
+
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    await User.findByIdAndDelete(req.session.userId);
+
+    req.session.destroy((sessionError) => {
+      if (sessionError) {
+        return res.status(500).json({
+          error: "Account deleted, but logout failed.",
+        });
+      }
+
+      res.json({
+        success: true,
+      });
+    });
+  } catch (error) {
+    console.error("Delete profile error:", error);
+
+    res.status(500).json({
+      error: "Server error while deleting account.",
+    });
+  }
+});
+
 module.exports = router;

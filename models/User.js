@@ -77,7 +77,7 @@ const userSchema = new mongoose.Schema(
 
     avatarUrl: {
       type: String,
-      default: "https://i.pravatar.cc/160?img=47",
+      default: "",
     },
 
     aboutMe: {
