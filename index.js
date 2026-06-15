@@ -80,6 +80,7 @@ const Trip = mongoose.model('Trip', tripSchema);
 
 // Middleware
 app.use(cors());
+app.use(cors());
 app.use(express.json());
 <<<<<<< HEAD
 
@@ -164,7 +165,6 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 // Destination dropdown API cache
 const destinationCache = new Map();
 const destinationCacheTtlMs = 1000 * 60 * 60 * 24; // 24 hours
@@ -274,6 +274,7 @@ function getCountryCode(country) {
 app.get("/api/destinations/regions", (req, res) => {
   res.json({
     regions: ["Africa", "Americas", "Asia", "Europe", "Oceania"],
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "not connected"
   });
 });
 
@@ -725,7 +726,6 @@ async function getOpenTripMapPlaceDetails(xid) {
 // /api/popular-attractions?state=Penang&country=Malaysia&countryCode=MY&radius=50000
 // /api/popular-attractions?city=Tokyo&country=Japan&countryCode=JP&radius=10000
 app.get("/api/popular-attractions", async (req, res) => {
-=======
 function getGeoapifyCategories(category) {
   const categoryMap = {
     all: [
@@ -742,12 +742,14 @@ function getGeoapifyCategories(category) {
       "natural",
       "beach",
       "public_transport"
+      "public_transport"
     ],
 
     must_see: [
       "tourism.sights",
       "tourism.attraction",
       "tourism.attraction.viewpoint",
+      "heritage"
       "heritage"
     ],
 
@@ -758,12 +760,21 @@ function getGeoapifyCategories(category) {
       "tourism.sights.building",
       "tourism.attraction.artwork",
       "religion"
+      "religion"
     ],
 
     museums: [
       "entertainment.museum"
     ],
+    museums: [
+      "entertainment.museum"
+    ],
 
+    food: [
+      "catering.restaurant",
+      "catering.cafe",
+      "catering.fast_food"
+    ],
     food: [
       "catering.restaurant",
       "catering.cafe",
@@ -775,8 +786,15 @@ function getGeoapifyCategories(category) {
       "commercial.marketplace",
       "commercial.department_store",
       "commercial.supermarket"
+      "commercial.supermarket"
     ],
 
+    nature: [
+      "natural",
+      "beach",
+      "leisure.park",
+      "tourism.attraction.viewpoint"
+    ],
     nature: [
       "natural",
       "beach",
@@ -789,6 +807,7 @@ function getGeoapifyCategories(category) {
       "accommodation.hostel",
       "accommodation.guest_house",
       "accommodation.apartment"
+      "accommodation.apartment"
     ],
 
     nightlife: [
@@ -796,7 +815,16 @@ function getGeoapifyCategories(category) {
       "catering.pub",
       "entertainment"
     ],
+    nightlife: [
+      "catering.bar",
+      "catering.pub",
+      "entertainment"
+    ],
 
+    transport: [
+      "public_transport",
+      "airport"
+    ]
     transport: [
       "public_transport",
       "airport"
@@ -848,6 +876,8 @@ async function getUnsplashImage(query) {
       Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
       "Accept-Version": "v1"
     }
+      "Accept-Version": "v1"
+    }
   });
 
   if (!response.ok) {
@@ -866,7 +896,6 @@ async function getUnsplashImage(query) {
 }
 
 app.get("/api/search-places", async (req, res) => {
->>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
   try {
     const city = String(req.query.city || "").trim();
     const state = String(req.query.state || "").trim();
@@ -917,6 +946,7 @@ app.get("/api/search-places", async (req, res) => {
     if (!process.env.OPENTRIPMAP_API_KEY) {
       return res.status(500).json({
         error: "Missing OPENTRIPMAP_API_KEY in .env file",
+        error: `Geoapify geocode failed with status ${geocodeResponse.status}`
       });
     }
 
@@ -950,6 +980,7 @@ app.get("/api/search-places", async (req, res) => {
         matched: geonameData,
 =======
         error: "City not found"
+        error: "City not found"
       });
     }
 
@@ -968,7 +999,9 @@ app.get("/api/search-places", async (req, res) => {
 
     if (!placesResponse.ok) {
       return res.status(500).json({
-        error: `Geoapify places failed with status ${placesResponse.status}`,
+        error: `Geoapify places failed with status ${placesResponse.status}`
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        error: `Geoapify places failed with status ${placesResponse.status}`
       });
     }
 
@@ -1038,6 +1071,7 @@ app.get("/api/search-places", async (req, res) => {
           lon: place.properties.lon,
           image: image
 >>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          image: image
         };
       })
     );
@@ -1072,6 +1106,7 @@ app.get("/api/search-places", async (req, res) => {
       categoriesFound: categoriesFound,
       places: places
 >>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      places: places
     });
   } catch (error) {
     console.error("Popular attractions error:", error);
@@ -1082,6 +1117,7 @@ app.get("/api/search-places", async (req, res) => {
 =======
       error: error.message || "Failed to search places"
 >>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      error: error.message || "Failed to search places"
     });
   }
 });
