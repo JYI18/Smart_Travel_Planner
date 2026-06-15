@@ -182,6 +182,10 @@
         const navbar = document.getElementById("topnavbar");
         if (navbar) {
           navbar.innerHTML = data;
+          const scripts = navbar.getElementsByTagName("script");
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
         }
       })
       .catch(() => {
