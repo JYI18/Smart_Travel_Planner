@@ -3,22 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
   <title>FlyAway · Plan Your Journey | Smart Travel Planner</title>
+
   <!-- Tailwind + Fonts + Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"
+    rel="stylesheet"
+  >
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    fetch("/components/topNavBar.html")
+      .then((response) => response.text())
+      .then((data) => {
+        const nav = document.getElementById("topnavbar");
+
+        if (nav) {
+          nav.innerHTML = data;
+
+          const scripts = nav.getElementsByTagName("script");
+
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
+        }
+      })
+      .catch((error) => console.error("Navbar failed to load:", error));
+  </script>
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #fef9f0;  /* warm creamy background – high contrast, not dark */
-      overflow-x: hidden;
-      color: #1e2a32;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    
-    /* Parallax background (same image as homepage, but brighter overlay) */
+
+    :root {
+      --bg-main: #07111f;
+      --bg-panel: rgba(15, 23, 42, 0.78);
+      --bg-panel-strong: rgba(15, 23, 42, 0.92);
+      --bg-panel-soft: rgba(30, 41, 59, 0.62);
+      --border-soft: rgba(148, 163, 184, 0.22);
+      --border-gold: rgba(245, 165, 36, 0.42);
+      --text-main: #e5eef8;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --gold: #f5a524;
+      --gold-light: #ffc857;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg-main);
+      overflow-x: hidden;
+      color: var(--text-main);
+    }
+
     .parallax-bg {
       position: fixed;
       top: 0;
@@ -26,116 +75,141 @@
       width: 100%;
       height: 100%;
       z-index: -2;
-      background-image: url('img/FlyAway_Background.jpg');
+      background-image: url("img/FlyAway_Background.jpg");
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
     }
+
     .parallax-bg::before {
-      content: '';
+      content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(145deg, rgba(255,248,235,0.88) 0%, rgba(255,242,219,0.94) 100%);
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(245, 165, 36, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.12), transparent 30%),
+        linear-gradient(145deg, rgba(2, 6, 23, 0.88) 0%, rgba(7, 17, 31, 0.96) 52%, rgba(15, 23, 42, 0.98) 100%);
       pointer-events: none;
     }
-    
-    /* Light & airy glassmorphic cards */
+
     .glass-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(245, 165, 36, 0.3);
+      background: var(--bg-panel);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-gold);
       border-radius: 2rem;
       transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
+      box-shadow:
+        0 24px 80px -30px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
+
     .glass-card:hover {
-      background: rgba(255, 255, 255, 0.85);
-      border-color: #F5A524;
-      transform: translateY(-6px);
-      box-shadow: 0 25px 40px -16px rgba(245, 165, 36, 0.2);
+      background: rgba(15, 23, 42, 0.86);
+      border-color: rgba(245, 165, 36, 0.72);
+      box-shadow:
+        0 32px 90px -36px rgba(0, 0, 0, 0.9),
+        0 0 36px rgba(245, 165, 36, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
-    
-    /* Input fields – light theme */
+
     .input-light {
       display: flex;
       height: 2.9rem;
       width: 100%;
       border-radius: 1rem;
-      border: 1px solid #e2dcd0;
-      background: #ffffffcc;
-      color: #1e2a32;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(2, 6, 23, 0.55);
+      color: var(--text-main);
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
       outline: none;
       transition: all 0.2s;
     }
-    .input-light:focus {
-      border-color: #F5A524;
-      box-shadow: 0 0 0 3px rgba(245, 165, 36, 0.2);
-      background: #ffffff;
+
+    .input-light::placeholder {
+      color: rgba(148, 163, 184, 0.78);
     }
+
+    .input-light:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245, 165, 36, 0.18);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
     textarea.input-light {
       min-height: 100px;
     }
-    
-    /* Gold gradient + buttons (warm contrast) */
+
+    select.input-light option {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      opacity: 0.75;
+      cursor: pointer;
+    }
+
     .btn-gold {
-      background: linear-gradient(105deg, #F5A524 0%, #FFB347 100%);
-      color: white;
-      font-weight: 700;
+      background: linear-gradient(105deg, #f59e0b 0%, #f5a524 52%, #facc15 100%);
+      color: #111827;
+      font-weight: 800;
       padding: 0.75rem 2rem;
       border-radius: 3rem;
       transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(245, 165, 36, 0.35);
+      box-shadow: 0 12px 28px rgba(245, 165, 36, 0.24);
     }
+
     .btn-gold:hover {
       transform: scale(1.02);
-      box-shadow: 0 10px 22px rgba(245, 165, 36, 0.5);
+      box-shadow: 0 18px 36px rgba(245, 165, 36, 0.38);
     }
+
     .btn-outline-light {
-      background: transparent;
-      border: 1px solid #cbbfaa;
-      color: #7b6e55;
+      background: rgba(15, 23, 42, 0.48);
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      color: #cbd5e1;
       border-radius: 3rem;
-      font-weight: 500;
+      font-weight: 600;
       padding: 0.7rem 1.5rem;
       transition: all 0.2s;
     }
+
     .btn-outline-light:hover {
-      background: #F5A52410;
-      border-color: #F5A524;
-      color: #b45f1b;
+      background: rgba(245, 165, 36, 0.12);
+      border-color: rgba(245, 165, 36, 0.75);
+      color: #ffd166;
     }
-    
-    /* style chips (light mode) */
+
     .style-chip-light {
-      background: white;
-      border: 1px solid #ede3d1;
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.25);
       border-radius: 9999px;
       padding: 0.4rem 1.2rem;
       font-size: 0.8rem;
-      font-weight: 500;
-      color: #5a4a2e;
+      font-weight: 600;
+      color: #cbd5e1;
       transition: all 0.2s;
       cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
+
     .style-chip-light.active {
-      background: #F5A524;
-      border-color: #F5A524;
-      color: white;
-      box-shadow: 0 5px 12px rgba(245,165,36,0.25);
+      background: linear-gradient(105deg, #f59e0b, #f5a524);
+      border-color: rgba(245, 165, 36, 0.9);
+      color: #111827;
+      box-shadow: 0 10px 24px rgba(245, 165, 36, 0.22);
     }
+
     .style-chip-light:hover:not(.active) {
-      background: #fff4e6;
-      border-color: #F5A524;
-      color: #b45f1b;
+      background: rgba(245, 165, 36, 0.12);
+      border-color: rgba(245, 165, 36, 0.7);
+      color: #ffd166;
     }
-    
-    /* section label + badge */
+
     .section-label-light {
       display: inline-flex;
       align-items: center;
@@ -144,395 +218,1291 @@
       font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #F5A524;
+      color: #ffd166;
       background: rgba(245, 165, 36, 0.12);
+      border: 1px solid rgba(245, 165, 36, 0.24);
       padding: 0.4rem 1.2rem;
       border-radius: 40px;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
     }
+
     .gold-gradient-text {
-      background: linear-gradient(125deg, #E67E22, #F5A524, #FFC857);
+      background: linear-gradient(125deg, #f59e0b, #f5a524, #ffe08a);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       font-weight: 800;
     }
-    
-    /* Navbar – light & airy */
-    .navbar-light {
-      background: rgba(255, 250, 240, 0.92);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(245,165,36,0.25);
-      box-shadow: 0 2px 15px rgba(0,0,0,0.02);
-    }
-    
-    /* floating particles soft */
+
     .particle-soft {
       position: fixed;
       width: 3px;
       height: 3px;
-      background: rgba(245,165,36,0.4);
+      background: rgba(245, 165, 36, 0.55);
       border-radius: 50%;
       pointer-events: none;
       animation: floatSoft 12s linear infinite;
       z-index: 0;
+      box-shadow: 0 0 12px rgba(245, 165, 36, 0.3);
     }
+
     @keyframes floatSoft {
-      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      15% { opacity: 0.6; }
-      85% { opacity: 0.5; }
-      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 0.6;
+      }
+
+      85% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
     }
+
     .cloud-soft {
       position: fixed;
-      background: rgba(255,215,160,0.25);
+      background: rgba(30, 64, 175, 0.18);
       border-radius: 1000px;
-      filter: blur(40px);
+      filter: blur(46px);
       pointer-events: none;
       z-index: -1;
       animation: floatCloudSoft 45s linear infinite;
     }
+
     @keyframes floatCloudSoft {
-      0% { transform: translateX(-200px); opacity: 0; }
-      20% { opacity: 0.5; }
-      80% { opacity: 0.4; }
-      100% { transform: translateX(calc(100vw + 300px)); opacity: 0; }
+      0% {
+        transform: translateX(-200px);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 0.45;
+      }
+
+      80% {
+        opacity: 0.35;
+      }
+
+      100% {
+        transform: translateX(calc(100vw + 300px));
+        opacity: 0;
+      }
     }
+
     .scroll-reveal {
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.6s ease;
     }
+
     .scroll-reveal.revealed {
       opacity: 1;
       transform: translateY(0);
     }
-    ::-webkit-scrollbar { width: 7px; }
-    ::-webkit-scrollbar-track { background: #f3ede3; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #F5A524; border-radius: 10px; }
-    
-    /* footer */
+
     .footer-light {
-      border-top: 1px solid #f0e5d6;
-      background: rgba(255, 250, 240, 0.6);
-      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(2, 6, 23, 0.76);
+      backdrop-filter: blur(14px);
+    }
+
+    #topnavbar {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    #topnavbar [class*="bg-white"],
+    #topnavbar [class*="bg-stone"],
+    #topnavbar [class*="bg-gray"] {
+      background-color: rgba(15, 23, 42, 0.86) !important;
+    }
+
+    #topnavbar [class*="text-stone"],
+    #topnavbar [class*="text-gray"],
+    #topnavbar [class*="text-slate"] {
+      color: #e2e8f0 !important;
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #020617;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f5a524;
+      border-radius: 10px;
     }
   </style>
 </head>
-<body class="antialiased">
-  <!-- Parallax Background with same image + warm overlay -->
-  <div class="parallax-bg"></div>
 
-  <!-- Soft clouds & particles -->
+<body class="antialiased">
+  <div class="parallax-bg"></div>
   <div id="softClouds"></div>
   <div id="softParticles"></div>
-
-  <!-- Navbar – light & consistent with homepage logo/identity -->
-  <nav class="navbar-light sticky top-0 left-0 z-50 flex w-full items-center justify-between px-6 py-3 shadow-sm transition-all">
-    <div class="flex items-center gap-3">
-      <img src="/img/FlyAway_Logo.png" alt="FlyAway Logo" class="h-10 w-auto object-contain" style="max-width: 130px;">
-      <span class="text-xl font-bold text-amber-700 tracking-tight">FlyAway</span>
-    </div>
-    <div class="hidden md:flex gap-7 text-sm font-semibold text-stone-700">
-      <a href="#" class="hover:text-amber-600 transition flex items-center gap-1"><i class="fa-solid fa-house"></i> Home</a>
-      <a href="#" class="text-amber-600 border-b-2 border-amber-400 pb-0.5 flex items-center gap-1"><i class="fa-solid fa-plus-circle"></i> Plan Trip</a>
-      <a href="itenary.html" class="hover:text-amber-600 transition flex items-center gap-1"><i class="fa-solid fa-suitcase-rolling"></i> My Trips</a>
-      <a href="#profile" class="hover:text-amber-600 transition flex items-center gap-1"><i class="fa-solid fa-user"></i> Profile</a>
-    </div>
-    <div class="md:hidden">
-      <button class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white text-sm font-semibold shadow-md">
-        <i class="fas fa-plus mr-1"></i>Plan
-      </button>
-    </div>
-  </nav>
+  <div id="topnavbar"></div>
 
   <main class="relative z-10 max-w-6xl mx-auto px-6 py-12 md:py-16">
-    <!-- Header with bright contrast -->
     <div class="scroll-reveal text-center mb-12">
-      <div class="section-label-light mx-auto w-fit mb-4"><i class="fa-regular fa-compass"></i> DREAM. PLAN. EXPLORE</div>
-      <h1 class="font-serif text-5xl md:text-6xl font-black text-stone-800 leading-tight">Design your next<br><span class="gold-gradient-text">smart getaway</span></h1>
-      <p class="text-stone-600 max-w-2xl mx-auto mt-4 text-base font-medium bg-white/40 backdrop-blur-sm rounded-full py-2 px-6 inline-block">Fill in the details — your journey, beautifully organized.</p>
+      <div class="section-label-light mx-auto w-fit mb-4">
+        <i class="fa-regular fa-compass"></i>
+        DREAM. PLAN. EXPLORE
+      </div>
+
+      <h1 class="font-serif text-5xl md:text-6xl font-black text-slate-100 leading-tight">
+        Design your next<br>
+        <span class="gold-gradient-text">smart getaway</span>
+      </h1>
+
+      <p class="text-slate-300 max-w-2xl mx-auto mt-4 text-base font-medium bg-slate-900/55 backdrop-blur-sm rounded-full py-2 px-6 inline-block">
+        Fill in the details — your journey, beautifully organized.
+      </p>
     </div>
 
-    <!-- Light & Contrast Trip Form Card (no dark mode) -->
     <div class="glass-card max-w-4xl mx-auto p-6 md:p-8 transition-all duration-300">
-      <div class="flex items-center gap-3 border-b border-amber-200/60 pb-5 mb-6">
-        <div class="h-11 w-11 rounded-2xl bg-amber-100 flex items-center justify-center shadow-inner"><i class="fa-solid fa-map-location-dot text-amber-600 text-xl"></i></div>
-        <h2 class="text-2xl font-serif font-bold text-stone-800">Trip blueprint</h2>
-        <span class="text-xs text-amber-600 ml-auto bg-amber-50 px-3 py-1 rounded-full"><i class="fa-regular fa-pen-to-square mr-1"></i> new expedition</span>
+      <div class="flex items-center gap-3 border-b border-amber-500/25 pb-5 mb-6">
+        <div class="h-11 w-11 rounded-2xl bg-amber-400/15 flex items-center justify-center shadow-inner">
+          <i class="fa-solid fa-map-location-dot text-amber-300 text-xl"></i>
+        </div>
+
+        <h2 class="text-2xl font-serif font-bold text-slate-100">
+          Trip blueprint
+        </h2>
+
+        <span class="text-xs text-amber-300 ml-auto bg-amber-400/10 px-3 py-1 rounded-full">
+          <i class="fa-regular fa-pen-to-square mr-1"></i>
+          new expedition
+        </span>
       </div>
 
       <form id="newTripForm" onsubmit="event.preventDefault(); saveNewTrip();">
         <input type="hidden" id="tripIdField" value="">
-        
+
         <div class="grid md:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-regular fa-flag mr-1 text-amber-500"></i> Trip name *</label>
-            <input type="text" id="tripName" class="input-light" placeholder="e.g., Amalfi Coast Dream" required>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-flag mr-1 text-amber-300"></i>
+              Trip name *
+            </label>
+
+            <input
+              type="text"
+              id="tripName"
+              class="input-light"
+              placeholder="e.g., Amalfi Coast Dream"
+              required
+            >
           </div>
+
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-solid fa-location-dot mr-1 text-amber-500"></i> Destination *</label>
-            <input type="text" id="destination" class="input-light" placeholder="e.g., Santorini, Greece" required>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-location-dot mr-1 text-amber-300"></i>
+              Destination *
+            </label>
+
+            <input
+              type="text"
+              id="destination"
+              class="input-light"
+              placeholder="e.g., Santorini, Greece"
+              required
+            >
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 mt-5">
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-regular fa-calendar mr-1 text-amber-500"></i> Departure</label>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-calendar mr-1 text-amber-300"></i>
+              Departure
+            </label>
+
             <input type="date" id="departureDate" class="input-light">
           </div>
+
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-regular fa-calendar-check mr-1 text-amber-500"></i> Return</label>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-calendar-check mr-1 text-amber-300"></i>
+              Return
+            </label>
+
             <input type="date" id="returnDate" class="input-light">
           </div>
         </div>
 
-        <!-- Travel style chips (bright) -->
         <div class="mt-6">
-          <label class="block text-sm font-semibold text-stone-700 mb-2"><i class="fa-solid fa-tag mr-1 text-amber-500"></i> Travel vibe</label>
+          <label class="block text-sm font-semibold text-slate-200 mb-2">
+            <i class="fa-solid fa-tag mr-1 text-amber-300"></i>
+            Travel vibe
+          </label>
+
           <div class="flex flex-wrap gap-2 mb-2" id="styleChipsContainer">
-            <div class="style-chip-light" data-style="Beach"><i class="fa-solid fa-umbrella-beach mr-1"></i> Beach</div>
-            <div class="style-chip-light" data-style="Adventure"><i class="fa-solid fa-mountain-sun mr-1"></i> Adventure</div>
-            <div class="style-chip-light" data-style="City"><i class="fa-solid fa-city mr-1"></i> City</div>
-            <div class="style-chip-light" data-style="Foodie"><i class="fa-solid fa-utensils mr-1"></i> Foodie</div>
-            <div class="style-chip-light" data-style="Relax"><i class="fa-solid fa-spa mr-1"></i> Relax</div>
+            <div class="style-chip-light" data-style="Beach">
+              <i class="fa-solid fa-umbrella-beach mr-1"></i>
+              Beach
+            </div>
+
+            <div class="style-chip-light" data-style="Adventure">
+              <i class="fa-solid fa-mountain-sun mr-1"></i>
+              Adventure
+            </div>
+
+            <div class="style-chip-light" data-style="City">
+              <i class="fa-solid fa-city mr-1"></i>
+              City
+            </div>
+
+            <div class="style-chip-light" data-style="Foodie">
+              <i class="fa-solid fa-utensils mr-1"></i>
+              Foodie
+            </div>
+
+            <div class="style-chip-light" data-style="Relax">
+              <i class="fa-solid fa-spa mr-1"></i>
+              Relax
+            </div>
           </div>
+
           <input type="hidden" id="tripStyleInput">
         </div>
 
         <div class="grid md:grid-cols-3 gap-5 mt-5">
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-solid fa-users mr-1 text-amber-500"></i> Travelers</label>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-users mr-1 text-amber-300"></i>
+              Travelers
+            </label>
+
             <input type="number" id="travelers" min="1" value="2" class="input-light">
           </div>
+
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-solid fa-coins mr-1 text-amber-500"></i> Budget (approx)</label>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-coins mr-1 text-amber-300"></i>
+              Budget (approx)
+            </label>
+
             <input type="number" id="budget" class="input-light" placeholder="0">
           </div>
+
           <div>
-            <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-solid fa-globe mr-1 text-amber-500"></i> Currency</label>
-            <select id="currency" class="input-light bg-white/90">
-              <option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option><option>CAD</option>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-globe mr-1 text-amber-300"></i>
+              Currency
+            </label>
+
+            <select id="currency" class="input-light bg-slate-900/90">
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+              <option>JPY</option>
+              <option>CAD</option>
             </select>
           </div>
         </div>
 
         <div class="mt-6">
-          <label class="block text-sm font-semibold text-stone-700 mb-1.5"><i class="fa-regular fa-note-sticky mr-1 text-amber-500"></i> Travel notes / wishlist</label>
-          <textarea id="notes" rows="3" class="input-light" placeholder="Hidden gems, local cuisine, must-see spots..."></textarea>
+          <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+            <i class="fa-regular fa-note-sticky mr-1 text-amber-300"></i>
+            Travel notes / wishlist
+          </label>
+
+          <textarea
+            id="notes"
+            rows="3"
+            class="input-light"
+            placeholder="Hidden gems, local cuisine, must-see spots..."
+          ></textarea>
         </div>
 
-        <div class="mt-8 flex flex-wrap justify-end gap-3 border-t border-amber-200/40 pt-6">
-          <button type="reset" onclick="resetForm()" class="btn-outline-light px-6 py-2.5"><i class="fa-regular fa-trash-alt mr-1"></i> Clear</button>
-          <button type="submit" class="btn-gold px-8 py-2.5"><i class="fa-regular fa-floppy-disk mr-2"></i> Save Trip</button>
+        <!-- Add spots to trip -->
+        <div class="mt-8 rounded-3xl border border-amber-500/25 bg-slate-900/55 p-5">
+          <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-extrabold uppercase tracking-wider text-amber-300">
+                <i class="fa-solid fa-route mr-1"></i>
+                Trip Spots
+              </p>
+
+              <h3 class="mt-1 font-serif text-2xl font-bold text-slate-100">
+                Add places to this trip
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-400">
+                Add attractions, events, and food spots from your wishlist or search new places.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onclick="loadPlannerWishlist()"
+              class="btn-outline-light px-4 py-2.5"
+            >
+              <i class="fa-solid fa-heart mr-1"></i>
+              Load Wishlist
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <div class="mb-2 flex items-center justify-between">
+              <p class="text-sm font-bold text-slate-200">
+                Selected for this trip
+              </p>
+
+              <span id="selectedSpotsCount" class="text-xs text-slate-400">
+                0 spots selected
+              </span>
+            </div>
+
+            <div id="selectedTripSpots" class="grid gap-3 md:grid-cols-2">
+              <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/60 p-5 text-center text-sm text-slate-400 md:col-span-2">
+                No spots added yet.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-6 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-4">
+            <div class="mb-3 flex items-center justify-between">
+              <p class="text-sm font-bold text-slate-200">
+                Add from wishlist
+              </p>
+
+              <button
+                type="button"
+                onclick="loadPlannerWishlist()"
+                class="rounded-full bg-amber-400/15 px-3 py-1.5 text-xs font-bold text-amber-200 hover:bg-amber-400/20"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div id="plannerWishlistGrid" class="grid gap-3 md:grid-cols-2">
+              <p class="text-sm text-slate-400">
+                Click “Load Wishlist” to show saved attractions, events, and food spots.
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-700/70 bg-slate-900/60 p-4">
+            <p class="mb-3 text-sm font-bold text-slate-200">
+              Find more spots while planning
+            </p>
+
+            <div class="grid gap-3 md:grid-cols-4">
+              <select id="plannerSearchType" class="input-light">
+                <option value="attraction">Attractions</option>
+                <option value="event">Events</option>
+                <option value="food">Food Spots</option>
+              </select>
+
+              <input
+                id="plannerCountry"
+                type="text"
+                class="input-light"
+                placeholder="Country, e.g. Japan"
+                value="Japan"
+              >
+
+              <input
+                id="plannerCountryCode"
+                type="text"
+                class="input-light"
+                placeholder="Code, e.g. JP"
+                value="JP"
+              >
+
+              <input
+                id="plannerState"
+                type="text"
+                class="input-light"
+                placeholder="State, e.g. Tokyo"
+                value="Tokyo"
+              >
+            </div>
+
+            <div class="mt-3 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                id="plannerFoodQuery"
+                type="text"
+                class="input-light"
+                placeholder="For food search: ramen, cafe, bakery..."
+              >
+
+              <button
+                type="button"
+                onclick="searchPlannerSpots()"
+                class="btn-gold px-5 py-2.5"
+              >
+                <i class="fa-solid fa-magnifying-glass mr-1"></i>
+                Search
+              </button>
+            </div>
+
+            <p class="mt-2 text-xs text-slate-400">
+              Attractions need country + country code + state. Events need country code. Food uses destination/state/country.
+            </p>
+
+            <div id="plannerSearchResults" class="mt-4 grid gap-3 md:grid-cols-2">
+              <p class="text-sm text-slate-400">
+                Search results will appear here.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-end gap-3 border-t border-amber-500/20 pt-6">
+          <button
+            type="reset"
+            onclick="resetForm()"
+            class="btn-outline-light px-6 py-2.5"
+          >
+            <i class="fa-regular fa-trash-alt mr-1"></i>
+            Clear
+          </button>
+
+          <button type="submit" class="btn-gold px-8 py-2.5">
+            <i class="fa-regular fa-floppy-disk mr-2"></i>
+            Save Trip
+          </button>
+        </div>
+
+        <div id="tripShareSection" class="hidden mt-6 rounded-2xl border border-amber-500/20 bg-amber-400/10/70 p-4 text-slate-200">
+          <p class="font-semibold mb-2">
+            Invite friends with this trip link
+          </p>
+
+          <div class="flex gap-2 flex-wrap">
+            <input
+              id="tripShareUrl"
+              type="text"
+              readonly
+              class="input-light flex-1 min-w-[220px] bg-slate-900/90"
+              placeholder="Save trip to generate invite link"
+            >
+
+            <button
+              type="button"
+              onclick="copyTripLink()"
+              class="btn-outline-light px-4 py-2.5 whitespace-nowrap"
+            >
+              <i class="fas fa-link mr-1"></i>
+              Copy Link
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-2">
+            Send this to trip members to open the shared itinerary without extra setup.
+          </p>
         </div>
       </form>
     </div>
-
-    <!-- extra info bar contrast -->
-    <div class="max-w-3xl mx-auto mt-12 text-center">
-      <div class="flex flex-wrap justify-center gap-3 text-xs text-stone-500">
-        <span class="bg-white/70 backdrop-blur px-4 py-1.5 rounded-full shadow-sm"><i class="fa-regular fa-cloud-sun mr-1 text-amber-500"></i> Live weather insights</span>
-        <span class="bg-white/70 backdrop-blur px-4 py-1.5 rounded-full shadow-sm"><i class="fa-regular fa-heart mr-1 text-rose-400"></i> Save favorites</span>
-        <span class="bg-white/70 backdrop-blur px-4 py-1.5 rounded-full shadow-sm"><i class="fa-regular fa-map mr-1 text-emerald-500"></i> Smart itinerary ready</span>
-      </div>
-    </div>
   </main>
 
-  <footer class="footer-light border-t border-stone-200 py-6 mt-12">
-    <div class="max-w-6xl mx-auto px-6 text-center text-stone-500 text-sm">
+  <footer class="footer-light border-t border-slate-700/70 py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-6 text-center text-slate-400 text-sm">
       FlyAway Smart Travel Planner — seamless trip management · powered by wanderlust
     </div>
   </footer>
 
   <script>
-    // === Soft atmospheric clouds + particles (light contrast style) ===
-    function initSoftAtmosphere() {
-      const cloudContainer = document.getElementById('softClouds');
-      for (let i = 0; i < 12; i++) {
-        const cloud = document.createElement('div');
-        cloud.className = 'cloud-soft';
-        cloud.style.width = Math.random() * 240 + 120 + 'px';
-        cloud.style.height = Math.random() * 100 + 60 + 'px';
-        cloud.style.bottom = Math.random() * 60 + 5 + '%';
-        cloud.style.left = -Math.random() * 200 + 'px';
-        cloud.style.animationDelay = Math.random() * 20 + 's';
-        cloud.style.animationDuration = Math.random() * 40 + 35 + 's';
-        cloudContainer.appendChild(cloud);
-      }
-      const particleDiv = document.getElementById('softParticles');
-      for (let i = 0; i < 40; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle-soft';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDelay = Math.random() * 14 + 's';
-        p.style.animationDuration = Math.random() * 16 + 7 + 's';
-        p.style.width = Math.random() * 5 + 2 + 'px';
-        p.style.height = p.style.width;
-        particleDiv.appendChild(p);
-      }
-    }
-    initSoftAtmosphere();
-
-    // scroll reveal
-    const revealItems = document.querySelectorAll('.scroll-reveal');
-    const scrollObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('revealed'); });
-    }, { threshold: 0.1 });
-    revealItems.forEach(el => scrollObserver.observe(el));
-
-    // style chips handler (light mode)
-    const styleChips = document.querySelectorAll('.style-chip-light');
-    const tripStyleHidden = document.getElementById('tripStyleInput');
-    function updateStyleSelection(selectedStyle) {
-      styleChips.forEach(chip => {
-        const styleVal = chip.getAttribute('data-style');
-        if (styleVal === selectedStyle) chip.classList.add('active');
-        else chip.classList.remove('active');
-      });
-      tripStyleHidden.value = selectedStyle || '';
-    }
-    styleChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        const style = chip.getAttribute('data-style');
-        updateStyleSelection(style);
-      });
-    });
-    // reset form 
-    window.resetForm = function() {
-      document.getElementById('newTripForm').reset();
-      document.getElementById('tripIdField').value = '';
-      document.getElementById('tripStyleInput').value = '';
-      updateStyleSelection('');
-      document.getElementById('departureDate').value = '';
-      document.getElementById('returnDate').value = '';
-      document.getElementById('notes').value = '';
-      document.getElementById('budget').value = '';
-      document.getElementById('travelers').value = '2';
-      document.getElementById('currency').value = 'USD';
-      Swal.fire({
-        title: 'Cleared ✨',
-        text: 'Form is ready for a new journey',
-        icon: 'info',
-        background: '#fffcf5',
-        color: '#5a4a2e',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    };
-    
     const API_URL = window.location.origin;
+
+    let selectedTripSpots = [];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function showToast(icon, title) {
       Swal.fire({
         toast: true,
-        position: 'top-end',
-        icon: icon,
-        title: title,
+        position: "top-end",
+        icon,
+        title,
         showConfirmButton: false,
         timer: 2100,
-        background: '#ffffffdd',
-        color: '#2c3e2f',
-        backdrop: false
+        background: "#0f172add",
+        color: "#e2e8f0",
+        backdrop: false,
       });
     }
-    
-    // Save new trip (POST) or update if edit mode (kept for completeness)
-    async function saveNewTrip() {
-      const tripName = document.getElementById('tripName').value.trim();
-      const destination = document.getElementById('destination').value.trim();
-      if (!tripName || !destination) {
-        showToast('error', 'Trip name & destination are required 🌟');
+
+    function initSoftAtmosphere() {
+      const cloudContainer = document.getElementById("softClouds");
+
+      for (let i = 0; i < 12; i += 1) {
+        const cloud = document.createElement("div");
+
+        cloud.className = "cloud-soft";
+        cloud.style.width = Math.random() * 240 + 120 + "px";
+        cloud.style.height = Math.random() * 100 + 60 + "px";
+        cloud.style.bottom = Math.random() * 60 + 5 + "%";
+        cloud.style.left = -Math.random() * 200 + "px";
+        cloud.style.animationDelay = Math.random() * 20 + "s";
+        cloud.style.animationDuration = Math.random() * 40 + 35 + "s";
+
+        cloudContainer.appendChild(cloud);
+      }
+
+      const particleDiv = document.getElementById("softParticles");
+
+      for (let i = 0; i < 40; i += 1) {
+        const particle = document.createElement("div");
+
+        particle.className = "particle-soft";
+        particle.style.left = Math.random() * 100 + "%";
+        particle.style.animationDelay = Math.random() * 14 + "s";
+        particle.style.animationDuration = Math.random() * 16 + 7 + "s";
+        particle.style.width = Math.random() * 5 + 2 + "px";
+        particle.style.height = particle.style.width;
+
+        particleDiv.appendChild(particle);
+      }
+    }
+
+    initSoftAtmosphere();
+
+    const revealItems = document.querySelectorAll(".scroll-reveal");
+    const scrollObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    revealItems.forEach((element) => scrollObserver.observe(element));
+
+    const styleChips = document.querySelectorAll(".style-chip-light");
+    const tripStyleHidden = document.getElementById("tripStyleInput");
+
+    function updateStyleSelection(selectedStyle) {
+      styleChips.forEach((chip) => {
+        const styleVal = chip.getAttribute("data-style");
+
+        if (styleVal === selectedStyle) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+
+      tripStyleHidden.value = selectedStyle || "";
+    }
+
+    styleChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const style = chip.getAttribute("data-style");
+        updateStyleSelection(style);
+      });
+    });
+
+    function buildExternalId(item) {
+      return String(
+        item.externalId ||
+          item.id ||
+          item.xid ||
+          item.place_id ||
+          item.website ||
+          item.url ||
+          item.name ||
+          ""
+      ).trim();
+    }
+
+    function normalizeTripSpot(item, fallbackType) {
+      const itemType = item.itemType || fallbackType;
+
+      return {
+        itemType,
+        externalId: buildExternalId(item),
+        name: item.name || "Unnamed spot",
+        image: item.image || "",
+        url: item.url || item.website || "",
+        description: item.description || "",
+        source: item.source || "",
+
+        // Needed by itinerary page
+        dayIndex: Number.isFinite(Number(item.dayIndex)) ? Number(item.dayIndex) : 0,
+        startTime: item.startTime || "",
+        endTime: item.endTime || "",
+        activityNotes: item.activityNotes || "",
+
+        // attraction
+        kinds: item.kinds || "",
+        lat: item.lat || item.latitude || null,
+        lon: item.lon || item.longitude || null,
+        distance: item.distance || null,
+
+        // event
+        date: item.date || "",
+        time: item.time || "",
+        venue: item.venue || "",
+        city: item.city || "",
+        country: item.country || "",
+
+        // food
+        cuisine: item.cuisine || "",
+        foodType: item.foodType || item.type || "",
+        location: item.location || "",
+        price: item.price || "",
+        open: item.open || "",
+        tags: Array.isArray(item.tags) ? item.tags : [],
+      };
+    }
+
+    function isSameSpot(a, b) {
+      return a.itemType === b.itemType && a.externalId === b.externalId;
+    }
+
+    function getTripDayCount() {
+      const departureValue = document.getElementById("departureDate").value;
+      const returnValue = document.getElementById("returnDate").value;
+
+      if (!departureValue || !returnValue) return 1;
+
+      const departure = new Date(departureValue);
+      const returnDate = new Date(returnValue);
+
+      if (
+        Number.isNaN(departure.getTime()) ||
+        Number.isNaN(returnDate.getTime()) ||
+        returnDate < departure
+      ) {
+        return 1;
+      }
+
+      const diffMs = returnDate - departure;
+      const dayCount = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+
+      return Math.min(Math.max(dayCount, 1), 30);
+    }
+
+    function getDefaultStartTime(index) {
+      const times = ["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"];
+      return times[index % times.length];
+    }
+
+    function renderDayOptions(selectedDayIndex) {
+      const dayCount = getTripDayCount();
+
+      return Array.from({ length: dayCount }, (_, index) => {
+        return `
+          <option value="${index}" ${Number(selectedDayIndex) === index ? "selected" : ""}>
+            Day ${index + 1}
+          </option>
+        `;
+      }).join("");
+    }
+
+    function updateSelectedSpotField(index, field, value) {
+      if (!selectedTripSpots[index]) return;
+
+      selectedTripSpots[index][field] = value;
+    }
+
+    function addSpotToTrip(item, itemType) {
+      const spot = normalizeTripSpot(item, itemType);
+
+      if (!spot.externalId || !spot.name) {
+        showToast("error", "This spot is missing required data");
         return;
       }
-      
-      const tripData = {
-        trip_name: tripName,
-        destination: destination,
-        departure_date: document.getElementById('departureDate').value || null,
-        return_date: document.getElementById('returnDate').value || null,
-        trip_style: tripStyleHidden.value || 'City',
-        travelers: parseInt(document.getElementById('travelers').value) || 1,
-        budget: parseFloat(document.getElementById('budget').value) || null,
-        currency: document.getElementById('currency').value,
-        notes: document.getElementById('notes').value,
-        status: 'planned',
-        favorite: false
-      };
-      
-      const existingId = document.getElementById('tripIdField').value;
-      let url = `${API_URL}/api/trips`;
-      let method = 'POST';
-      if (existingId) {
-        url = `${API_URL}/api/trips/${existingId}`;
-        method = 'PUT';
+
+      const alreadyAdded = selectedTripSpots.some((existing) =>
+        isSameSpot(existing, spot)
+      );
+
+      if (alreadyAdded) {
+        showToast("info", "This spot is already added to the trip");
+        return;
       }
-      
+
+      const dayCount = getTripDayCount();
+
+      spot.dayIndex = selectedTripSpots.length % dayCount;
+      spot.startTime = spot.startTime || getDefaultStartTime(selectedTripSpots.length);
+
+      selectedTripSpots.push(spot);
+      renderSelectedTripSpots();
+      showToast("success", "Spot added to trip");
+    }
+
+
+    function removeSpotFromTrip(index) {
+      selectedTripSpots.splice(index, 1);
+      renderSelectedTripSpots();
+    }
+
+    function getSpotIcon(itemType) {
+      if (itemType === "event") return "fa-calendar-days";
+      if (itemType === "food") return "fa-utensils";
+
+      return "fa-mountain-sun";
+    }
+
+    function getSpotLabel(itemType) {
+      if (itemType === "event") return "Event";
+      if (itemType === "food") return "Food";
+
+      return "Attraction";
+    }
+
+    function getSpotSubtext(spot) {
+      if (spot.itemType === "event") {
+        return [spot.date, spot.venue, spot.city, spot.country]
+          .filter(Boolean)
+          .join(" · ");
+      }
+
+      if (spot.itemType === "food") {
+        return [spot.cuisine, spot.foodType, spot.location]
+          .filter(Boolean)
+          .join(" · ");
+      }
+
+      return spot.description || spot.kinds || spot.source || "Attraction";
+    }
+
+    function renderSpotCard(spot, options = {}) {
+      const { addButton = false, removeIndex = null } = options;
+      const icon = getSpotIcon(spot.itemType);
+      const label = getSpotLabel(spot.itemType);
+      const subtext = getSpotSubtext(spot);
+
+      return `
+        <article class="rounded-2xl border border-slate-700/70 bg-slate-900/80 p-3 shadow-sm">
+          <div class="flex gap-3">
+            <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-amber-400/10">
+              ${
+                spot.image
+                  ? `<img src="${escapeHtml(spot.image)}" alt="${escapeHtml(spot.name)}" class="h-full w-full object-cover">`
+                  : `<div class="grid h-full w-full place-items-center text-amber-300">
+                      <i class="fa-solid ${icon} text-2xl"></i>
+                    </div>`
+              }
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <span class="inline-flex rounded-full bg-amber-400/15 px-2 py-0.5 text-[11px] font-bold text-amber-200">
+                ${escapeHtml(label)}
+              </span>
+
+              <h4 class="mt-1 line-clamp-2 text-sm font-bold text-slate-100">
+                ${escapeHtml(spot.name)}
+              </h4>
+
+              <p class="mt-1 line-clamp-2 text-xs text-slate-400">
+                ${escapeHtml(subtext)}
+              </p>
+
+              ${
+                removeIndex !== null
+                  ? `<div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      <select
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'dayIndex', Number(this.value))"
+                      >
+                        ${renderDayOptions(spot.dayIndex)}
+                      </select>
+
+                      <input
+                        type="time"
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        value="${escapeHtml(spot.startTime || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'startTime', this.value)"
+                      >
+
+                      <input
+                        type="time"
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        value="${escapeHtml(spot.endTime || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'endTime', this.value)"
+                      >
+
+                      <input
+                        type="text"
+                        class="input-light !h-9 !rounded-xl !text-xs sm:col-span-3"
+                        placeholder="Activity note, e.g. lunch, sunset visit..."
+                        value="${escapeHtml(spot.activityNotes || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'activityNotes', this.value)"
+                      >
+                    </div>`
+                  : ""
+              }
+
+              <div class="mt-2 flex flex-wrap gap-2">
+                ${
+                  addButton
+                    ? `<button type="button" class="add-spot-btn rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-300">
+                        <i class="fa-solid fa-plus mr-1"></i>
+                        Add
+                      </button>`
+                    : ""
+                }
+
+                ${
+                  removeIndex !== null
+                    ? `<button type="button" onclick="removeSpotFromTrip(${removeIndex})" class="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/20">
+                        <i class="fa-solid fa-trash-can mr-1"></i>
+                        Remove
+                      </button>`
+                    : ""
+                }
+
+                ${
+                  spot.url
+                    ? `<a href="${escapeHtml(spot.url)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-slate-700/70 px-3 py-1.5 text-xs font-bold text-slate-400 hover:bg-slate-800">
+                        View
+                      </a>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSelectedTripSpots() {
+      const container = document.getElementById("selectedTripSpots");
+      const count = document.getElementById("selectedSpotsCount");
+
+      if (!container || !count) return;
+
+      count.textContent = `${selectedTripSpots.length} spot${selectedTripSpots.length === 1 ? "" : "s"} selected`;
+
+      if (!selectedTripSpots.length) {
+        container.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/60 p-5 text-center text-sm text-slate-400 md:col-span-2">
+            No spots added yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = selectedTripSpots
+        .map((spot, index) => renderSpotCard(spot, { removeIndex: index }))
+        .join("");
+    }
+
+    async function loadPlannerWishlist() {
+      const container = document.getElementById("plannerWishlistGrid");
+
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+          Loading wishlist...
+        </div>
+      `;
+
       try {
-        const response = await fetch(url, {
-          method: method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(tripData)
-        });
-        if (response.ok) {
-          const saved = await response.json();
-          showToast('success', existingId ? 'Trip updated!' : 'New adventure saved! ✈️');
-          resetForm();
-          Swal.fire({
-            title: existingId ? 'Updated!' : 'Trip Created!',
-            text: existingId ? 'Your journey details have been updated.' : 'Your trip is now part of your collection.',
-            icon: 'success',
-            background: '#fffef7',
-            color: '#4a3b28',
-            confirmButtonColor: '#F5A524',
-            timer: 1800,
-            showConfirmButton: false
-          });
-        } else {
-          const errText = await response.text();
-          showToast('error', 'Could not save: ' + (errText || 'server issue'));
+        const response = await fetch("/api/wishlist");
+        const data = await response.json();
+
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
         }
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load wishlist");
+        }
+
+        const wishlist = Array.isArray(data.wishlist) ? data.wishlist : [];
+
+        if (!wishlist.length) {
+          container.innerHTML = `
+            <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+              Your wishlist is empty.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = "";
+
+        wishlist.forEach((item) => {
+          const spot = normalizeTripSpot(item, item.itemType);
+          const wrapper = document.createElement("div");
+
+          wrapper.innerHTML = renderSpotCard(spot, { addButton: true });
+
+          const button = wrapper.querySelector(".add-spot-btn");
+
+          button.addEventListener("click", () => {
+            addSpotToTrip(spot, spot.itemType);
+          });
+
+          container.appendChild(wrapper.firstElementChild);
+        });
       } catch (error) {
         console.error(error);
-        showToast('error', 'Network error. Please try again.');
+
+        container.innerHTML = `
+          <div class="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-sm text-red-300 md:col-span-2">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
       }
     }
-    
-    // optional: edit trip via query param (eg from my trips page)
+
+    async function searchPlannerSpots() {
+      const container = document.getElementById("plannerSearchResults");
+
+      const searchType = document.getElementById("plannerSearchType").value;
+      const country = document.getElementById("plannerCountry").value.trim();
+      const countryCode = document.getElementById("plannerCountryCode").value.trim().toUpperCase();
+      const state = document.getElementById("plannerState").value.trim();
+      const foodQuery = document.getElementById("plannerFoodQuery").value.trim();
+
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+          Searching...
+        </div>
+      `;
+
+      try {
+        let items = [];
+
+        if (searchType === "attraction") {
+          if (!country || !countryCode || !state) {
+            throw new Error("Attraction search needs country, country code, and state.");
+          }
+
+          const params = new URLSearchParams({
+            country,
+            countryCode,
+            state,
+            radius: "50000",
+            limit: "12",
+          });
+
+          const response = await fetch(`/api/popular-attractions?${params.toString()}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search attractions");
+          }
+
+          items = (data.attractions || []).map((item) =>
+            normalizeTripSpot(item, "attraction")
+          );
+        }
+
+        if (searchType === "event") {
+          if (!countryCode) {
+            throw new Error("Event search needs country code.");
+          }
+
+          const params = new URLSearchParams({
+            countryCode,
+            limit: "12",
+          });
+
+          const response = await fetch(`/api/events?${params.toString()}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search events");
+          }
+
+          items = (data.events || []).map((item) =>
+            normalizeTripSpot(item, "event")
+          );
+        }
+
+        if (searchType === "food") {
+          const destination = document.getElementById("destination").value.trim();
+          const near = state && country ? `${state}, ${country}` : destination;
+
+          const params = new URLSearchParams({
+            near: near || "Tokyo, Japan",
+            query: foodQuery || "restaurant",
+            type: "All",
+            cuisine: "All",
+            limit: "12",
+            radius: "8000",
+          });
+
+          const response = await fetch(`/api/food-places?${params.toString()}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search food spots");
+          }
+
+          items = (data.places || []).map((item) =>
+            normalizeTripSpot(item, "food")
+          );
+        }
+
+        renderPlannerSearchResults(items);
+      } catch (error) {
+        console.error(error);
+
+        container.innerHTML = `
+          <div class="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-sm text-red-300 md:col-span-2">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
+
+    function renderPlannerSearchResults(items) {
+      const container = document.getElementById("plannerSearchResults");
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+            No spots found.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = "";
+
+      items.forEach((spot) => {
+        const wrapper = document.createElement("div");
+
+        wrapper.innerHTML = renderSpotCard(spot, { addButton: true });
+
+        const button = wrapper.querySelector(".add-spot-btn");
+
+        button.addEventListener("click", () => {
+          addSpotToTrip(spot, spot.itemType);
+        });
+
+        container.appendChild(wrapper.firstElementChild);
+      });
+    }
+
+    window.resetForm = function () {
+      document.getElementById("newTripForm").reset();
+      document.getElementById("tripIdField").value = "";
+      document.getElementById("tripStyleInput").value = "";
+
+      updateStyleSelection("");
+
+      document.getElementById("departureDate").value = "";
+      document.getElementById("returnDate").value = "";
+      document.getElementById("notes").value = "";
+      document.getElementById("budget").value = "";
+      document.getElementById("travelers").value = "2";
+      document.getElementById("currency").value = "USD";
+
+      selectedTripSpots = [];
+      renderSelectedTripSpots();
+
+      const plannerWishlistGrid = document.getElementById("plannerWishlistGrid");
+      if (plannerWishlistGrid) {
+        plannerWishlistGrid.innerHTML = `
+          <p class="text-sm text-slate-400">
+            Click “Load Wishlist” to show saved attractions, events, and food spots.
+          </p>
+        `;
+      }
+
+      const plannerSearchResults = document.getElementById("plannerSearchResults");
+      if (plannerSearchResults) {
+        plannerSearchResults.innerHTML = `
+          <p class="text-sm text-slate-400">
+            Search results will appear here.
+          </p>
+        `;
+      }
+
+      document.getElementById("tripShareSection").classList.add("hidden");
+      document.getElementById("tripShareUrl").value = "";
+
+      Swal.fire({
+        title: "Cleared",
+        text: "Form is ready for a new journey",
+        icon: "info",
+        background: "#0f172a",
+        color: "#e2e8f0",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    };
+
+    async function saveNewTrip() {
+      const tripName = document.getElementById("tripName").value.trim();
+      const destination = document.getElementById("destination").value.trim();
+
+      if (!tripName || !destination) {
+        showToast("error", "Trip name & destination are required");
+        return;
+      }
+
+      const tripData = {
+        trip_name: tripName,
+        destination,
+        departure_date: document.getElementById("departureDate").value || null,
+        return_date: document.getElementById("returnDate").value || null,
+        trip_style: tripStyleHidden.value || "City",
+        travelers: parseInt(document.getElementById("travelers").value, 10) || 1,
+        budget: parseFloat(document.getElementById("budget").value) || null,
+        currency: document.getElementById("currency").value,
+        notes: document.getElementById("notes").value,
+        status: "planned",
+        favorite: false,
+        spots: selectedTripSpots,
+      };
+
+      const existingId = document.getElementById("tripIdField").value;
+
+      let url = `${API_URL}/api/trips`;
+      let method = "POST";
+
+      if (existingId) {
+        url = `${API_URL}/api/trips/${existingId}`;
+        method = "PUT";
+      }
+
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tripData),
+        });
+
+        const responseData = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(responseData?.error || "Could not save trip.");
+        }
+
+        const saved = responseData;
+
+        document.getElementById("tripIdField").value = saved._id;
+        document.getElementById("tripShareUrl").value = `${API_URL}/itenary.html?tripId=${saved._id}`;
+        document.getElementById("tripShareSection").classList.remove("hidden");
+
+        selectedTripSpots = Array.isArray(saved.spots) ? saved.spots : selectedTripSpots;
+        renderSelectedTripSpots();
+
+        showToast("success", existingId ? "Trip updated!" : "New adventure saved!");
+
+        Swal.fire({
+          title: existingId ? "Updated!" : "Trip Created!",
+          text: existingId
+            ? "Your journey details and selected spots have been updated."
+            : "Your trip and selected spots are now saved.",
+          icon: "success",
+          background: "#0f172a",
+          color: "#e2e8f0",
+          confirmButtonColor: "#f5a524",
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("error", error.message || "Network error. Please try again.");
+      }
+    }
+
     async function loadTripForEdit(id) {
       try {
-        const res = await fetch(`${API_URL}/api/trips/${id}`);
-        if (res.ok) {
-          const trip = await res.json();
-          document.getElementById('tripIdField').value = trip._id;
-          document.getElementById('tripName').value = trip.trip_name || '';
-          document.getElementById('destination').value = trip.destination || '';
-          document.getElementById('departureDate').value = trip.departure_date ? trip.departure_date.split('T')[0] : '';
-          document.getElementById('returnDate').value = trip.return_date ? trip.return_date.split('T')[0] : '';
-          document.getElementById('travelers').value = trip.travelers || 2;
-          document.getElementById('budget').value = trip.budget || '';
-          document.getElementById('currency').value = trip.currency || 'USD';
-          document.getElementById('notes').value = trip.notes || '';
-          const style = trip.trip_style || '';
-          updateStyleSelection(style);
-          window.scrollTo({ top: 140, behavior: 'smooth' });
-        } else {
-          showToast('error', 'Trip not found');
+        const response = await fetch(`${API_URL}/api/trips/${id}`);
+        const trip = await response.json();
+
+        if (!response.ok) {
+          throw new Error(trip.error || "Trip not found");
         }
-      } catch(e) {
-        showToast('error', 'Cannot load trip data');
+
+        document.getElementById("tripIdField").value = trip._id;
+        document.getElementById("tripName").value = trip.trip_name || "";
+        document.getElementById("destination").value = trip.destination || "";
+        document.getElementById("departureDate").value = trip.departure_date ? trip.departure_date.split("T")[0] : "";
+        document.getElementById("returnDate").value = trip.return_date ? trip.return_date.split("T")[0] : "";
+        document.getElementById("travelers").value = trip.travelers || 2;
+        document.getElementById("budget").value = trip.budget || "";
+        document.getElementById("currency").value = trip.currency || "USD";
+        document.getElementById("notes").value = trip.notes || "";
+        document.getElementById("tripShareUrl").value = `${API_URL}/itenary.html?tripId=${trip._id}`;
+        document.getElementById("tripShareSection").classList.remove("hidden");
+
+        const style = trip.trip_style || "";
+        updateStyleSelection(style);
+
+        selectedTripSpots = Array.isArray(trip.spots)
+          ? trip.spots.map((spot) => normalizeTripSpot(spot, spot.itemType))
+          : [];
+
+        renderSelectedTripSpots();
+
+        window.scrollTo({
+          top: 140,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("error", error.message || "Cannot load trip data");
       }
     }
+
+    function copyTripLink() {
+      const shareInput = document.getElementById("tripShareUrl");
+
+      if (!shareInput.value) {
+        showToast("error", "Save the trip first to generate the invite link");
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(shareInput.value)
+        .then(() => showToast("success", "Invite link copied"))
+        .catch(() => showToast("error", "Unable to copy invite link"));
+    }
+
+    renderSelectedTripSpots();
+
     const urlParams = new URLSearchParams(window.location.search);
-    const editId = urlParams.get('edit');
-    if (editId) loadTripForEdit(editId);
-    
-    // set minimal default placeholder for demo (optional)
-    if (!document.getElementById('departureDate').value) {
-      const nextWeek = new Date();
-      nextWeek.setDate(nextWeek.getDate() + 14);
-      // not enforcing, just keep placeholder clean
+    const editId = urlParams.get("edit");
+
+    if (editId) {
+      loadTripForEdit(editId);
     }
   </script>
 </body>
