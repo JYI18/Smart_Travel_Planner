@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Profile · FlyAway</title>
+  <title>Profile</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -36,6 +36,7 @@
 </head>
 
 <body class="min-h-screen bg-cream font-sans text-ink">
+  <div id="topnavbar"></div>
 
   <div class="mx-auto max-w-6xl px-6 py-10">
 
@@ -752,6 +753,15 @@
     document.getElementById("deleteAccountButton").addEventListener("click", deleteAccount);
 
     loadProfile();
+
+    fetch("/components/topNavBar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("topnavbar").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Navbar failed to load:", error);
+      });
   </script>
 
 </body>

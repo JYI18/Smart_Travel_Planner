@@ -94,29 +94,9 @@ router.post("/signup", async (req, res) => {
   try {
     console.log("Signup form data:", req.body);
 
-    const {
-      name,
-      dob,
-      gender,
-      contact,
-      current_country,
-      current_city,
-      email,
-      password,
-      confirm_password,
-    } = req.body;
+    const { name, email, password, confirm_password } = req.body;
 
-    if (
-      !name ||
-      !dob ||
-      !gender ||
-      !contact ||
-      !current_country ||
-      !current_city ||
-      !email ||
-      !password ||
-      !confirm_password
-    ) {
+    if (!name || !email || !password || !confirm_password) {
       return res.status(400).send("Please fill in all required fields.");
     }
 
@@ -150,11 +130,6 @@ router.post("/signup", async (req, res) => {
     const newUser = await User.create({
       authProvider: "local",
       name: name.trim(),
-      dob,
-      gender,
-      contact: contact.trim(),
-      current_country: current_country.trim(),
-      current_city: current_city.trim(),
       email: normalizedEmail,
       password: hashedPassword,
       profileCompleted: false,
@@ -271,8 +246,17 @@ router.post("/setup-profile", (req, res) => {
         return res.redirect("/login");
       }
 
-      const { aboutMe, preferredCurrency, language, travelPreferences } =
-        req.body;
+      const {
+        aboutMe,
+        preferredCurrency,
+        language,
+        travelPreferences,
+        dob,
+        gender,
+        contact,
+        current_country,
+        current_city,
+      } = req.body;
 
       const preferences = Array.isArray(travelPreferences)
         ? travelPreferences
@@ -281,6 +265,11 @@ router.post("/setup-profile", (req, res) => {
         : [];
 
       const updateData = {
+        dob: dob || undefined,
+        gender: gender || "Prefer not to say",
+        contact: contact ? contact.trim() : "",
+        current_country: current_country ? current_country.trim() : "",
+        current_city: current_city ? current_city.trim() : "",
         aboutMe: aboutMe ? aboutMe.trim() : "",
         preferredCurrency: preferredCurrency || "MYR",
         language: language || "English",

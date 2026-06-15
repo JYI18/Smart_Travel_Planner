@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>FlyAway Explore</title>
+  <meta name="description" content="Explore popular attractions and upcoming events by country and state." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui"],
+            serif: ["Playfair Display", "Georgia", "serif"],
+          },
+          colors: {
+            primary: {
+              DEFAULT: "hsl(195 85% 41%)",
+              glow: "hsl(185 90% 55%)",
+            },
+            accent: {
+              DEFAULT: "hsl(35 95% 65%)",
+            },
+          },
+        },
+      },
+    };
+
+    fetch("/components/topNavBar.html")
+      .then((response) => response.text())
+      .then((html) => {
+        const target = document.getElementById("topnavbar");
+        if (target) target.innerHTML = html;
+      })
+      .catch((error) => console.error("Navbar failed to load:", error));
+  </script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: #0d0f14;
+      color: #e8eaf0;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245, 165, 36, 0.08), transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30, 140, 200, 0.07), transparent 60%),
+        #0d0f14;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1d25;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f5a524;
+      border-radius: 9999px;
+    }
+
+    .hero-bg {
+      background-image:
+        linear-gradient(to bottom, rgba(13, 15, 20, 0.2), rgba(13, 15, 20, 0.85) 72%, #0d0f14),
+        url("/img/FlyAway_Background.jpg");
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #f5a524 0%, #ffd700 50%, #f5a524 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 18px 60px -35px rgba(0, 0, 0, 0.9);
+    }
+
+    #exploreMap {
+      height: 420px;
+      width: 100%;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .leaflet-container {
+      font-family: "Inter", system-ui, sans-serif;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+      background: #111827;
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.8);
+    }
+
+    .leaflet-popup-content {
+      margin: 0.85rem 1rem;
+      line-height: 1.45;
+    }
+
+    .leaflet-popup-content a {
+      color: #f5a524;
+      font-weight: 700;
+    }
+
+    .input-base {
+      height: 2.75rem;
+      width: 100%;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.055);
+      color: #e8eaf0;
+      padding: 0.5rem 0.875rem;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .input-base::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .input-base:focus {
+      border-color: rgba(245, 165, 36, 0.55);
+      background: rgba(255, 255, 255, 0.075);
+      box-shadow: 0 0 0 3px rgba(245, 165, 36, 0.12);
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f5a524;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-gold {
+      background: rgba(245, 165, 36, 0.15);
+      color: #f5a524;
+      border: 1px solid rgba(245, 165, 36, 0.32);
+    }
+
+    .region-card {
+      position: relative;
+      flex: 0 0 auto;
+      width: 16rem;
+      height: 8.6rem;
+      border-radius: 1.15rem;
+      overflow: hidden;
+      cursor: pointer;
+      scroll-snap-align: start;
+      isolation: isolate;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.8);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .region-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .region-card[aria-pressed="true"] {
+      border-color: rgba(245, 165, 36, 0.85);
+      box-shadow:
+        0 0 0 1px rgba(245, 165, 36, 0.25),
+        0 18px 36px -20px rgba(245, 165, 36, 0.55);
+    }
+
+    .region-card .bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .region-card:hover .bg {
+      transform: scale(1.06);
+    }
+
+    .region-card .scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.72));
+    }
+
+    .region-card .badge-haul {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 0.5rem;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.74rem;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+
+    .region-card .label {
+      position: absolute;
+      left: 1rem;
+      bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .region-card.anywhere .bg {
+      background:
+        linear-gradient(135deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.76)),
+        url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&auto=format&fit=crop") center/cover;
+    }
+
+    .filter-chip,
+    .state-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 2.75rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.055);
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .filter-chip {
+      flex: 0 0 auto;
+      padding: 0.75rem 1.15rem;
+    }
+
+    .state-chip {
+      padding: 0.7rem 1rem;
+    }
+
+    .filter-chip:hover,
+    .state-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .filter-chip[aria-pressed="true"],
+    .state-chip[aria-pressed="true"] {
+      background: rgba(245, 165, 36, 0.16);
+      border-color: rgba(245, 165, 36, 0.75);
+      color: #f8d27a;
+      box-shadow: 0 12px 28px -18px rgba(245, 165, 36, 0.95);
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-height: 3rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.62);
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .tab-btn[aria-selected="true"] {
+      color: #111827;
+      background: linear-gradient(135deg, #f5a524, #ffd56a);
+      border-color: rgba(245, 165, 36, 0.85);
+      box-shadow: 0 14px 34px -22px rgba(245, 165, 36, 0.9);
+    }
+
+    .cascade-arrow {
+      display: grid;
+      place-items: center;
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.78);
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .cascade-arrow:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+
+    .particle {
+      position: fixed;
+      width: 3px;
+      height: 3px;
+      background: rgba(245, 165, 36, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s linear infinite;
+      z-index: 0;
+    }
+
+    @media (max-width: 768px) {
+      .region-card {
+        width: 13.5rem;
+        height: 7.5rem;
+      }
+
+      .filter-chip,
+      .state-chip {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+  <div id="particles"></div>
+
+  <header class="hero-bg relative min-h-[420px] overflow-hidden">
+    <div id="topnavbar"></div>
+
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-16 pb-20 text-center">
+      <span class="badge badge-gold mb-5">
+        <i class="fa-solid fa-compass"></i>
+        FlyAway Explore
+      </span>
+
+      <h1 class="font-serif max-w-3xl text-4xl font-black leading-tight text-white md:text-6xl" style="text-shadow:0 2px 30px rgba(0,0,0,0.5)">
+        Discover Attractions and Events
+      </h1>
+
+      <p class="mt-5 max-w-2xl text-lg font-light text-white/75">
+        Choose a region, country, and state to discover popular attractions, or switch tabs to see upcoming events by country.
+      </p>
+    </div>
+  </header>
+
+  <main class="relative z-10 mx-auto max-w-6xl px-6 py-12">
+    <section class="glass-card p-5 md:p-7">
+      <div class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="section-label">
+            <i class="fa-solid fa-location-dot"></i>
+            Destination Filter
+          </p>
+          <h2 class="mt-2 font-serif text-3xl font-black gold-gradient md:text-4xl">
+            Explore by country and state
+          </h2>
+          <p id="selectionSummary" class="mt-2 text-sm text-white/45">
+            Start with Anywhere, or pick a region to load countries.
+          </p>
+        </div>
+
+        <button
+          id="clearFiltersBtn"
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/55 transition hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-300"
+        >
+          <i class="fa-solid fa-rotate-left"></i>
+          Clear filters
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="mb-8 flex flex-wrap gap-3 rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-2">
+        <button id="attractionsTab" class="tab-btn" type="button" role="tab" aria-selected="true" data-tab="attractions">
+          <i class="fa-solid fa-mountain-sun"></i>
+          Attractions
+        </button>
+
+        <button id="eventsTab" class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="events">
+          <i class="fa-solid fa-calendar-days"></i>
+          Upcoming Events
+        </button>
+      </div>
+
+      <!-- Category filter: changes depending on selected tab -->
+      <div class="mb-8 grid gap-4 md:grid-cols-2">
+        <div id="attractionCategoryWrap" class="space-y-2">
+          <label for="attractionCategorySelect" class="block text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+            Attraction Category
+          </label>
+          <select id="attractionCategorySelect" class="input-base">
+            <option value="all">All attractions</option>
+            <option value="must_see">Must-see attractions</option>
+            <option value="culture">Culture & heritage</option>
+            <option value="museums">Museums</option>
+            <option value="architecture">Architecture</option>
+            <option value="nature">Nature & parks</option>
+            <option value="religion">Religious sites</option>
+            <option value="entertainment">Entertainment</option>
+          </select>
+        </div>
+
+        <div id="eventCategoryWrap" class="hidden space-y-2">
+          <label for="eventCategorySelect" class="block text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+            Event Category
+          </label>
+          <select id="eventCategorySelect" class="input-base">
+            <option value="all">All events</option>
+            <option value="music">Music</option>
+            <option value="sports">Sports</option>
+            <option value="arts">Arts & theatre</option>
+            <option value="film">Film</option>
+            <option value="miscellaneous">Miscellaneous</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Region carousel -->
+      <div class="mb-8 space-y-4">
+        <div class="flex items-center justify-between gap-4">
+          <p class="text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+            Region
+          </p>
+
+          <div class="hidden items-center gap-3 md:flex">
+            <button id="regionScrollPrev" type="button" class="cascade-arrow" aria-label="Scroll regions left">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <button id="regionScrollNext" type="button" class="cascade-arrow" aria-label="Scroll regions right">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="regionCarousel"
+          class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <!-- region cards injected by JS -->
+        </div>
+      </div>
+
+      <!-- Country selector -->
+      <div id="countryWrap" class="hidden mb-8 space-y-4">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p class="text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+            Country
+          </p>
+
+          <div class="relative w-full md:max-w-sm">
+            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i>
+            <input id="countryChipSearch" type="text" placeholder="Search country..." class="input-base pl-11" />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button type="button" id="countryScrollPrev" class="cascade-arrow shrink-0" aria-label="Scroll countries left">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
+          </button>
+
+          <div
+            id="countryChipRail"
+            class="flex flex-1 gap-3 overflow-x-auto scroll-smooth py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <!-- country chips injected by JS -->
+          </div>
+
+          <button type="button" id="countryScrollNext" class="cascade-arrow shrink-0" aria-label="Scroll countries right">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event date filter: only used for Upcoming Events tab -->
+      <div id="eventDateWrap" class="hidden mb-8 space-y-4">
+        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+              Event Date
+            </p>
+            <p class="mt-1 text-sm text-white/40">
+              Search upcoming events by date range.
+            </p>
+          </div>
+
+          <div class="grid w-full gap-3 md:max-w-xl md:grid-cols-[1fr_1fr_auto]">
+            <label class="block">
+              <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-white/40">
+                Start date
+              </span>
+              <input id="eventStartDate" type="date" class="input-base" />
+            </label>
+
+            <label class="block">
+              <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-white/40">
+                End date
+              </span>
+              <input id="eventEndDate" type="date" class="input-base" />
+            </label>
+
+            <button
+              id="clearEventDatesBtn"
+              type="button"
+              class="mt-6 inline-flex h-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] px-4 text-sm font-bold text-white/55 transition hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-300"
+            >
+              Clear dates
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- State selector: only used for Attractions tab -->
+      <div id="stateWrap" class="hidden mb-8 space-y-4">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p class="text-[13px] font-bold uppercase tracking-[0.22em] text-white/45">
+            State / Province
+          </p>
+
+          <div class="relative w-full md:max-w-sm">
+            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i>
+            <input id="stateChipSearch" type="text" placeholder="Search state/province..." class="input-base pl-11" />
+          </div>
+        </div>
+
+        <div id="stateChipWrap" class="flex flex-wrap gap-3">
+          <!-- state chips injected by JS -->
+        </div>
+      </div>
+
+      <!-- Hidden selects preserve the country/state cascade state -->
+      <select id="destinationRegion" class="hidden">
+        <option value="">Region</option>
+      </select>
+
+      <select id="destinationCountry" class="hidden" disabled>
+        <option value="">Country</option>
+      </select>
+
+      <select id="destinationState" class="hidden" disabled>
+        <option value="">State / Province</option>
+      </select>
+    </section>
+
+    <!-- Results -->
+    <section class="mt-10">
+      <div class="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p id="resultLabel" class="section-label">
+            <i class="fa-solid fa-mountain-sun"></i>
+            Attractions
+          </p>
+          <h2 id="resultTitle" class="mt-2 font-serif text-3xl font-black text-white md:text-4xl">
+            Random famous attractions
+          </h2>
+          <p id="resultSubtitle" class="mt-2 text-sm text-white/45">
+            Showing global inspiration from Anywhere.
+          </p>
+        </div>
+      </div>
+
+      <div
+        id="mapWrap"
+        class="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-3 shadow-[0_18px_60px_-35px_rgba(0,0,0,0.9)]"
+      >
+        <div id="exploreMap"></div>
+      </div>
+
+      <div id="resultGrid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <!-- result cards injected by JS -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 bg-white/[0.02] py-8">
+    <div class="mx-auto max-w-6xl px-6 text-sm text-white/40">
+      © 2026 FlyAway Smart Travel Planner
+    </div>
+  </footer>
+
+  <script>
+    const particles = document.getElementById("particles");
+
+    for (let i = 0; i < 30; i += 1) {
+      const particle = document.createElement("div");
+      particle.className = "particle";
+      particle.style.left = Math.random() * 100 + "vw";
+      particle.style.top = Math.random() * 80 + 10 + "vh";
+      particle.style.animationDelay = Math.random() * 8 + "s";
+      particle.style.animationDuration = Math.random() * 6 + 6 + "s";
+      particles.appendChild(particle);
+    }
+
+    const appState = {
+      activeTab: "attractions",
+      currentRegion: "",
+      currentCountry: "",
+      currentCountryCode: "",
+      currentState: "",
+      countriesLoadedForRegion: "",
+      statesLoadedForCountry: "",
+      eventStartDate: "",
+      eventEndDate: "",
+      attractionCategory: "all",
+      eventCategory: "all",
+    };
+
+    const regionImages = {
+      Africa: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=900&auto=format&fit=crop",
+      Americas: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&auto=format&fit=crop",
+      Asia: "https://images.unsplash.com/photo-1528164344705-47542687000d?w=900&auto=format&fit=crop",
+      Europe: "https://images.unsplash.com/photo-1491557345352-5929e343eb89?w=900&auto=format&fit=crop",
+      Oceania: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=900&auto=format&fit=crop",
+    };
+
+    const defaultImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&auto=format&fit=crop";
+
+    const attractionCategoryLabels = {
+      all: "All attractions",
+      must_see: "Must-see attractions",
+      culture: "Culture & heritage",
+      museums: "Museums",
+      architecture: "Architecture",
+      nature: "Nature & parks",
+      religion: "Religious sites",
+      entertainment: "Entertainment",
+    };
+
+    const eventCategoryLabels = {
+      all: "All events",
+      music: "Music",
+      sports: "Sports",
+      arts: "Arts & theatre",
+      film: "Film",
+      miscellaneous: "Miscellaneous",
+    };
+
+    const destinationRegion = document.getElementById("destinationRegion");
+    const destinationCountry = document.getElementById("destinationCountry");
+    const destinationState = document.getElementById("destinationState");
+
+    const regionCarousel = document.getElementById("regionCarousel");
+    const countryWrap = document.getElementById("countryWrap");
+    const countryChipRail = document.getElementById("countryChipRail");
+    const countryChipSearch = document.getElementById("countryChipSearch");
+
+    const stateWrap = document.getElementById("stateWrap");
+    const stateChipWrap = document.getElementById("stateChipWrap");
+    const stateChipSearch = document.getElementById("stateChipSearch");
+
+    const eventDateWrap = document.getElementById("eventDateWrap");
+    const eventStartDate = document.getElementById("eventStartDate");
+    const eventEndDate = document.getElementById("eventEndDate");
+    const clearEventDatesBtn = document.getElementById("clearEventDatesBtn");
+
+    const attractionCategoryWrap = document.getElementById("attractionCategoryWrap");
+    const attractionCategorySelect = document.getElementById("attractionCategorySelect");
+    const eventCategoryWrap = document.getElementById("eventCategoryWrap");
+    const eventCategorySelect = document.getElementById("eventCategorySelect");
+
+    const resultGrid = document.getElementById("resultGrid");
+    const resultLabel = document.getElementById("resultLabel");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultSubtitle = document.getElementById("resultSubtitle");
+    const selectionSummary = document.getElementById("selectionSummary");
+    const mapWrap = document.getElementById("mapWrap");
+
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+
+    const regionScrollPrev = document.getElementById("regionScrollPrev");
+    const regionScrollNext = document.getElementById("regionScrollNext");
+    const countryScrollPrev = document.getElementById("countryScrollPrev");
+    const countryScrollNext = document.getElementById("countryScrollNext");
+
+    let exploreMap;
+    let exploreMarkersLayer;
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function initExploreMap() {
+      if (exploreMap) return;
+
+      exploreMap = L.map("exploreMap").setView([35.6762, 139.6503], 11);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(exploreMap);
+
+      exploreMarkersLayer = L.layerGroup().addTo(exploreMap);
+    }
+
+    function clearExploreMap() {
+      if (!exploreMarkersLayer) return;
+      exploreMarkersLayer.clearLayers();
+    }
+
+    function updateMapVisibility() {
+      const shouldShowMap = appState.activeTab === "attractions";
+
+      mapWrap.classList.toggle("hidden", !shouldShowMap);
+
+      if (shouldShowMap) {
+        setTimeout(() => {
+          if (exploreMap) exploreMap.invalidateSize();
+        }, 0);
+      } else {
+        clearExploreMap();
+      }
+    }
+
+    function getCurrentCategoryLabel() {
+      if (appState.activeTab === "attractions") {
+        return attractionCategoryLabels[appState.attractionCategory] || attractionCategoryLabels.all;
+      }
+
+      return eventCategoryLabels[appState.eventCategory] || eventCategoryLabels.all;
+    }
+
+    function showResultsOnMap(items) {
+      if (!exploreMap || !exploreMarkersLayer) return;
+
+      exploreMarkersLayer.clearLayers();
+
+      const validItems = items.filter((item) => item.lat && item.lon);
+
+      if (!validItems.length) {
+        return;
+      }
+
+      validItems.forEach((item) => {
+        const marker = L.marker([item.lat, item.lon]).addTo(exploreMarkersLayer);
+
+        marker.bindPopup(`
+          <strong>${escapeHtml(item.name)}</strong>
+        `);
+      });
+
+      const bounds = L.latLngBounds(
+        validItems.map((item) => [item.lat, item.lon])
+      );
+
+      exploreMap.fitBounds(bounds, {
+        padding: [30, 30],
+      });
+    }
+
+    function stripKinds(kinds) {
+      return String(kinds || "")
+        .split(",")
+        .map((kind) => kind.replaceAll("_", " "))
+        .filter(Boolean)
+        .slice(0, 3);
+    }
+
+    function formatDistance(distance) {
+      if (distance === null || distance === undefined || distance === "") return "";
+      const meters = Number(distance);
+
+      if (Number.isNaN(meters)) return "";
+      if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km away`;
+
+      return `${Math.round(meters)} m away`;
+    }
+
+    function formatEventDate(date, time) {
+      if (!date) return "Date not available";
+
+      const parsedDate = new Date(`${date}T${time || "00:00"}`);
+      const dateText = parsedDate.toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+
+      if (!time) return dateText;
+
+      return `${dateText} · ${time.slice(0, 5)}`;
+    }
+
+    function getSelectedDateRangeText() {
+      const start = appState.eventStartDate;
+      const end = appState.eventEndDate;
+
+      if (start && end) return `${start} to ${end}`;
+      if (start) return `from ${start}`;
+      if (end) return `until ${end}`;
+
+      return "";
+    }
+
+    function hasInvalidEventDateRange() {
+      return (
+        appState.eventStartDate &&
+        appState.eventEndDate &&
+        appState.eventEndDate < appState.eventStartDate
+      );
+    }
+
+    function applyEventDateInputsToState() {
+      appState.eventStartDate = eventStartDate.value;
+      appState.eventEndDate = eventEndDate.value;
+    }
+
+    function resetSelect(selectElement, placeholder, disabled = false) {
+      selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+      selectElement.disabled = disabled;
+    }
+
+    function addOptions(selectElement, options) {
+      options.forEach((option) => {
+        const value = typeof option === "string" ? option : option.name;
+        const item = document.createElement("option");
+
+        item.value = value;
+        item.textContent = value;
+
+        const countryCode = typeof option === "object" && option.code ? option.code : "";
+        if (countryCode) item.dataset.cc = countryCode;
+
+        selectElement.appendChild(item);
+      });
+    }
+
+    function selectedCountryCode() {
+      const selectedOption = destinationCountry.options[destinationCountry.selectedIndex];
+      return selectedOption?.dataset?.cc || "";
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "API request failed");
+      }
+
+      return data;
+    }
+
+    function setGridLoading(message) {
+      clearExploreMap();
+
+      resultGrid.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center text-white/55">
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    function setGridMessage(icon, title, message) {
+      clearExploreMap();
+
+      resultGrid.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center">
+          <i class="fa-solid ${escapeHtml(icon)} mb-4 block text-4xl text-white/35"></i>
+          <p class="font-bold text-white/75">${escapeHtml(title)}</p>
+          <p class="mt-2 text-sm text-white/42">${escapeHtml(message)}</p>
+        </div>
+      `;
+    }
+
+    function setGridError(error) {
+      clearExploreMap();
+
+      resultGrid.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-red-400/20 bg-red-500/10 p-8 text-center text-red-100">
+          <i class="fa-solid fa-triangle-exclamation mb-3 block text-3xl"></i>
+          ${escapeHtml(error)}
+        </div>
+      `;
+    }
+
+    function updateHeadings() {
+      const isAttractions = appState.activeTab === "attractions";
+      const country = appState.currentCountry;
+      const state = appState.currentState;
+
+      resultLabel.innerHTML = isAttractions
+        ? `<i class="fa-solid fa-mountain-sun"></i> Attractions`
+        : `<i class="fa-solid fa-calendar-days"></i> Upcoming Events`;
+
+      const categoryLabel = getCurrentCategoryLabel();
+
+      if (!appState.currentRegion) {
+        resultTitle.textContent = isAttractions ? "Random famous attractions" : "Random famous upcoming events";
+        resultSubtitle.textContent = `Showing global inspiration from Anywhere · ${categoryLabel}.`;
+      } else if (isAttractions) {
+        resultTitle.textContent = state && country ? `Popular attractions in ${state}` : "Popular attractions";
+        resultSubtitle.textContent = state && country
+          ? `Showing ${categoryLabel.toLowerCase()} in ${state}, ${country}.`
+          : `Select a country and state/province to load ${categoryLabel.toLowerCase()}.`;
+      } else {
+        const dateRange = getSelectedDateRangeText();
+
+        resultTitle.textContent = country ? `Upcoming events in ${country}` : "Upcoming events";
+        resultSubtitle.textContent = country
+          ? `Showing ${categoryLabel.toLowerCase()} by country${dateRange ? `, ${dateRange}` : ""}.`
+          : `Select a country to load ${categoryLabel.toLowerCase()}${dateRange ? ` ${dateRange}` : ""}.`;
+      }
+
+      const summaryParts = [];
+
+      if (!appState.currentRegion) {
+        summaryParts.push("Anywhere");
+      } else {
+        summaryParts.push(appState.currentRegion);
+      }
+
+      if (country) summaryParts.push(country);
+      if (state && isAttractions) summaryParts.push(state);
+
+      summaryParts.push(categoryLabel);
+
+      if (!isAttractions) {
+        const dateRange = getSelectedDateRangeText();
+        if (dateRange) summaryParts.push(dateRange);
+      }
+
+      selectionSummary.textContent = `Current selection: ${summaryParts.join(" / ")}`;
+    }
+
+    function setActiveTab(tabName) {
+      appState.activeTab = tabName;
+
+      document.querySelectorAll(".tab-btn").forEach((button) => {
+        button.setAttribute("aria-selected", button.dataset.tab === tabName ? "true" : "false");
+      });
+
+      const isEventsTab = tabName === "events";
+      const isAttractionsTab = tabName === "attractions";
+
+      eventDateWrap.classList.toggle("hidden", !isEventsTab);
+      attractionCategoryWrap.classList.toggle("hidden", !isAttractionsTab);
+      eventCategoryWrap.classList.toggle("hidden", !isEventsTab);
+
+      stateWrap.classList.toggle(
+        "hidden",
+        !isAttractionsTab || !appState.currentRegion || !appState.currentCountry
+      );
+
+      updateMapVisibility();
+      updateHeadings();
+      loadResultsForCurrentSelection();
+    }
+
+    function renderAttractions(attractions) {
+      if (!attractions.length) {
+        setGridMessage(
+          "fa-map-location-dot",
+          "No attractions found.",
+          "Try another state/province or choose Anywhere."
+        );
+        return;
+      }
+
+      resultGrid.innerHTML = "";
+
+      attractions.forEach((place) => {
+        const tags = stripKinds(place.kinds);
+        const distance = formatDistance(place.distance);
+        const description = place.description || "Description not available yet.";
+        const card = document.createElement("article");
+
+        card.className =
+          "glass-card overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-amber-400/35";
+
+        card.innerHTML = `
+          <div class="h-48 overflow-hidden bg-white/[0.04]">
+            ${
+              place.image
+                ? `<img src="${escapeHtml(place.image)}" alt="${escapeHtml(place.name)}" class="h-full w-full object-cover transition duration-500 hover:scale-105" />`
+                : `<div class="flex h-full items-center justify-center text-white/35">
+                    <i class="fa-solid fa-mountain-sun text-4xl"></i>
+                  </div>`
+            }
+          </div>
+
+          <div class="p-5">
+            <div class="mb-3 flex flex-wrap gap-2">
+              ${
+                tags.length
+                  ? tags
+                      .map(
+                        (tag) =>
+                          `<span class="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/50">${escapeHtml(tag)}</span>`
+                      )
+                      .join("")
+                  : `<span class="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/50">Attraction</span>`
+              }
+            </div>
+
+            <h3 class="line-clamp-2 text-lg font-extrabold text-white">
+              ${escapeHtml(place.name)}
+            </h3>
+
+            <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-white/55">
+              ${escapeHtml(description)}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+              <p class="text-xs font-semibold text-white/38">
+                ${
+                  distance
+                    ? `<i class="fa-solid fa-location-dot mr-1 text-amber-400"></i>${escapeHtml(distance)}`
+                    : "OpenTripMap"
+                }
+              </p>
+
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="save-wishlist-btn inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/70 transition hover:bg-pink-500 hover:text-white"
+                >
+                  <i class="fa-regular fa-heart"></i>
+                  Save
+                </button>
+
+                ${
+                  place.url
+                    ? `<a href="${escapeHtml(place.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-bold text-black transition hover:bg-amber-400">
+                        View
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                      </a>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `;
+
+        const saveButton = card.querySelector(".save-wishlist-btn");
+
+        saveButton.addEventListener("click", () => {
+          saveToWishlist("attraction", place, saveButton);
+        });
+
+        resultGrid.appendChild(card);
+      });
+
+      showResultsOnMap(attractions);
+    }
+        
+    function renderEvents(events) {
+      if (!events.length) {
+        setGridMessage(
+          "fa-calendar-xmark",
+          "No upcoming events found.",
+          "Try another country, or choose Anywhere."
+        );
+        return;
+      }
+
+      resultGrid.innerHTML = "";
+
+      events.forEach((event) => {
+        const card = document.createElement("article");
+
+        card.className =
+          "glass-card overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-amber-400/35";
+
+        card.innerHTML = `
+          <div class="h-48 overflow-hidden bg-white/[0.04]">
+            ${
+              event.image
+                ? `<img src="${escapeHtml(event.image)}" alt="${escapeHtml(event.name)}" class="h-full w-full object-cover transition duration-500 hover:scale-105" />`
+                : `<div class="flex h-full items-center justify-center text-white/35">
+                    <i class="fa-solid fa-calendar-days text-4xl"></i>
+                  </div>`
+            }
+          </div>
+
+          <div class="p-5">
+            <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-amber-400">
+              ${escapeHtml(formatEventDate(event.date, event.time))}
+            </p>
+
+            <h3 class="mt-3 line-clamp-2 text-lg font-extrabold text-white">
+              ${escapeHtml(event.name)}
+            </h3>
+
+            <p class="mt-3 text-sm leading-relaxed text-white/55">
+              <i class="fa-solid fa-location-dot mr-1 text-amber-400"></i>
+              ${escapeHtml(event.venue || "Venue not available")}
+              ${event.city ? ` · ${escapeHtml(event.city)}` : ""}
+              ${event.country ? ` · ${escapeHtml(event.country)}` : ""}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+              <button
+                type="button"
+                class="save-wishlist-btn inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/70 transition hover:bg-pink-500 hover:text-white"
+              >
+                <i class="fa-regular fa-heart"></i>
+                Save
+              </button>
+
+              ${
+                event.url
+                  ? `<a href="${escapeHtml(event.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-bold text-black transition hover:bg-amber-400">
+                      View event
+                      <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>`
+                  : `<span class="text-sm text-white/35">No event link available</span>`
+              }
+            </div>
+          </div>
+        `;
+
+        const saveButton = card.querySelector(".save-wishlist-btn");
+
+        saveButton.addEventListener("click", () => {
+          saveToWishlist("event", event, saveButton);
+        });
+
+        resultGrid.appendChild(card);
+      });
+
+      clearExploreMap();
+    }
+        
+    async function loadAnywhereResults() {
+      updateHeadings();
+
+      if (appState.activeTab === "events" && hasInvalidEventDateRange()) {
+        setGridMessage(
+          "fa-calendar-xmark",
+          "Invalid date range.",
+          "End date cannot be earlier than start date."
+        );
+        return;
+      }
+
+      setGridLoading(appState.activeTab === "attractions" ? "Loading global attractions." : "Loading global upcoming events.");
+
+      try {
+        const params = new URLSearchParams({
+          eventLimit: "12",
+          attractionLimit: "12",
+        });
+
+        if (appState.activeTab === "events") {
+          params.set("eventCategory", appState.eventCategory);
+
+          if (appState.eventStartDate) {
+            params.set("startDate", appState.eventStartDate);
+          }
+
+          if (appState.eventEndDate) {
+            params.set("endDate", appState.eventEndDate);
+          }
+        } else {
+          params.set("attractionCategory", appState.attractionCategory);
+        }
+
+        const data = await fetchJson(`/api/explore/anywhere?${params.toString()}`);
+
+        if (appState.activeTab === "attractions") {
+          renderAttractions(data.attractions || []);
+        } else {
+          renderEvents(data.events || []);
+        }
+      } catch (error) {
+        console.error(error);
+        setGridError(error.message);
+      }
+    }
+
+    async function loadAttractionsForSelectedState() {
+      const country = appState.currentCountry;
+      const state = appState.currentState;
+      const countryCode = appState.currentCountryCode;
+
+      updateHeadings();
+
+      if (!country || !state || !countryCode) {
+        setGridMessage(
+          "fa-hand-pointer",
+          "Select a state or province.",
+          "Attractions are loaded after you pick a state/province."
+        );
+        return;
+      }
+
+      setGridLoading(`Loading attractions in ${state}.`);
+
+      try {
+        const params = new URLSearchParams({
+          state,
+          country,
+          countryCode,
+          radius: "50000",
+          limit: "12",
+          category: appState.attractionCategory,
+        });
+
+        const data = await fetchJson(`/api/popular-attractions?${params.toString()}`);
+        renderAttractions(data.attractions || []);
+      } catch (error) {
+        console.error(error);
+        setGridError(error.message);
+      }
+    }
+
+    async function loadEventsForSelectedCountry() {
+      const country = appState.currentCountry;
+      const countryCode = appState.currentCountryCode;
+
+      updateHeadings();
+
+      if (hasInvalidEventDateRange()) {
+        setGridMessage(
+          "fa-calendar-xmark",
+          "Invalid date range.",
+          "End date cannot be earlier than start date."
+        );
+        return;
+      }
+
+      if (!country || !countryCode) {
+        setGridMessage(
+          "fa-hand-pointer",
+          "Select a country.",
+          "Upcoming events are loaded after you pick a country."
+        );
+        return;
+      }
+
+      setGridLoading(`Loading upcoming events in ${country}.`);
+
+      try {
+        const params = new URLSearchParams({
+          countryCode,
+          limit: "12",
+          category: appState.eventCategory,
+        });
+
+        if (appState.eventStartDate) {
+          params.set("startDate", appState.eventStartDate);
+        }
+
+        if (appState.eventEndDate) {
+          params.set("endDate", appState.eventEndDate);
+        }
+
+        const data = await fetchJson(`/api/events?${params.toString()}`);
+        renderEvents(data.events || []);
+      } catch (error) {
+        console.error(error);
+        setGridError(error.message);
+      }
+    }
+
+    function loadResultsForCurrentSelection() {
+      if (!appState.currentRegion) {
+        loadAnywhereResults();
+        return;
+      }
+
+      if (appState.activeTab === "events") {
+        loadEventsForSelectedCountry();
+        return;
+      }
+
+      loadAttractionsForSelectedState();
+    }
+
+    function sortedOptions(selectElement) {
+      return Array.from(selectElement.options)
+        .filter((option) => option.value)
+        .sort((a, b) => a.textContent.localeCompare(b.textContent));
+    }
+
+    function renderCountryChips() {
+      const searchText = countryChipSearch.value.trim().toLowerCase();
+      const matchingOptions = sortedOptions(destinationCountry).filter((option) => {
+        return option.textContent.toLowerCase().includes(searchText);
+      });
+
+      countryChipRail.innerHTML = "";
+
+      if (!matchingOptions.length) {
+        countryChipRail.innerHTML = `<p class="px-2 py-2 text-sm text-white/45">No matching countries.</p>`;
+        return;
+      }
+
+      matchingOptions.forEach((option) => {
+        const button = document.createElement("button");
+        const countryCode = option.dataset.cc || "";
+
+        button.type = "button";
+        button.className = "filter-chip";
+        button.setAttribute("aria-pressed", destinationCountry.value === option.value ? "true" : "false");
+
+        button.innerHTML = `
+          <span class="text-xs font-extrabold uppercase opacity-80">${escapeHtml(countryCode || "—")}</span>
+          <span>${escapeHtml(option.textContent)}</span>
+        `;
+
+        button.addEventListener("click", async () => {
+          destinationCountry.value = option.value;
+          appState.currentCountry = option.value;
+          appState.currentCountryCode = selectedCountryCode();
+          appState.currentState = "";
+
+          resetSelect(destinationState, "State / Province", true);
+          stateChipSearch.value = "";
+          stateChipWrap.innerHTML = "";
+
+          renderCountryChips();
+          updateHeadings();
+
+          if (appState.activeTab === "attractions") {
+            stateWrap.classList.remove("hidden");
+            await loadStatesByCountry(option.value);
+            loadAttractionsForSelectedState();
+          } else {
+            stateWrap.classList.add("hidden");
+            loadEventsForSelectedCountry();
+          }
+        });
+
+        countryChipRail.appendChild(button);
+      });
+    }
+
+    function renderStateChips() {
+      const searchText = stateChipSearch.value.trim().toLowerCase();
+      const maxVisibleStates = searchText ? 80 : 24;
+      const matchingOptions = sortedOptions(destinationState)
+        .filter((option) => option.textContent.toLowerCase().includes(searchText))
+        .slice(0, maxVisibleStates);
+
+      stateChipWrap.innerHTML = "";
+
+      if (!matchingOptions.length) {
+        stateChipWrap.innerHTML = `<p class="px-2 py-2 text-sm text-white/45">No matching states/provinces.</p>`;
+        return;
+      }
+
+      matchingOptions.forEach((option) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "state-chip";
+        button.setAttribute("aria-pressed", destinationState.value === option.value ? "true" : "false");
+
+        button.innerHTML = `
+          <i class="fa-solid fa-location-dot text-xs"></i>
+          <span>${escapeHtml(option.textContent)}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          destinationState.value = option.value;
+          appState.currentState = option.value;
+
+          renderStateChips();
+          loadAttractionsForSelectedState();
+        });
+
+        stateChipWrap.appendChild(button);
+      });
+    }
+
+    async function loadCountriesByRegion(region) {
+      resetSelect(destinationCountry, "Loading countries.", true);
+      resetSelect(destinationState, "State / Province", true);
+
+      countryChipRail.innerHTML = `
+        <div class="rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/45">
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+          Loading countries.
+        </div>
+      `;
+
+      try {
+        const data = await fetchJson(`/api/destinations/countries?region=${encodeURIComponent(region)}`);
+
+        resetSelect(destinationCountry, "Country", false);
+        addOptions(destinationCountry, data.countries || []);
+        appState.countriesLoadedForRegion = region;
+
+        renderCountryChips();
+      } catch (error) {
+        console.error(error);
+        countryChipRail.innerHTML = `<p class="px-2 py-2 text-sm text-red-200">${escapeHtml(error.message)}</p>`;
+      }
+    }
+
+    async function loadStatesByCountry(country) {
+      if (!country) return;
+
+      resetSelect(destinationState, "Loading states.", true);
+      stateChipWrap.innerHTML = `
+        <div class="rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/45">
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+          Loading states/provinces.
+        </div>
+      `;
+
+      try {
+        const data = await fetchJson(`/api/destinations/states?country=${encodeURIComponent(country)}`);
+
+        resetSelect(destinationState, "State / Province", false);
+        addOptions(destinationState, data.states || []);
+        appState.statesLoadedForCountry = country;
+
+        renderStateChips();
+      } catch (error) {
+        console.error(error);
+        stateChipWrap.innerHTML = `<p class="px-2 py-2 text-sm text-red-200">${escapeHtml(error.message)}</p>`;
+      }
+    }
+
+    function renderRegionCards(regions) {
+      regionCarousel.innerHTML = "";
+
+      const allRegions = ["", ...regions];
+
+      allRegions.forEach((region) => {
+        const isAnywhere = !region;
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = `region-card ${isAnywhere ? "anywhere" : ""}`;
+        button.setAttribute("aria-pressed", appState.currentRegion === region ? "true" : "false");
+
+        const background = isAnywhere ? "" : `style="background-image:url('${regionImages[region] || defaultImage}')"`;
+
+        button.innerHTML = `
+          <div class="bg" ${background}></div>
+          <div class="scrim"></div>
+          <span class="badge-haul">${isAnywhere ? "Global" : "Region"}</span>
+          <span class="label">
+            <i class="fa-solid ${isAnywhere ? "fa-globe" : "fa-location-dot"}"></i>
+            ${escapeHtml(isAnywhere ? "Anywhere" : region)}
+          </span>
+        `;
+
+        button.addEventListener("click", () => selectRegion(region));
+        regionCarousel.appendChild(button);
+      });
+    }
+
+    async function selectRegion(region) {
+      appState.currentRegion = region;
+      appState.currentCountry = "";
+      appState.currentCountryCode = "";
+      appState.currentState = "";
+
+      destinationRegion.value = region;
+      resetSelect(destinationCountry, "Country", true);
+      resetSelect(destinationState, "State / Province", true);
+
+      countryChipSearch.value = "";
+      stateChipSearch.value = "";
+      countryChipRail.innerHTML = "";
+      stateChipWrap.innerHTML = "";
+
+      document.querySelectorAll(".region-card").forEach((card) => {
+        const label = card.textContent.trim();
+        const cardRegion = label.includes("Anywhere") ? "" : label.replace("Region", "").trim();
+        card.setAttribute("aria-pressed", cardRegion === region ? "true" : "false");
+      });
+
+      countryWrap.classList.toggle("hidden", !region);
+      eventDateWrap.classList.toggle("hidden", appState.activeTab !== "events");
+      attractionCategoryWrap.classList.toggle("hidden", appState.activeTab !== "attractions");
+      eventCategoryWrap.classList.toggle("hidden", appState.activeTab !== "events");
+      stateWrap.classList.add("hidden");
+
+      updateMapVisibility();
+      updateHeadings();
+
+      if (!region) {
+        loadAnywhereResults();
+        return;
+      }
+
+      setGridMessage(
+        appState.activeTab === "attractions" ? "fa-map-location-dot" : "fa-calendar-days",
+        "Select a country.",
+        appState.activeTab === "attractions"
+          ? "After selecting a country, choose a state/province to load attractions."
+          : "After selecting a country, upcoming events will load automatically."
+      );
+
+      await loadCountriesByRegion(region);
+    }
+
+    async function loadDestinationRegions() {
+      const fallbackRegions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
+
+      try {
+        const data = await fetchJson("/api/destinations/regions");
+        return data.regions?.length ? data.regions : fallbackRegions;
+      } catch (error) {
+        console.error(error);
+        return fallbackRegions;
+      }
+    }
+
+    clearFiltersBtn.addEventListener("click", () => {
+      appState.eventStartDate = "";
+      appState.eventEndDate = "";
+      appState.attractionCategory = "all";
+      appState.eventCategory = "all";
+      eventStartDate.value = "";
+      eventEndDate.value = "";
+      attractionCategorySelect.value = "all";
+      eventCategorySelect.value = "all";
+
+      selectRegion("");
+    });
+
+    clearEventDatesBtn.addEventListener("click", () => {
+      appState.eventStartDate = "";
+      appState.eventEndDate = "";
+      eventStartDate.value = "";
+      eventEndDate.value = "";
+
+      if (appState.activeTab === "events") {
+        updateHeadings();
+        loadResultsForCurrentSelection();
+      }
+    });
+
+    eventStartDate.addEventListener("change", () => {
+      applyEventDateInputsToState();
+
+      if (appState.activeTab === "events") {
+        updateHeadings();
+        loadResultsForCurrentSelection();
+      }
+    });
+
+    eventEndDate.addEventListener("change", () => {
+      applyEventDateInputsToState();
+
+      if (appState.activeTab === "events") {
+        updateHeadings();
+        loadResultsForCurrentSelection();
+      }
+    });
+
+    attractionCategorySelect.addEventListener("change", () => {
+      appState.attractionCategory = attractionCategorySelect.value;
+
+      if (appState.activeTab === "attractions") {
+        updateHeadings();
+        loadResultsForCurrentSelection();
+      }
+    });
+
+    eventCategorySelect.addEventListener("change", () => {
+      appState.eventCategory = eventCategorySelect.value;
+
+      if (appState.activeTab === "events") {
+        updateHeadings();
+        loadResultsForCurrentSelection();
+      }
+    });
+
+    countryChipSearch.addEventListener("input", renderCountryChips);
+    stateChipSearch.addEventListener("input", renderStateChips);
+
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        setActiveTab(button.dataset.tab);
+      });
+    });
+
+    regionScrollPrev.addEventListener("click", () => {
+      regionCarousel.scrollBy({ left: -320, behavior: "smooth" });
+    });
+
+    regionScrollNext.addEventListener("click", () => {
+      regionCarousel.scrollBy({ left: 320, behavior: "smooth" });
+    });
+
+    countryScrollPrev.addEventListener("click", () => {
+      countryChipRail.scrollBy({ left: -260, behavior: "smooth" });
+    });
+
+    countryScrollNext.addEventListener("click", () => {
+      countryChipRail.scrollBy({ left: 260, behavior: "smooth" });
+    });
+
+    async function initialiseExplorePage() {
+      initExploreMap();
+      updateMapVisibility();
+
+      setTimeout(() => {
+        if (exploreMap) exploreMap.invalidateSize();
+      }, 0);
+
+      const regions = await loadDestinationRegions();
+
+      resetSelect(destinationRegion, "Region", false);
+      addOptions(destinationRegion, regions);
+
+      renderRegionCards(regions);
+      await selectRegion("");
+    }
+
+    async function saveToWishlist(itemType, item, button) {
+      try {
+        button.disabled = true;
+        button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving`;
+
+        const response = await fetch("/api/wishlist", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemType,
+            item,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to save item.");
+        }
+
+        button.innerHTML = `<i class="fa-solid fa-heart"></i> Saved`;
+        button.classList.remove("bg-white/[0.06]", "text-white/70");
+        button.classList.add("bg-pink-500", "text-white");
+      } catch (error) {
+        console.error(error);
+
+        alert(error.message);
+
+        button.disabled = false;
+        button.innerHTML = `<i class="fa-regular fa-heart"></i> Save`;
+      }
+    }
+        
+    initialiseExplorePage();
+  </script>
+</body>
+</html>

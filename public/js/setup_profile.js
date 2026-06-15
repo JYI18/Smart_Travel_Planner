@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const avatarInput = document.getElementById("avatar");
   const aboutMeInput = document.getElementById("aboutMe");
+  const dobInput = document.getElementById("dob");
+  const genderInput = document.getElementById("gender");
+  const contactInput = document.getElementById("contact");
+  const currentCountryInput = document.getElementById("current_country");
+  const currentCityInput = document.getElementById("current_city");
   const preferredCurrencyInput = document.getElementById("preferredCurrency");
   const languageInput = document.getElementById("language");
   const avatarError = document.getElementById("err_avatar");
@@ -103,6 +108,51 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
   }
 
+  function validateRequired(input, message) {
+    if (!input) return true;
+
+    if (!input.value || !input.value.trim()) {
+      showStatus(message);
+      input.classList.add("invalid");
+      input.classList.remove("valid");
+      input.focus();
+      return false;
+    }
+
+    input.classList.remove("invalid");
+    input.classList.add("valid");
+    return true;
+  }
+
+  function validateContact() {
+    if (!contactInput) return true;
+
+    const value = contactInput.value.trim();
+    const phoneRegex = /^60\d{2}-\d{7,8}$/;
+
+    if (!value) {
+      showStatus("Please enter your contact number.");
+      contactInput.classList.add("invalid");
+      contactInput.classList.remove("valid");
+      contactInput.focus();
+      return false;
+    }
+
+    if (!phoneRegex.test(value)) {
+      showStatus(
+        "Contact number must use 60XX-XXXXXXX or 60XX-XXXXXXXX format."
+      );
+      contactInput.classList.add("invalid");
+      contactInput.classList.remove("valid");
+      contactInput.focus();
+      return false;
+    }
+
+    contactInput.classList.remove("invalid");
+    contactInput.classList.add("valid");
+    return true;
+  }
+
   function validateSelect(input, message) {
     if (!input) return true;
 
@@ -129,6 +179,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!validateAboutMe()) {
+      return false;
+    }
+
+    if (!validateRequired(dobInput, "Please enter your date of birth.")) {
+      return false;
+    }
+
+    if (!validateSelect(genderInput, "Please select your gender.")) {
+      return false;
+    }
+
+    if (!validateContact()) {
+      return false;
+    }
+
+    if (
+      !validateRequired(
+        currentCountryInput,
+        "Please enter your current living country."
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      !validateRequired(
+        currentCityInput,
+        "Please enter your current living city."
+      )
+    ) {
       return false;
     }
 
@@ -159,6 +239,41 @@ document.addEventListener("DOMContentLoaded", () => {
     aboutMeInput.addEventListener("input", () => {
       clearStatus();
       aboutMeInput.classList.remove("invalid");
+    });
+  }
+
+  if (dobInput) {
+    dobInput.addEventListener("change", () => {
+      clearStatus();
+      dobInput.classList.remove("invalid");
+    });
+  }
+
+  if (genderInput) {
+    genderInput.addEventListener("change", () => {
+      clearStatus();
+      genderInput.classList.remove("invalid");
+    });
+  }
+
+  if (contactInput) {
+    contactInput.addEventListener("input", () => {
+      clearStatus();
+      contactInput.classList.remove("invalid");
+    });
+  }
+
+  if (currentCountryInput) {
+    currentCountryInput.addEventListener("input", () => {
+      clearStatus();
+      currentCountryInput.classList.remove("invalid");
+    });
+  }
+
+  if (currentCityInput) {
+    currentCityInput.addEventListener("input", () => {
+      clearStatus();
+      currentCityInput.classList.remove("invalid");
     });
   }
 

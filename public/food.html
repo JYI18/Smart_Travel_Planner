@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food & Dining — Travel Planner</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300..700&display=swap"
+    rel="stylesheet"
+  >
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            terracotta: "#d4a24c",
+            amber: "#d4a24c",
+            sage: "#6b9ec7",
+            cream: "#0f1525",
+            ink: "#f5f0e8",
+            sand: "#2a3248",
+            background: "#0f1525",
+            foreground: "#f5f0e8",
+            card: "#161d30",
+            muted: "#1e2538",
+            "muted-foreground": "#a0a8b8",
+            border: "#2a3248",
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', "serif"],
+            body: ["Inter", "system-ui", "sans-serif"],
+          }
+        }
+      }
+    };
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("/components/topNavBar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          const topNavbar = document.getElementById("topnavbar");
+
+          if (topNavbar) {
+            topNavbar.innerHTML = data;
+          }
+        })
+        .catch((error) => {
+          console.error("Navbar failed to load:", error);
+        });
+    });
+  </script>
+
+  <style>
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(212, 162, 76, 0.18), transparent 45%),
+        radial-gradient(ellipse at 80% 0%, rgba(107, 158, 199, 0.12), transparent 45%),
+        #0f1525;
+      color: #f5f0e8;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Playfair Display", serif;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-foreground">
+  <div id="topnavbar"></div>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden px-4 pb-12 pt-16 sm:px-6 lg:px-8">
+    <div class="relative mx-auto max-w-5xl text-center">
+      <p class="mb-3 text-sm font-medium tracking-widest uppercase text-amber">
+        Taste the Journey
+      </p>
+
+      <h1 class="text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        Find Your Next<br>
+        <span class="italic text-amber">Unforgettable Meal</span>
+      </h1>
+
+      <p class="mx-auto mt-5 max-w-xl text-base text-muted-foreground">
+        From restaurants and cafés to bakeries and dessert spots — discover nearby food places for your trip.
+      </p>
+
+      <div class="mx-auto mt-8 max-w-3xl space-y-3">
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <div class="relative flex-1">
+            <svg
+              class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+
+            <input
+              id="foodSearch"
+              type="text"
+              placeholder="Search food places, e.g. ramen, coffee, bakery..."
+              class="h-12 w-full rounded-full border border-border bg-card text-foreground placeholder:text-muted-foreground pl-10 pr-4 text-sm shadow-sm outline-none focus:border-amber"
+            >
+          </div>
+
+          <button
+            id="nearMeBtn"
+            type="button"
+            class="h-12 gap-2 rounded-full bg-amber px-6 text-sm font-medium text-background hover:bg-amber/90 flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Near me
+          </button>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+          <input
+            id="countrySearch"
+            type="text"
+            value="Japan"
+            placeholder="Country, e.g. Japan"
+            class="h-11 rounded-full border border-border bg-card text-foreground placeholder:text-muted-foreground px-4 text-sm shadow-sm outline-none focus:border-amber"
+          >
+
+          <input
+            id="stateSearch"
+            type="text"
+            value="Tokyo"
+            placeholder="State / Province, e.g. Tokyo"
+            class="h-11 rounded-full border border-border bg-card text-foreground placeholder:text-muted-foreground px-4 text-sm shadow-sm outline-none focus:border-amber"
+          >
+
+          <button
+            id="areaSearchBtn"
+            type="button"
+            class="h-11 rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground shadow-sm hover:border-terracotta/40 hover:text-amber"
+          >
+            Search Area
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="sticky top-0 z-30 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-5xl space-y-3">
+      <div>
+        <div class="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Type
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-1" id="typeFilters"></div>
+      </div>
+
+      <div>
+        <div class="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Cuisine / Diet
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-1" id="cuisineFilters"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold sm:text-3xl" id="resultsTitle">
+          Near Me
+        </h2>
+
+        <p class="mt-1 text-sm text-muted-foreground" id="resultsCount">
+          Loading nearby food places...
+        </p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="resultsGrid"></div>
+    </div>
+  </section>
+
+  <script>
+    const diningTypes = [
+      "All",
+      "Restaurants",
+      "Cafés",
+      "Fast Food",
+      "Food Courts",
+      "Bakeries",
+      "Bars",
+      "Desserts"
+    ];
+
+    const cuisines = [
+      "All",
+      "Indian",
+      "Chinese",
+      "Malay",
+      "Korean",
+      "Vegetarian",
+      "Vegan",
+      "Japanese",
+      "Mediterranean",
+      "Vietnamese",
+      "Thai"
+    ];
+
+    let activeType = "All";
+    let activeCuisine = "All";
+    let restaurants = [];
+    let currentCoords = null;
+
+    const foodSearch = document.getElementById("foodSearch");
+    const countrySearch = document.getElementById("countrySearch");
+    const stateSearch = document.getElementById("stateSearch");
+    const areaSearchBtn = document.getElementById("areaSearchBtn");
+    const nearMeBtn = document.getElementById("nearMeBtn");
+    const resultsTitle = document.getElementById("resultsTitle");
+    const resultsCount = document.getElementById("resultsCount");
+    const resultsGrid = document.getElementById("resultsGrid");
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getNearMeButtonHtml() {
+      return `
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Near me
+      `;
+    }
+
+    function getAreaText() {
+      const country = countrySearch?.value.trim();
+      const state = stateSearch?.value.trim();
+
+      if (state && country) return `${state}, ${country}`;
+      if (country) return country;
+      if (state) return state;
+
+      return "Tokyo, Japan";
+    }
+
+    function renderFilters() {
+      const typeEl = document.getElementById("typeFilters");
+
+      typeEl.innerHTML = diningTypes.map((type) => `
+        <button
+          onclick="setType('${type}')"
+          class="flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition-all ${
+            activeType === type
+              ? "border-amber bg-amber text-background shadow-sm"
+              : "border-border bg-card text-muted-foreground hover:border-amber/30 hover:bg-muted hover:text-foreground"
+          }"
+        >
+          ${type}
+        </button>
+      `).join("");
+
+      const cuisineEl = document.getElementById("cuisineFilters");
+
+      cuisineEl.innerHTML = cuisines.map((cuisine) => `
+        <button
+          onclick="setCuisine('${cuisine}')"
+          class="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${
+            activeCuisine === cuisine
+              ? "border-sage bg-sage/15 text-sage"
+              : "border-border bg-card text-muted-foreground hover:border-sage/40 hover:bg-muted hover:text-foreground"
+          }"
+        >
+          ${cuisine}
+        </button>
+      `).join("");
+    }
+
+    function renderLoading() {
+      const areaLabel = currentCoords ? "your current location" : getAreaText();
+
+      resultsTitle.textContent = "Near Me";
+      resultsCount.textContent = "Loading nearby food places from Geoapify...";
+
+      resultsGrid.innerHTML = `
+        <div class="col-span-full rounded-2xl border border-border bg-card py-16 text-center shadow-sm">
+          <p class="text-muted-foreground">Finding food places near ${escapeHtml(areaLabel)}...</p>
+        </div>
+      `;
+    }
+
+    function renderError(message) {
+      resultsTitle.textContent = "Near Me";
+      resultsCount.textContent = "Unable to load results";
+
+      resultsGrid.innerHTML = `
+        <div class="col-span-full rounded-2xl border border-red-500/30 bg-red-500/10 py-16 text-center">
+          <p class="text-red-300">${escapeHtml(message)}</p>
+        </div>
+      `;
+    }
+
+    async function saveFoodToWishlist(index, button) {
+      const restaurant = restaurants[index];
+
+      if (!restaurant) {
+        alert("Food spot not found.");
+        return;
+      }
+
+      try {
+        button.disabled = true;
+        button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving`;
+
+        const response = await fetch("/api/wishlist", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemType: "food",
+            item: restaurant,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to save food spot.");
+        }
+
+        button.innerHTML = `<i class="fa-solid fa-heart"></i> Saved`;
+        button.classList.remove("bg-amber", "text-background", "hover:bg-amber/90");
+        button.classList.add("bg-pink-500", "text-white");
+
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+        button.disabled = false;
+        button.innerHTML = `<i class="fa-regular fa-heart"></i> Save`;
+      }
+    }
+
+    async function loadRestaurants() {
+      renderLoading();
+
+      try {
+        const params = new URLSearchParams();
+
+        params.set("query", foodSearch?.value.trim() || "restaurant");
+        params.set("type", activeType);
+        params.set("cuisine", activeCuisine);
+        params.set("limit", "18");
+        params.set("radius", "8000");
+
+        if (currentCoords) {
+          params.set("lat", currentCoords.lat);
+          params.set("lon", currentCoords.lon);
+        } else {
+          params.set("near", getAreaText());
+        }
+
+        const response = await fetch(`/api/food-places?${params.toString()}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch food places");
+        }
+
+        restaurants = data.places || [];
+        renderResults();
+      } catch (error) {
+        console.error(error);
+        renderError(error.message);
+      }
+    }
+
+    function renderResults() {
+      const areaLabel = currentCoords ? "your current location" : getAreaText();
+
+      resultsTitle.textContent = "Near Me";
+
+      resultsCount.textContent =
+        `${restaurants.length} ${restaurants.length === 1 ? "place" : "places"} found near ${areaLabel}`;
+
+      if (restaurants.length === 0) {
+        resultsGrid.innerHTML = `
+          <div class="col-span-full rounded-2xl border border-dashed border-border py-16 text-center">
+            <p class="text-muted-foreground">No food places match your search.</p>
+            <button onclick="clearFilters()" class="mt-3 text-amber text-sm">
+              Clear filters
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      resultsGrid.innerHTML = restaurants.map((restaurant, index) => {
+        const name = escapeHtml(restaurant.name);
+        const cuisine = escapeHtml(restaurant.cuisine);
+        const type = escapeHtml(restaurant.type);
+        const location = escapeHtml(restaurant.location);
+        const image = escapeHtml(restaurant.image);
+        const price = escapeHtml(restaurant.price);
+        const open = escapeHtml(restaurant.open);
+        const website = escapeHtml(restaurant.website);
+        const rating = restaurant.rating ? Number(restaurant.rating).toFixed(1) : "N/A";
+
+        return `
+          <article class="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:border-amber/40 hover:shadow-md">
+            <div class="relative aspect-[16/10] overflow-hidden">
+              <img
+                src="${image}"
+                alt="${name}"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              >
+
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+
+              <div class="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
+                ${(restaurant.tags || []).map((tag) => `
+                  <span class="rounded-full border border-border bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
+                    ${escapeHtml(tag)}
+                  </span>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="p-4">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="text-lg font-semibold text-foreground">
+                  ${name}
+                </h3>
+
+                <div class="flex items-center gap-1 text-muted-foreground">
+                  <span class="text-xs font-medium">${restaurant.source || "Geoapify"}</span>
+                </div>
+              </div>
+
+              <p class="mt-1 text-sm text-muted-foreground">
+                ${cuisine} • ${type}
+              </p>
+
+              <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <span class="flex items-center gap-1">
+                  <svg
+                    class="h-3 w-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  ${location}
+                </span>
+
+                ${
+                  open
+                    ? `<span class="flex items-center gap-1">
+                        <svg
+                          class="h-3 w-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        ${open}
+                      </span>`
+                    : ""
+                }
+              </div>
+
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-sm font-medium text-muted-foreground">
+                  ${price}
+                </span>
+
+                <span class="text-xs text-muted-foreground">
+                  ${rating !== "N/A" ? `${rating} rating` : "Rating not available"}
+                </span>
+              </div>
+
+              <div class="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onclick="saveFoodToWishlist(${index}, this)"
+                  class="flex-1 rounded-full bg-amber px-4 py-2 text-sm font-medium text-background hover:bg-amber/90 disabled:cursor-not-allowed disabled:opacity-80"
+                >
+                  <i class="fa-regular fa-heart"></i>
+                  Save
+                </button>
+
+                ${
+                  website
+                    ? `<a
+                        href="${website}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        Website
+                      </a>`
+                    : ""
+                }
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function setType(type) {
+      activeType = type;
+      renderFilters();
+      loadRestaurants();
+    }
+
+    function setCuisine(cuisine) {
+      activeCuisine = cuisine;
+      renderFilters();
+      loadRestaurants();
+    }
+
+    function clearFilters() {
+      activeType = "All";
+      activeCuisine = "All";
+      foodSearch.value = "";
+      countrySearch.value = "Japan";
+      stateSearch.value = "Tokyo";
+      currentCoords = null;
+
+      renderFilters();
+      loadRestaurants();
+    }
+
+    function debounce(fn, delay = 400) {
+      let timer;
+
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    foodSearch?.addEventListener(
+      "input",
+      debounce(() => {
+        loadRestaurants();
+      }, 400)
+    );
+
+    areaSearchBtn?.addEventListener("click", () => {
+      currentCoords = null;
+      loadRestaurants();
+    });
+
+    [countrySearch, stateSearch].forEach((input) => {
+      input?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          currentCoords = null;
+          loadRestaurants();
+        }
+      });
+    });
+
+    nearMeBtn?.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
+
+      nearMeBtn.disabled = true;
+      nearMeBtn.innerHTML = "Locating...";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          currentCoords = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          };
+
+          nearMeBtn.disabled = false;
+          nearMeBtn.innerHTML = getNearMeButtonHtml();
+
+          loadRestaurants();
+        },
+        () => {
+          nearMeBtn.disabled = false;
+          nearMeBtn.innerHTML = getNearMeButtonHtml();
+
+          alert("Could not access your location.");
+        }
+      );
+    });
+
+    renderFilters();
+    loadRestaurants();
+  </script>
+</body>
+</html>

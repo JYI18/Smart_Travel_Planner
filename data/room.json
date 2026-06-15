@@ -1,0 +1,32 @@
+[
+  {
+    "roomId": "R001",
+    "hotelId": "lp347e4",
+    "roomType": "Standard Room",
+    "guests": 2,
+    "price": 120,
+    "currency": "EUR",
+    "breakfast": false,
+    "available": true
+  },
+  {
+    "roomId": "R002",
+    "hotelId": "lp347e4",
+    "roomType": "Deluxe Room",
+    "guests": 2,
+    "price": 180,
+    "currency": "EUR",
+    "breakfast": true,
+    "available": true
+  },
+  {
+    "roomId": "R003",
+    "hotelId": "lp347e4",
+    "roomType": "Family Suite",
+    "guests": 4,
+    "price": 280,
+    "currency": "EUR",
+    "breakfast": true,
+    "available": true
+  }
+]

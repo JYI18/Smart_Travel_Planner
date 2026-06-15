@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>My Wishlist | FlyAway</title>
+  <meta name="description" content="View attractions, events, and food spots saved to your FlyAway wishlist." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui"],
+            serif: ["Playfair Display", "Georgia", "serif"],
+          },
+          colors: {
+            primary: {
+              DEFAULT: "hsl(195 85% 41%)",
+              glow: "hsl(185 90% 55%)",
+            },
+            accent: {
+              DEFAULT: "hsl(35 95% 65%)",
+            },
+          },
+        },
+      },
+    };
+
+    fetch("/components/topNavBar.html")
+      .then((response) => response.text())
+      .then((html) => {
+        const target = document.getElementById("topnavbar");
+        if (target) target.innerHTML = html;
+      })
+      .catch((error) => console.error("Navbar failed to load:", error));
+  </script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: #0d0f14;
+      color: #e8eaf0;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245, 165, 36, 0.08), transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30, 140, 200, 0.07), transparent 60%),
+        #0d0f14;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1d25;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f5a524;
+      border-radius: 9999px;
+    }
+
+    .hero-bg {
+      background-image:
+        linear-gradient(to bottom, rgba(13, 15, 20, 0.2), rgba(13, 15, 20, 0.85) 72%, #0d0f14),
+        url("/img/FlyAway_Background.jpg");
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #f5a524 0%, #ffd700 50%, #f5a524 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 18px 60px -35px rgba(0, 0, 0, 0.9);
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f5a524;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-gold {
+      background: rgba(245, 165, 36, 0.15);
+      color: #f5a524;
+      border: 1px solid rgba(245, 165, 36, 0.32);
+    }
+
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-height: 3rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.62);
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .filter-btn[aria-selected="true"] {
+      color: #111827;
+      background: linear-gradient(135deg, #f5a524, #ffd56a);
+      border-color: rgba(245, 165, 36, 0.85);
+      box-shadow: 0 14px 34px -22px rgba(245, 165, 36, 0.9);
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+
+    .particle {
+      position: fixed;
+      width: 3px;
+      height: 3px;
+      background: rgba(245, 165, 36, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s linear infinite;
+      z-index: 0;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+  <div id="particles"></div>
+
+    <div id="topnavbar"></div>
+
+  <main class="relative z-10 mx-auto max-w-6xl px-6 py-12">
+    <section class="glass-card p-5 md:p-7">
+      <div class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="section-label">
+            <i class="fa-solid fa-bookmark"></i>
+            Saved Items
+          </p>
+
+          <h2 class="mt-2 font-serif text-3xl font-black gold-gradient md:text-4xl">
+            Your travel wishlist
+          </h2>
+
+          <p id="wishlistSummary" class="mt-2 text-sm text-white/45">
+            Loading saved attractions, events, and food spots.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="/attraction.html"
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-sm font-bold text-amber-300 transition hover:bg-amber-400 hover:text-black"
+          >
+            <i class="fa-solid fa-compass"></i>
+            Explore more
+          </a>
+
+          <a
+            href="/food.html"
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/60 transition hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-300"
+          >
+            <i class="fa-solid fa-utensils"></i>
+            Find food
+          </a>
+        </div>
+      </div>
+
+      <div class="mb-8 flex flex-wrap gap-3 rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-2">
+        <button class="filter-btn" type="button" data-filter="all" aria-selected="true">
+          <i class="fa-solid fa-layer-group"></i>
+          All
+        </button>
+
+        <button class="filter-btn" type="button" data-filter="attraction" aria-selected="false">
+          <i class="fa-solid fa-mountain-sun"></i>
+          Attractions
+        </button>
+
+        <button class="filter-btn" type="button" data-filter="event" aria-selected="false">
+          <i class="fa-solid fa-calendar-days"></i>
+          Events
+        </button>
+
+        <button class="filter-btn" type="button" data-filter="food" aria-selected="false">
+          <i class="fa-solid fa-utensils"></i>
+          Food Spots
+        </button>
+      </div>
+
+      <div
+        id="wishlistGrid"
+        class="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+      >
+        <!-- Wishlist cards injected by wishlist.js -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 bg-white/[0.02] py-8">
+    <div class="mx-auto max-w-6xl px-6 text-sm text-white/40">
+      © 2026 FlyAway Smart Travel Planner
+    </div>
+  </footer>
+
+  <script src="/js/wishlist.js"></script>
+</body>
+</html>

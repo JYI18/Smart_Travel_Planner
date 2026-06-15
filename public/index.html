@@ -9,20 +9,22 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- Google Font -->
+  <!-- Google Fonts: Inter + Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'ui-sans-serif', 'system-ui']
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            serif: ['Playfair Display', 'Georgia', 'serif']
           },
           colors: {
             background: '#f7f5f0',
@@ -65,7 +67,18 @@
     fetch("/components/topNavBar.html")
       .then(response => response.text())
       .then(data => {
-        document.getElementById("topnavbar").innerHTML = data;
+        const nav = document.getElementById("topnavbar");
+        if (nav) {
+          nav.innerHTML = data;
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          const scripts = nav.getElementsByTagName("script");
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
+        }
       })
       .catch(error => {
         console.error("Navbar failed to load:", error);
@@ -73,136 +86,769 @@
   </script>
 
   <style>
-    .bg-gradient-primary {
-      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
-    }
-
-    .bg-gradient-sunset {
-      background-image: linear-gradient(135deg, hsl(25 95% 60%), hsl(340 85% 65%));
-    }
-
-    .bg-gradient-card {
-      background-image: linear-gradient(180deg, hsl(0 0% 100%), hsl(200 40% 97%));
-    }
-
-    .shadow-soft {
-      box-shadow: 0 4px 20px -4px hsl(195 60% 30% / 0.12);
-    }
-
-    .shadow-glow {
-      box-shadow: 0 10px 40px -10px hsl(195 85% 41% / 0.35);
-    }
-
-    .shadow-card {
-      box-shadow: 0 8px 30px -8px hsl(210 40% 20% / 0.1);
-    }
-
-    .transition-smooth {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .hero-bg {
-      background-image:
-        linear-gradient(135deg, hsl(35 85% 45% / 0.7), hsl(220 25% 18% / 0.85)),
-        url("/img/FlyAway_Background.jpg");
-      background-size: cover;
-      background-position: center;
-    }
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
+      background: #0d0f14;
+      color: #e8eaf0;
+      overflow-x: hidden;
     }
 
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1d25; }
+    ::-webkit-scrollbar-thumb { background: #f5a524; border-radius: 10px; }
+
+    /* ── Fixed star-field background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245,165,36,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30,140,200,0.07) 0%, transparent 60%),
+        #0d0f14;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── Hero ── */
+    .hero-bg {
+      background-image:
+        linear-gradient(to bottom, rgba(13,15,20,0.35) 0%, rgba(13,15,20,0.80) 70%, rgba(13,15,20,1) 100%),
+        url("/img/FlyAway_Background.jpg");
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+    }
+
+    /* ── Gradient utilities ── */
+    .bg-gradient-primary {
+      background-image: linear-gradient(135deg, hsl(195 85% 41%), hsl(185 90% 55%));
+    }
+    .bg-gradient-sunset {
+      background-image: linear-gradient(135deg, hsl(25 95% 60%), hsl(340 85% 65%));
+    }
+    .bg-gradient-card {
+      background-image: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+    .gold-gradient {
+      background: linear-gradient(135deg, #F5A524 0%, #FFD700 50%, #F5A524 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ── Glass card ── */
+    .glass-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 1.25rem;
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .glass-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(245,165,36,0.35);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,165,36,0.15);
+    }
+
+    /* ── Trip card header gradient per destination ── */
+    .card-header-paris  { background: linear-gradient(135deg, #1a6fa8 0%, #2bb5d8 100%); }
+    .card-header-tokyo  { background: linear-gradient(135deg, #b5481a 0%, #e8832a 100%); }
+    .card-header-icy    { background: linear-gradient(135deg, #1a4f8a 0%, #5ab4e8 100%); }
+
+    /* ── Shadows ── */
+    .shadow-soft  { box-shadow: 0 4px 20px -4px rgba(245,165,36,0.15); }
+    .shadow-glow  { box-shadow: 0 10px 40px -10px rgba(245,165,36,0.40); }
+    .shadow-card  { box-shadow: 0 8px 30px -8px rgba(0,0,0,0.4); }
+
+    /* ── Transition ── */
+    .transition-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* ── Inputs ── */
     .input-base {
       display: flex;
-      height: 2.5rem;
+      height: 2.75rem;
       width: 100%;
-      border-radius: 0.5rem;
-      border: 1px solid hsl(200 25% 88%);
-      background: hsl(0 0% 100%);
-      padding: 0.5rem 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: #e8eaf0;
+      padding: 0.5rem 0.875rem;
       font-size: 0.875rem;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
+    .input-base::placeholder { color: rgba(255,255,255,0.35); }
     .input-base:focus {
-      box-shadow: 0 0 0 2px hsl(195 85% 41% / 0.4);
+      border-color: rgba(245,165,36,0.5);
+      box-shadow: 0 0 0 3px rgba(245,165,36,0.12);
     }
 
+    /* ── Badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.125rem 0.625rem;
+      padding: 0.2rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
+<<<<<<< HEAD
       font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
+    .badge-gold {
+      background: rgba(245,165,36,0.15);
+      color: #F5A524;
+      border: 1px solid rgba(245,165,36,0.3);
+    }
+    .badge-muted {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #F5A524;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Animated glow pulse on hero buttons ── */
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(245,165,36,0.4); }
+      50%       { box-shadow: 0 0 32px rgba(245,165,36,0.7); }
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #F5A524, #e8832a);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      animation: glowPulse 3s ease-in-out infinite;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.92; transform: scale(1.04); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.25);
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.15); transform: scale(1.04); }
+
+    /* ── Search pill ── */
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.5rem 0.75rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .search-pill:focus-within {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(245,165,36,0.45);
+      box-shadow: 0 0 0 3px rgba(245,165,36,0.1);
+    }
+
+    /* ── Quick-link reservation buttons ── */
+    .res-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      border-radius: 0.875rem;
+      padding: 0.75rem 0.5rem;
+      color: rgba(255,255,255,0.55);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .res-btn:hover {
+      background: rgba(245,165,36,0.08);
+      border-color: rgba(245,165,36,0.25);
+      color: #F5A524;
+      transform: translateY(-2px);
+    }
+
+    /* ── API badge row ── */
+    .api-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: 0.875rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ── Weather section ── */
+    .weather-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+    }
+    .weather-result {
+      border-radius: 1.25rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 1.5rem;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 2rem 0;
+    }
+
+    /* ── Floating particles ── */
+    @keyframes particleFloat {
+      0%   { transform: translateY(0)   rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+    .particle {
+      position: fixed;
+      width: 3px; height: 3px;
+      background: rgba(245,165,36,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s linear infinite;
+      z-index: 0;
+    }
+  
+
+    /* ── Region carousel filter cards ── */
+    .region-card {
+      position: relative;
+      flex: 0 0 auto;
+      width: 13rem;
+      height: 7.5rem;
+      border-radius: 1rem;
+      overflow: hidden;
+      cursor: pointer;
+      scroll-snap-align: start;
+      background: #0b1220;
+      isolation: isolate;
+      border: 2px solid transparent;
+      box-shadow: 0 8px 24px -12px rgba(0, 0, 0, .6);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .region-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .region-card[aria-pressed="true"] {
+      border-color: #f5c97b;
+      box-shadow:
+        0 0 0 1px rgba(245, 201, 123, 0.35),
+        0 12px 28px -10px rgba(245, 201, 123, .35);
+    }
+
+    .region-card .bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform .5s ease;
+    }
+
+    .region-card:hover .bg {
+      transform: scale(1.06);
+    }
+
+    .region-card .scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, .05) 0%, rgba(0, 0, 0, .65) 100%);
+    }
+
+    .region-card .badge-haul {
+      position: absolute;
+      top: .6rem;
+      left: .6rem;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: .2rem .55rem;
+      border-radius: .5rem;
+      background: rgba(15, 23, 42, .7);
+      color: #fff;
+      backdrop-filter: blur(6px);
+    }
+
+    .region-card .label {
+      position: absolute;
+      left: .85rem;
+      bottom: .7rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: .01em;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, .5);
+    }
+
+    .region-card.anywhere .bg {
+      background:
+        radial-gradient(ellipse at 30% 30%, #1e3a8a 0%, #0b1220 70%),
+        url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600") center / cover;
+      background-blend-mode: multiply;
+    }
+
+
+    /* Keep select option menus readable on dark theme */
+    select.input-base option {
+      color: #111827;
+      background: #ffffff;
+    }
+
+    .region-card.anywhere .bg {
+      background:
+        linear-gradient(135deg, rgba(30, 64, 175, 0.75), rgba(15, 23, 42, 0.55)),
+        url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600") center/cover;
+    }
+
+    #regionCarousel {
+      padding: 0.5rem 0.75rem 0.9rem 0.75rem;
+    }
+
+    .region-card .scrim {
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.12) 0%,
+        rgba(0, 0, 0, 0.68) 100%
+      );
+    }
+
+
+    /* Explore empty state injected by JS */
+    #exploreTripGrid #exploreEmptyState {
+      grid-column: 1 / -1;
+      width: 100%;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.65);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+
+    /* ── Expected Explore filter layout ── */
+    #trips .input-base {
+      min-height: 3rem;
+      border-radius: 0.95rem;
+      background: rgba(255,255,255,0.055);
+      border-color: rgba(255,255,255,0.11);
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .badge-gold {
+      background: rgba(245,165,36,0.15);
+      color: #F5A524;
+      border: 1px solid rgba(245,165,36,0.3);
+    }
+    .badge-muted {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #F5A524;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Animated glow pulse on hero buttons ── */
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(245,165,36,0.4); }
+      50%       { box-shadow: 0 0 32px rgba(245,165,36,0.7); }
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #F5A524, #e8832a);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      animation: glowPulse 3s ease-in-out infinite;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.92; transform: scale(1.04); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.25);
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.15); transform: scale(1.04); }
+
+    /* ── Search pill ── */
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.5rem 0.75rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .search-pill:focus-within {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(245,165,36,0.45);
+      box-shadow: 0 0 0 3px rgba(245,165,36,0.1);
+    }
+
+    /* ── Quick-link reservation buttons ── */
+    .res-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      border-radius: 0.875rem;
+      padding: 0.75rem 0.5rem;
+      color: rgba(255,255,255,0.55);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .res-btn:hover {
+      background: rgba(245,165,36,0.08);
+      border-color: rgba(245,165,36,0.25);
+      color: #F5A524;
+      transform: translateY(-2px);
+    }
+
+    /* ── API badge row ── */
+    .api-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: 0.875rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ── Weather section ── */
+    .weather-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+    }
+    .weather-result {
+      border-radius: 1.25rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 1.5rem;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 2rem 0;
+    }
+
+    /* ── Floating particles ── */
+    @keyframes particleFloat {
+      0%   { transform: translateY(0)   rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+    .particle {
+      position: fixed;
+      width: 3px; height: 3px;
+      background: rgba(245,165,36,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat 8s linear infinite;
+      z-index: 0;
+    }
+
+    .cascade-arrow {
+      display: grid;
+      place-items: center;
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.78);
+      transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
+    }
+
+    .cascade-arrow:hover {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-1px);
+    }
+
+    #regionCarousel {
+      padding: 0.25rem 0 0.75rem 0;
+      gap: 1rem;
+    }
+
+    .region-card {
+      width: 16rem;
+      height: 8.6rem;
+      border-radius: 1.15rem;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 14px 30px -18px rgba(0,0,0,0.8);
+    }
+
+    .region-card[aria-pressed="true"] {
+      border-color: rgba(245, 165, 36, 0.85);
+      box-shadow:
+        0 0 0 1px rgba(245, 165, 36, 0.25),
+        0 18px 36px -20px rgba(245, 165, 36, 0.55);
+    }
+
+    .region-card .label {
+      left: 1rem;
+      bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .region-card .badge-haul {
+      top: 0.8rem;
+      right: 0.8rem;
+      left: auto;
+      background: rgba(0,0,0,0.42);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.86);
+      font-size: 0.74rem;
+    }
+
+    .region-card.anywhere .bg {
+      background:
+        linear-gradient(135deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.76)),
+        url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800") center/cover;
+    }
+
+    .filter-chip,
+    .city-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 2.75rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.055);
+      color: rgba(255,255,255,0.78);
+      font-size: 0.96rem;
+      font-weight: 650;
+      line-height: 1;
+      transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+      white-space: nowrap;
+    }
+
+    .filter-chip {
+      flex: 0 0 auto;
+      padding: 0.75rem 1.15rem;
+    }
+
+    .city-chip {
+      padding: 0.7rem 1rem;
+    }
+
+    .filter-chip:hover,
+    .city-chip:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.18);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .filter-chip[aria-pressed="true"],
+    .city-chip[aria-pressed="true"] {
+      background: rgba(245, 165, 36, 0.16);
+      border-color: rgba(245, 165, 36, 0.75);
+      color: #f8d27a;
+      box-shadow: 0 12px 28px -18px rgba(245, 165, 36, 0.95);
+    }
+
+    .city-chip i {
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 768px) {
+      .region-card { width: 13.5rem; height: 7.5rem; }
+      .cascade-arrow { width: 2.45rem; height: 2.45rem; }
+      .filter-chip, .city-chip { font-size: 0.88rem; }
+    }
+
   </style>
 </head>
+<body class="antialiased">
 
-<body class="bg-background text-foreground antialiased">
+<<<<<<< HEAD
+<body class="antialiased">
+
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+  <!-- Floating particles -->
+  <div id="particles-hero"></div>
+  <script>
+    const pc = document.getElementById('particles-hero');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = (Math.random() * 80 + 10) + 'vh';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      pc.appendChild(p);
+    }
+  </script>
 
   <!-- HERO -->
-  <header class="hero-bg relative min-h-[610px] w-full overflow-hidden">
+<<<<<<< HEAD
+  <header class="hero-bg relative min-h-[320px] w-full overflow-hidden">
     <div id="topnavbar"></div>
 
-    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-2 text-center">
-      <span class="badge w-fit bg-white/20 text-white backdrop-blur mb-4">
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-8 pb-16 text-center">
+=======
+  <header class="hero-bg relative min-h-[620px] w-full overflow-hidden">
+    <div id="topnavbar"></div>
+
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-8 pb-16 text-center">
+
+      <!-- Badge -->
+      <span class="badge badge-gold mb-5">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         Smart Travel Planner
       </span>
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
 
-      <h1 class="max-w-2xl text-3xl font-bold leading-tight text-white md:text-4xl">
+      <h1 class="font-serif max-w-2xl text-4xl font-black leading-tight text-white md:text-6xl" style="text-shadow:0 2px 30px rgba(0,0,0,0.5)">
         Plan Your Dream Holidays Now
       </h1>
 
-      <p class="mt-4 max-w-xl text-lg text-white/85">
-        Save destinations, organize travel notes — all in one simple platform.
-      </p>
-
+<<<<<<< HEAD
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="PlanNewTrip.html" class="bg-gradient-primary text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+        <a href="PlanNewTrip.html" class="btn-primary">
           <i class="fa-solid fa-plus mr-2"></i>
           Plan a New Trip
         </a>
 
-        <a href="#trips" class="bg-white/10 text-white border border-white/40 backdrop-blur px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-smooth">
+        <a href="myTripList.html" class="btn-ghost">
           <i class="fa-solid fa-list mr-2"></i>
           View Trips
         </a>
       </div>
 
       <!-- SEARCH + TRIP TYPE CARD -->
-      <div class="relative mx-auto mt-10 w-full max-w-3xl overflow-visible rounded-2xl bg-white/95 text-left shadow-card ring-1 ring-black/5 backdrop-blur">
-
-        <!-- Search row -->
-        <div class="p-3 sm:p-4">
-          <label class="group flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-200 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/60">
-            <i class="fa-solid fa-magnifying-glass pl-2 text-slate-400 group-focus-within:text-primary"></i>
-            <input
-              type="text"
-              placeholder="Where to? Try ‘Lisbon’ or ‘Penang’"
-              class="flex-1 bg-transparent px-2 py-2 text-base font-medium text-slate-800 placeholder:text-slate-400 outline-none"
-            />
-            <button type="button" title="Use current location" class="hidden h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary transition sm:inline-flex">
-              <i class="fa-solid fa-location-dot"></i>
-            </button>
-            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">
-              <i class="fa-solid fa-arrow-right"></i>
-              <span class="hidden sm:inline">Search</span>
-            </button>
-          </label>
-        </div>
+      <div class="relative mx-auto mt-6 w-full max-w-3xl overflow-visible rounded-2xl bg-white/95 text-left shadow-card ring-1 ring-black/5 backdrop-blur">
 
         <!-- Trip type row -->
-        <div class="border-t border-slate-100 px-4 pb-4 pt-3 sm:px-5">
+        <div class="border-t border-slate-100 px-4 pb-3 pt-2 sm:px-5">
           <div class="mb-2 flex items-center justify-between">
             <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Reservations & attachments
             </h3>
           </div>
 
+=======
+      <p class="mt-5 max-w-xl text-lg text-white/75 font-light">
+        Save destinations, organize travel notes — all in one simple platform.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="#new" class="bg-gradient-primary text-white px-6 py-3 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+          <i class="fa-solid fa-plus mr-2"></i>
+          Plan a New Trip
+        </a>
+        <a href="#trips" class="btn-ghost">
+          <i class="fa-solid fa-list mr-2"></i>View Trips
+        </a>
+      </div>
+
+    <!-- SEARCH + TRIP TYPE CARD -->
+    <div class="mx-auto mt-10 w-full max-w-3xl overflow-hidden rounded-2xl bg-white/95 text-left shadow-card ring-1 ring-black/5 backdrop-blur">
+
+      <!-- Search row: unified pill -->
+      <div class="p-3 sm:p-4">
+        <label class="group flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-200 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/60">
+          <i class="fa-solid fa-magnifying-glass pl-2 text-slate-400 group-focus-within:text-primary"></i>
+          <input
+            type="text"
+            placeholder="Where to? Try ‘Lisbon’ or ‘Tokyo’"
+            class="flex-1 bg-transparent px-2 py-2 text-base font-medium text-slate-800 placeholder:text-slate-400 outline-none"
+          />
+          <button type="button" title="Use current location" class="hidden h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary transition sm:inline-flex">
+            <i class="fa-solid fa-location-dot"></i>
+          </button>
+          <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span class="hidden sm:inline">Search</span>
+          </button>
+        </label>
+      </div>
+
+      <!-- Trip type row -->
+      <div class="border-t border-slate-100 px-4 pb-4 pt-3 sm:px-5">
+        <div class="mb-2 flex items-center justify-between">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Reservations & attachments
+          </h3>
+        </div>
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
           <div class="grid grid-cols-3 gap-2 sm:grid-cols-6">
             <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
               <i class="fa-solid fa-plane text-lg transition group-hover:-translate-y-0.5"></i>
@@ -211,23 +857,32 @@
 
             <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
               <i class="fa-solid fa-bed text-lg transition group-hover:-translate-y-0.5"></i>
-              <span class="text-[11px] font-medium">Accommodations</span>
+              <span class="text-[11px] font-medium">Hotel</span>
             </button>
 
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <a
+              href="/transport.html"
+              class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100"
+            >
               <i class="fa-solid fa-car text-lg transition group-hover:-translate-y-0.5"></i>
               <span class="text-[11px] font-medium">Transport</span>
-            </button>
+            </a>
 
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
+            <a
+              href="/food.html"
+              class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100"
+            >
               <i class="fa-solid fa-utensils text-lg transition group-hover:-translate-y-0.5"></i>
               <span class="text-[11px] font-medium">Food</span>
-            </button>
+            </a>
 
-            <button class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100">
-              <i class="fa-solid fa-paperclip text-lg transition group-hover:-translate-y-0.5"></i>
+            <a
+              href="/attraction.html"
+              class="group flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100"
+            >
+              <i class="fa-solid fa-map-location-dot text-lg transition group-hover:-translate-y-0.5"></i>
               <span class="text-[11px] font-medium">Attractions</span>
-            </button>
+            </a>
 
             <!-- Other tab opens dropdown first -->
             <div class="relative z-50">
@@ -237,7 +892,7 @@
                 class="group flex w-full flex-col items-center gap-1 rounded-xl px-2 py-3 text-slate-500 ring-1 ring-transparent transition hover:bg-blue-50 hover:text-primary hover:ring-blue-100"
               >
                 <i class="fa-solid fa-ellipsis text-lg transition group-hover:-translate-y-0.5"></i>
-                <span class="text-[11px] font-medium">Tools</span>
+                <span class="text-[11px] font-medium">Others</span>
               </button>
 
               <!-- Dropdown shown immediately below Other -->
@@ -270,94 +925,215 @@
     </div>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-12 space-y-20">
+<<<<<<< HEAD
+  <main class="mx-auto max-w-6xl px-6 py-8 space-y-20">
 
     <!-- EXPLORE -->
     <section id="trips">
-      <div class="flex items-end justify-between mb-8">
-        <div>
-          <span class="badge bg-muted text-foreground mb-3">
-            <i class="fa-solid fa-briefcase"></i>
-            Recommended For You
-          </span>
-
-          <h2 class="text-3xl font-bold">Explore</h2>
-
-          <p class="mt-2 text-muted-foreground">
-            Get Inspired on Your Next Trip
-          </p>
-        </div>
-
-        <div class="hidden lg:flex flex-wrap items-center justify-end gap-2">
-          <select id="destinationRegion" class="input-base w-32 cursor-pointer">
-            <option value="">Region</option>
-          </select>
-
-          <select id="destinationCountry" class="input-base w-36 cursor-pointer" disabled>
-            <option value="">Country</option>
-          </select>
-
-          <select id="destinationCity" class="input-base w-36 cursor-pointer" disabled>
-            <option value="">City</option>
-          </select>
-
-          <div class="relative">
-            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
-            <input id="exploreSearchInput" placeholder="Search trips..." class="input-base pl-9 w-56" />
+      <div class="mb-2 space-y-5">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p class="section-label"><i class="fa-solid fa-fire"></i> Hot Picks</p>
+            <h2 class="text-4xl font-serif font-black gold-gradient">Explore</h2>
+            <p class="mt-2 text-white/50 text-sm">Get inspired on your next trip</p>
           </div>
+=======
+  <main class="mx-auto max-w-6xl px-6 py-12 space-y-20">
+    
+    <!-- TRIPS -->
+    <section id="trips">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+        <div>
+          <p class="section-label"><i class="fa-solid fa-briefcase"></i> Recommended For You</p>
+          <h2 class="text-4xl font-serif font-black gold-gradient">Explore</h2>
+          <p class="mt-2 text-white/50 text-sm">Get Inspired on Your Next Trip</p>
         </div>
+
+        <div class="relative hidden md:block">
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        </div>
+
+        <!-- Region carousel + search -->
+        <div class="w-full space-y-2">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/45">
+              Where to?
+            </p>
+          </div>
+
+          <!-- Region cards -->
+          <div id="regionCarousel"
+            class="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <!-- cards injected by JS -->
+          </div>
+
+          <!-- Cascading Country / State chips (hidden until region picked) -->
+          <div id="cascadeRow" class="hidden mt-8 space-y-6">
+            <!-- COUNTRY: horizontal flag-chip rail -->
+            <div id="countryWrap">
+              <div class="mb-3 flex items-center justify-between gap-4">
+                <span class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/45">Country</span>
+                <button id="clearFiltersBtn" type="button"
+                        class="text-sm font-medium text-white/45 hover:text-white transition">
+                  × Clear filters
+                </button>
+              </div>
+
+              <div class="relative mb-3 max-w-md">
+                <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i>
+                <input
+                  id="countryChipSearch"
+                  type="text"
+                  placeholder="Search country..."
+                  class="input-base h-10 pl-11 text-sm"
+                />
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button type="button" id="countryScrollPrev"
+                        class="cascade-arrow shrink-0" aria-label="Scroll countries left">
+                  <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+
+                <div id="countryChipRail"
+                     class="flex flex-1 gap-3 overflow-x-auto scroll-smooth py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <!-- chips injected by renderCountryChips() -->
+                </div>
+
+                <button type="button" id="countryScrollNext"
+                        class="cascade-arrow shrink-0" aria-label="Scroll countries right">
+                  <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- EVENTS: upcoming events for selected country -->
+            <div id="eventsWrap" class="hidden mt-8">
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/45">
+                    Upcoming Events
+                  </p>
+                  <p id="eventsSubtitle" class="mt-1 text-sm text-white/45">
+                    Select a country to discover upcoming events.
+                  </p>
+                </div>
+              </div>
+
+              <div id="eventsGrid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <!-- event cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- STATE / PROVINCE: pill chips, hidden until a country is selected -->
+            <div id="cityWrap" class="hidden">
+              <span class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/45">State / Province</span>
+
+              <div class="relative mt-3 mb-3 max-w-md">
+                <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35"></i>
+                <input
+                  id="cityChipSearch"
+                  type="text"
+                  placeholder="Search state/province..."
+                  class="input-base h-10 pl-11 text-sm"
+                />
+              </div>
+
+              <div id="cityChipWrap" class="mt-3 flex flex-wrap gap-3">
+                <!-- chips injected by renderStateChips() -->
+              </div>
+            </div>
+
+            <!-- ATTRACTIONS: popular attractions for selected state/province -->
+            <div id="attractionsWrap" class="hidden mt-8">
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-[13px] font-semibold uppercase tracking-[0.22em] text-white/45">
+                    Popular Attractions
+                  </p>
+                  <p id="attractionsSubtitle" class="mt-1 text-sm text-white/45">
+                    Select a state/province to discover popular attractions.
+                  </p>
+                </div>
+              </div>
+
+              <div id="attractionsGrid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <!-- attraction cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Keep existing hidden selects so all cascade logic still works -->
+            <select id="destinationCountry" class="hidden" disabled>
+              <option value="">Country</option>
+            </select>
+            <select id="destinationCity" class="hidden" disabled>
+              <option value="">State / Province</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Hidden select preserved so existing logic keeps working -->
+        <select id="destinationRegion" class="hidden"><option value="">Region</option></select>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div id="exploreTripGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
         <!-- Trip card 1 -->
-        <article data-region="Europe" data-country="France" data-city="Paris" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+<<<<<<< HEAD
+        <article data-region="Europe" data-country="France" data-city="Paris" class="glass-card overflow-hidden">
+          <div class="card-header-paris p-5 text-white">
+=======
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
           <div class="bg-gradient-primary p-5 text-white">
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
             <div class="flex items-start justify-between">
               <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
               </div>
+
               <i class="fa-solid fa-cloud text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>18°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>65%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>12 km/h</div>
-            </div>
-          </div>
-
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              June 15, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Visit the Eiffel Tower, try local cafes, and explore museums.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Culture</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
-            </div>
-
-            <div class="flex items-center justify-between border-t border-border pt-4">
-              <div class="text-xs text-muted-foreground">
-                <i class="fa-solid fa-cloud mr-1"></i>
-                Partly cloudy
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                18°C
               </div>
 
-              <div class="flex gap-2">
-                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                65%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                12 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> June 15, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Visit the Eiffel Tower, try local cafes, and explore museums.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Culture</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-cloud mr-1"></i>Partly cloudy</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-
-                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
@@ -366,53 +1142,53 @@
         </article>
 
         <!-- Trip card 2 -->
-        <article data-region="Asia" data-country="Japan" data-city="Tokyo" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
           <div class="bg-gradient-primary p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
               </div>
+
               <i class="fa-solid fa-sun text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>24°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>70%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>8 km/h</div>
-            </div>
-          </div>
-
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              July 3, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Explore Shibuya, visit temples, and try Japanese street food.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Shopping</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
-            </div>
-
-            <div class="flex items-center justify-between border-t border-border pt-4">
-              <div class="text-xs text-muted-foreground">
-                <i class="fa-solid fa-sun mr-1"></i>
-                Sunny
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                24°C
               </div>
 
-              <div class="flex gap-2">
-                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                70%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                8 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> July 3, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Explore Shibuya, visit temples, and try Japanese street food.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Shopping</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-sun mr-1"></i>Sunny</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-
-                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
@@ -421,53 +1197,53 @@
         </article>
 
         <!-- Trip card 3 -->
-        <article data-region="Europe" data-country="Iceland" data-city="Reykjavik" class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
+        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
           <div class="bg-gradient-primary p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
-                <div class="flex items-center gap-1.5 text-sm opacity-90">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Destination
+                <div class="flex items-center gap-1.5 text-xs text-white/70 mb-1">
+                  <i class="fa-solid fa-location-dot"></i> Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
               </div>
+
               <i class="fa-solid fa-snowflake text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>7°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>78%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>22 km/h</div>
-            </div>
-          </div>
-
-          <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
-              September 5, 2026
-            </div>
-
-            <p class="text-sm text-foreground/80 leading-relaxed">
-              Northern lights, Blue Lagoon, Golden Circle tour.
-            </p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Adventure</span>
-              <span class="badge bg-muted text-foreground font-normal">Nature</span>
-            </div>
-
-            <div class="flex items-center justify-between border-t border-border pt-4">
-              <div class="text-xs text-muted-foreground">
-                <i class="fa-solid fa-snowflake mr-1"></i>
-                Snowy
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                7°C
               </div>
 
-              <div class="flex gap-2">
-                <button class="h-8 px-2 rounded hover:bg-muted transition-smooth">
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                78%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                22 km/h
+              </div>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i> September 5, 2026
+            </div>
+            <p class="text-sm text-white/65 leading-relaxed">Northern lights, Blue Lagoon, Golden Circle tour.</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="badge badge-muted">Adventure</span>
+              <span class="badge badge-muted">Nature</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40"><i class="fa-solid fa-snowflake mr-1"></i>Snowy</div>
+              <div class="flex gap-1">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-
-                <button class="h-8 px-2 rounded text-destructive hover:bg-muted transition-smooth">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
@@ -478,8 +1254,8 @@
       </div>
     </section>
 
-    <!-- MANAGE TRIPS -->
-    <section id="manage-trips">
+        <!-- TRIPS -->
+    <section id="trips">
       <div class="flex items-end justify-between mb-8">
         <div>
           <span class="badge bg-muted text-foreground mb-3">
@@ -490,12 +1266,11 @@
           <h2 class="text-3xl font-bold">Your Trips</h2>
 
           <p class="mt-2 text-muted-foreground">
-            Itenaries Planned
+            Live weather data is fetched from OpenWeatherMap for each destination.
           </p>
         </div>
-
         <div class="relative hidden md:block">
-          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></i>
           <input placeholder="Search trips..." class="input-base pl-9 w-64" />
         </div>
       </div>
@@ -503,119 +1278,251 @@
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
         <!-- Trip card 1 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
+        <article class="glass-card overflow-hidden">
+          <div class="card-header-paris p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Paris, France</h3>
               </div>
+
               <i class="fa-solid fa-cloud text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>18°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>65%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>12 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                18°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                65%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                12 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
+<<<<<<< HEAD
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i>
               June 15, 2026
             </div>
 
-            <p class="text-sm text-foreground/80 leading-relaxed">
+            <p class="text-sm text-white/65 leading-relaxed">
               Visit the Eiffel Tower, try local cafes, and explore museums.
             </p>
 
+=======
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> June 15, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Visit the Eiffel Tower, try local cafes, and explore museums.</p>
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Culture</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
+              <span class="badge badge-muted">Culture</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40">
+                <i class="fa-solid fa-cloud mr-1"></i>
+                Partly cloudy
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>
         </article>
 
         <!-- Trip card 2 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
+<<<<<<< HEAD
+        <article data-region="Asia" data-country="Japan" data-city="Tokyo" class="glass-card overflow-hidden">
+=======
+        <article class="glass-card overflow-hidden">
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          <div class="card-header-tokyo p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Tokyo, Japan</h3>
               </div>
+
               <i class="fa-solid fa-sun text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>24°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>70%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>8 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                24°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                70%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                8 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
+<<<<<<< HEAD
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i>
               July 3, 2026
             </div>
 
-            <p class="text-sm text-foreground/80 leading-relaxed">
+            <p class="text-sm text-white/65 leading-relaxed">
               Explore Shibuya, visit temples, and try Japanese street food.
             </p>
 
+=======
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> July 3, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Explore Shibuya, visit temples, and try Japanese street food.</p>
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Shopping</span>
-              <span class="badge bg-muted text-foreground font-normal">Food</span>
+              <span class="badge badge-muted">Shopping</span>
+              <span class="badge badge-muted">Food</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40">
+                <i class="fa-solid fa-sun mr-1"></i>
+                Sunny
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>
         </article>
 
         <!-- Trip card 3 -->
-        <article class="overflow-hidden rounded-lg border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-glow">
-          <div class="bg-gradient-primary p-5 text-white">
+<<<<<<< HEAD
+        <article data-region="Europe" data-country="Iceland" data-city="Reykjavik" class="glass-card overflow-hidden">
+=======
+        <article class="glass-card overflow-hidden">
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          <div class="card-header-icy p-5 text-white">
             <div class="flex items-start justify-between">
               <div>
                 <div class="flex items-center gap-1.5 text-sm opacity-90">
                   <i class="fa-solid fa-location-dot"></i>
                   Destination
                 </div>
+
                 <h3 class="mt-1 text-xl font-semibold">Reykjavik, Iceland</h3>
               </div>
+
               <i class="fa-solid fa-snowflake text-3xl"></i>
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-sm">
-              <div><i class="fa-solid fa-temperature-half mr-1"></i>7°C</div>
-              <div><i class="fa-solid fa-droplet mr-1"></i>78%</div>
-              <div><i class="fa-solid fa-wind mr-1"></i>22 km/h</div>
+              <div>
+                <i class="fa-solid fa-temperature-half mr-1"></i>
+                7°C
+              </div>
+
+              <div>
+                <i class="fa-solid fa-droplet mr-1"></i>
+                78%
+              </div>
+
+              <div>
+                <i class="fa-solid fa-wind mr-1"></i>
+                22 km/h
+              </div>
             </div>
           </div>
-
           <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-              <i class="fa-solid fa-calendar-days text-primary"></i>
+<<<<<<< HEAD
+            <div class="flex items-center gap-2 text-sm text-white/50">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i>
               September 5, 2026
             </div>
 
-            <p class="text-sm text-foreground/80 leading-relaxed">
+            <p class="text-sm text-white/65 leading-relaxed">
               Northern lights, Blue Lagoon, Golden Circle tour.
             </p>
 
+=======
+            <div class="flex items-center gap-2 text-sm text-white/50"><i class="fa-solid fa-calendar-days text-amber-400"></i> September 5, 2026</div>
+            <p class="text-sm text-white/65 leading-relaxed">Northern lights, Blue Lagoon, Golden Circle tour.</p>
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
             <div class="flex flex-wrap gap-1.5">
-              <span class="badge bg-muted text-foreground font-normal">Adventure</span>
-              <span class="badge bg-muted text-foreground font-normal">Nature</span>
+              <span class="badge badge-muted">Adventure</span>
+              <span class="badge badge-muted">Nature</span>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+              <div class="text-xs text-white/40">
+                <i class="fa-solid fa-snowflake mr-1"></i>
+                Snowy
+              </div>
+
+              <div class="flex gap-2">
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <button class="h-8 w-8 rounded-lg text-white/50 hover:bg-red-500/15 hover:text-red-400 transition-smooth flex items-center justify-center">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>
         </article>
 
+      </div>
+    </section>
+
+<<<<<<< HEAD
+    <!-- MANAGE TRIPS -->
+    <section id="manage-trips">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+        <div>
+          <p class="section-label"><i class="fa-solid fa-briefcase"></i>Itinerary</p>
+          <h2 class="text-4xl font-serif font-black gold-gradient">Your Trips</h2>
+        </div>
+
+        <div class="relative hidden md:block">
+          <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/30"></i>
+          <input placeholder="Search trips..." class="input-base pl-9 w-64" />
+        </div>
+      </div>
+
+      <div id="plannedTripsGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="glass-card p-6 text-white/60">
+          Loading your planned trips...
+        </div>
       </div>
     </section>
 
@@ -653,247 +1560,154 @@
               </p>
             </div>
 
+=======
+    <!-- WEATHER -->
+    <section class="py-16 bg-slate-50">
+      <div class="max-w-3xl mx-auto px-4">
+        <div class="text-center mb-8">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-sky-600">
+            <i class="fa-solid fa-bolt"></i> 03 — Real-time
+          </span>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-slate-900">Live weather, anywhere</h2>
+          <p class="mt-3 text-slate-600">
+            Combine your saved trips with live data from OpenWeatherMap.
+          </p>
+        </div>
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
             <!-- Search bar -->
             <form id="weatherForm" class="group relative flex items-center w-full rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 focus-within:ring-2 focus-within:ring-sky-500 focus-within:shadow-md transition">
               <span class="pl-5 text-slate-400 group-focus-within:text-sky-500">
                 <i class="fa-solid fa-location-dot text-lg"></i>
               </span>
 
-              <input
-                id="cityInput"
-                type="text"
-                value="Penang, Malaysia"
-                placeholder="Search any city — e.g. Penang, Kyoto, Cape Town"
-                class="flex-1 bg-transparent px-4 py-4 text-slate-900 placeholder:text-slate-400 focus:outline-none text-base"
-                aria-label="City name"
-              />
+          <input
+            type="text"
+            placeholder="Search any city — e.g. Lisbon, Kyoto, Cape Town"
+            class="flex-1 bg-transparent px-4 py-4 text-slate-900 placeholder:text-slate-400 focus:outline-none text-base"
+            aria-label="City name"
+          />
 
-              <input
-                id="weatherDateInput"
-                type="date"
-                class="hidden sm:block bg-transparent px-3 py-4 text-slate-700 focus:outline-none text-sm border-l border-slate-200"
-                aria-label="Weather date"
-              />
+          <button
+            type="submit"
+            class="m-1.5 inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold px-5 py-3 transition shadow-sm"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="hidden sm:inline">Search</span>
+          </button>
+        </form>
 
-              <button
-                type="submit"
-                class="m-1.5 inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold px-5 py-3 transition shadow-sm"
-              >
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span class="hidden sm:inline">Search</span>
-              </button>
-            </form>
-
-            <!-- Quick suggestions -->
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-              <span class="text-slate-500">Try:</span>
-              <button type="button" data-city="Paris" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Paris</button>
-              <button type="button" data-city="Penang, Malaysia" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Penang</button>
-              <button type="button" data-city="Tokyo" class="weather-suggestion px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Reykjavik</button>
-            </div>
-
-            <!-- Result card -->
-            <div class="mt-8 rounded-2xl bg-white ring-1 ring-slate-200 p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-xs uppercase tracking-wider text-slate-500">Currently in</p>
-                  <h3 id="weatherCity" class="mt-1 text-xl font-semibold text-slate-900">Penang, Malaysia</h3>
-                  <p id="weatherCondition" class="text-slate-600 text-sm mt-1">
-                    <i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i> Loading...
-                  </p>
-                </div>
-
-                <div class="text-right">
-                  <p id="weatherTemp" class="text-4xl font-bold text-slate-900">--°</p>
-                  <p id="weatherFeelsLike" class="text-xs text-slate-500">feels like --°</p>
-                </div>
-              </div>
-
-              <!-- Extra weather info -->
-              <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-droplet mr-1"></i>
-                    Humidity
-                  </p>
-                  <p id="weatherHumidity" class="mt-1 font-semibold text-slate-900">--%</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-wind mr-1"></i>
-                    Wind Speed
-                  </p>
-                  <p id="weatherWind" class="mt-1 font-semibold text-slate-900">-- km/h</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-compass mr-1"></i>
-                    Wind Direction
-                  </p>
-                  <p id="weatherWindDir" class="mt-1 font-semibold text-slate-900">--</p>
-                </div>
-
-                <div class="rounded-xl bg-slate-50 p-4">
-                  <p class="text-slate-500 text-xs">
-                    <i class="fa-solid fa-sun mr-1"></i>
-                    UV Index
-                  </p>
-                  <p id="weatherUV" class="mt-1 font-semibold text-slate-900">--</p>
-                </div>
-              </div>
-
-              <!-- Daily forecast -->
-              <div class="mt-6 border-t border-slate-100 pt-5">
-                <h4 class="text-sm font-semibold text-slate-900">
-                  <i class="fa-solid fa-calendar-days text-sky-600 mr-1"></i>
-                  3-Day Forecast
-                </h4>
-
-                <div id="weatherDailyForecast" class="mt-3 grid gap-3 sm:grid-cols-3"></div>
-              </div>
-
-              <!-- Hourly forecast -->
-              <div class="mt-6 border-t border-slate-100 pt-5">
-                <h4 class="text-sm font-semibold text-slate-900">
-                  <i class="fa-solid fa-clock text-sky-600 mr-1"></i>
-                  Next Hours
-                </h4>
-
-                <div id="weatherHourlyForecast" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CURRENCY TAB -->
-          <div id="currencyToolPanel" class="hidden">
-
-            <div class="text-center mb-8">
-              <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-sky-600">
-                <i class="fa-solid fa-money-bill-transfer"></i> Currency
-              </span>
-
-              <h3 class="mt-3 text-2xl sm:text-3xl font-bold text-slate-900">
-                Currency converter
-              </h3>
-
-              <p class="mt-3 text-slate-600">
-                Convert travel money between popular currencies.
-              </p>
-            </div>
-
-            <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-6">
-              <form id="currencyForm" class="space-y-5">
-
-                <div>
-                  <label for="currencyAmount" class="block text-sm font-semibold text-slate-700 mb-2">
-                    Amount
-                  </label>
-                  <input
-                    id="currencyAmount"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value="100"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                  />
-                </div>
-
-                <div class="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
-                  <div>
-                    <label for="fromCurrency" class="block text-sm font-semibold text-slate-700 mb-2">
-                      From
-                    </label>
-                    <select
-                      id="fromCurrency"
-                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    >
-                      <option value="MYR">MYR — Malaysian Ringgit</option>
-                      <option value="JPY">JPY — Japanese Yen</option>
-                      <option value="USD">USD — US Dollar</option>
-                      <option value="EUR">EUR — Euro</option>
-                      <option value="GBP">GBP — British Pound</option>
-                      <option value="SGD">SGD — Singapore Dollar</option>
-                      <option value="KRW">KRW — Korean Won</option>
-                      <option value="CNY">CNY — Chinese Yuan</option>
-                      <option value="AUD">AUD — Australian Dollar</option>
-                      <option value="CAD">CAD — Canadian Dollar</option>
-                      <option value="CHF">CHF — Swiss Franc</option>
-                      <option value="THB">THB — Thai Baht</option>
-                      <option value="IDR">IDR — Indonesian Rupiah</option>
-                      <option value="PHP">PHP — Philippine Peso</option>
-                      <option value="NZD">NZD — New Zealand Dollar</option>
-                      <option value="HKD">HKD — Hong Kong Dollar</option>
-                      <option value="ISK">ISK — Icelandic Króna</option>
-                    </select>
-                  </div>
-
-                  <button
-                    id="swapCurrency"
-                    type="button"
-                    class="h-11 w-11 rounded-full bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition"
-                    title="Swap currencies"
-                  >
-                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                  </button>
-
-                  <div>
-                    <label for="toCurrency" class="block text-sm font-semibold text-slate-700 mb-2">
-                      To
-                    </label>
-                    <select
-                      id="toCurrency"
-                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    >
-                      <option value="JPY">JPY — Japanese Yen</option>
-                      <option value="MYR">MYR — Malaysian Ringgit</option>
-                      <option value="USD">USD — US Dollar</option>
-                      <option value="EUR">EUR — Euro</option>
-                      <option value="GBP">GBP — British Pound</option>
-                      <option value="SGD">SGD — Singapore Dollar</option>
-                      <option value="KRW">KRW — Korean Won</option>
-                      <option value="CNY">CNY — Chinese Yuan</option>
-                      <option value="AUD">AUD — Australian Dollar</option>
-                      <option value="CAD">CAD — Canadian Dollar</option>
-                      <option value="CHF">CHF — Swiss Franc</option>
-                      <option value="THB">THB — Thai Baht</option>
-                      <option value="IDR">IDR — Indonesian Rupiah</option>
-                      <option value="PHP">PHP — Philippine Peso</option>
-                      <option value="NZD">NZD — New Zealand Dollar</option>
-                      <option value="HKD">HKD — Hong Kong Dollar</option>
-                      <option value="ISK">ISK — Icelandic Króna</option>
-                    </select>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  class="w-full rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white hover:bg-sky-700 active:bg-sky-800 transition"
-                >
-                  <i class="fa-solid fa-calculator mr-2"></i>
-                  Convert
-                </button>
-              </form>
-
-              <div id="currencyResultBox" class="mt-6 hidden rounded-2xl bg-slate-50 p-5">
-                <p class="text-xs uppercase tracking-wider text-slate-500">Result</p>
-                <p id="currencyResult" class="mt-2 text-3xl font-bold text-slate-900">--</p>
-                <p id="currencyRateInfo" class="mt-2 text-sm text-slate-500">--</p>
-              </div>
-
-              <p id="currencyError" class="mt-4 hidden text-sm text-red-600"></p>
-            </div>
-          </div>
-
+        <!-- Quick suggestions -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+          <span class="text-slate-500">Try:</span>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Paris</button>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Tokyo</button>
+          <button class="px-3 py-1 rounded-full bg-white ring-1 ring-slate-200 hover:ring-sky-400 hover:text-sky-700 text-slate-700 transition">Reykjavik</button>
         </div>
-      </section>
-    </div>
-  </div>
 
-  <footer class="border-t border-border bg-muted/40 py-8">
-    <div class="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
-      SmartTrip — Web API Development Assignment · Node.js · Express · MongoDB · WeatherAPI
+        <!-- Result card -->
+        <div class="mt-8 rounded-2xl bg-white ring-1 ring-slate-200 p-6 flex items-center justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-wider text-slate-500">Currently in</p>
+            <h3 class="mt-1 text-xl font-semibold text-slate-900">Paris, France</h3>
+            <p class="text-slate-600 text-sm mt-1">
+              <i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i> Partly cloudy
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-4xl font-bold text-slate-900">18°</p>
+            <p class="text-xs text-slate-500">feels like 17°</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ADD TRIP -->
+    <section id="new" class="grid gap-8 md:grid-cols-[1.1fr_1fr]">
+      <div>
+        <span class="badge bg-muted text-foreground mb-3">
+          <i class="fa-solid fa-circle-plus"></i>
+          01 — Create
+        </span>
+
+        <h2 class="text-3xl font-bold">Add a new trip</h2>
+
+        <p class="mt-3 text-muted-foreground">
+          Capture your destination, dates, preferences and personal notes.
+        </p>
+
+        <div class="mt-6 space-y-3">
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">POST</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">GET</span>
+            <code class="font-mono">/api/trips</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">PUT</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
+
+          <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 text-sm shadow-soft">
+            <span class="badge bg-gradient-primary text-white">DELETE</span>
+            <code class="font-mono">/api/trips/:id</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-card rounded-lg border border-border shadow-card">
+        <div class="p-6 pb-0">
+          <h3 class="text-2xl font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-plus text-primary"></i>
+            New trip
+          </h3>
+        </div>
+
+        <form class="p-6 space-y-4" onsubmit="event.preventDefault(); alert('POST /api/trips');">
+          <div class="space-y-2">
+            <label for="dest" class="text-sm font-medium">Destination</label>
+            <input id="dest" class="input-base" placeholder="e.g. Kyoto, Japan" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label for="date" class="text-sm font-medium">Travel date</label>
+              <input id="date" type="date" class="input-base" />
+            </div>
+
+            <div class="space-y-2">
+              <label for="pref" class="text-sm font-medium">Preferences</label>
+              <input id="pref" class="input-base" placeholder="Food, Culture" />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="notes" class="text-sm font-medium">Notes</label>
+            <textarea id="notes" rows="4" class="input-base" style="height:auto;" placeholder="Things to do, places to see..."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-gradient-primary text-white py-2.5 rounded-lg font-medium shadow-glow hover:opacity-90 transition-smooth">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>
+            Save Trip
+          </button>
+        </form>
+      </div>
+    </section>
+
+
+
+
+
+  </main>
+
+<<<<<<< HEAD
+  <footer class="border-t border-white/10 bg-muted/40 py-8">
+    <div class="mx-auto max-w-6xl px-6 text-center text-sm text-white/50">
+      FlyAway @ 2026.
     </div>
   </footer>
 
@@ -1264,6 +2078,719 @@
     const destinationCity = document.getElementById("destinationCity");
     const exploreSearchInput = document.getElementById("exploreSearchInput");
 
+
+    const countryChipRail = document.getElementById("countryChipRail");
+    const countryWrap = document.getElementById("countryWrap");
+    const cityChipWrap = document.getElementById("cityChipWrap");
+    const cityWrap = document.getElementById("cityWrap");
+
+    const countryChipSearch = document.getElementById("countryChipSearch");
+    const cityChipSearch = document.getElementById("cityChipSearch");
+
+    const eventsWrap = document.getElementById("eventsWrap");
+    const eventsGrid = document.getElementById("eventsGrid");
+    const eventsSubtitle = document.getElementById("eventsSubtitle");
+
+    const attractionsWrap = document.getElementById("attractionsWrap");
+    const attractionsGrid = document.getElementById("attractionsGrid");
+    const attractionsSubtitle = document.getElementById("attractionsSubtitle");
+
+    const flagEmoji = (cc) => {
+      if (!cc) return "🏳️";
+      return cc.toUpperCase().replace(/./g, (char) => {
+        return String.fromCodePoint(127397 + char.charCodeAt());
+      });
+    };
+
+    // Countries and states are loaded from your backend APIs only.
+    // No local country/state lists are used here.
+
+    function sortedOptionsByPriority(selectElement, priorityList = []) {
+      const priority = new Map(priorityList.map((name, index) => [name, index]));
+
+      return Array.from(selectElement.options)
+        .filter((option) => option.value)
+        .sort((a, b) => {
+          const ai = priority.has(a.value) ? priority.get(a.value) : 999;
+          const bi = priority.has(b.value) ? priority.get(b.value) : 999;
+
+          if (ai !== bi) return ai - bi;
+          return a.textContent.localeCompare(b.textContent);
+        });
+    }
+
+    function renderCountryChips() {
+      if (!destinationCountry || !countryChipRail) return;
+
+      const searchText = (countryChipSearch?.value || "").trim().toLowerCase();
+
+      countryChipRail.innerHTML = "";
+
+      const matchingOptions = sortedOptionsByPriority(destinationCountry)
+        .filter((option) => {
+          return option.textContent.toLowerCase().includes(searchText);
+        });
+
+      matchingOptions.forEach((option) => {
+        const countryCode = option.dataset.cc || "";
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.dataset.value = option.value;
+        button.className = "filter-chip";
+        button.setAttribute(
+          "aria-pressed",
+          destinationCountry.value === option.value ? "true" : "false"
+        );
+
+        button.innerHTML = `
+          <span class="text-xs font-bold uppercase opacity-80">${countryCode}</span>
+          <span>${option.textContent}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          destinationCountry.value = option.value;
+          destinationCountry.dispatchEvent(new Event("change", { bubbles: true }));
+          renderCountryChips();
+        });
+
+        countryChipRail.appendChild(button);
+      });
+
+      if (!matchingOptions.length) {
+        countryChipRail.innerHTML = `
+          <p class="text-sm text-white/45 px-2 py-2">No matching countries.</p>
+        `;
+      }
+
+      cityWrap?.classList.toggle("hidden", !destinationCountry.value);
+    }
+
+    function renderStateChips() {
+      if (!destinationCity || !cityChipWrap) return;
+
+      const searchText = (cityChipSearch?.value || "").trim().toLowerCase();
+
+      cityChipWrap.innerHTML = "";
+
+      const maxVisibleStates = searchText ? 80 : 24;
+
+      const matchingOptions = sortedOptionsByPriority(destinationCity)
+        .filter((option) => {
+          return option.textContent.toLowerCase().includes(searchText);
+        })
+        .slice(0, maxVisibleStates);
+
+      matchingOptions.forEach((option) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "city-chip";
+        button.setAttribute(
+          "aria-pressed",
+          destinationCity.value === option.value ? "true" : "false"
+        );
+
+        button.innerHTML = `
+          <i class="fa-solid fa-location-dot"></i>
+          <span>${option.textContent}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          destinationCity.value = option.value;
+          destinationCity.dispatchEvent(new Event("change", { bubbles: true }));
+          renderStateChips();
+        });
+
+        cityChipWrap.appendChild(button);
+      });
+
+      if (!matchingOptions.length) {
+        cityChipWrap.innerHTML = `
+          <p class="text-sm text-white/45 px-2 py-2">No matching states/provinces.</p>
+        `;
+      }
+    }
+
+
+    function getSelectedCountryCode() {
+      if (!destinationCountry) return "";
+
+      const selectedOption =
+        destinationCountry.options[destinationCountry.selectedIndex];
+
+      return selectedOption?.dataset?.cc || "";
+    }
+
+    function resetEvents() {
+      if (eventsWrap) eventsWrap.classList.add("hidden");
+      if (eventsGrid) eventsGrid.innerHTML = "";
+      if (eventsSubtitle) {
+        eventsSubtitle.textContent = "Select a country to discover upcoming events.";
+      }
+    }
+
+    function formatEventDate(date, time) {
+      if (!date) return "Date not available";
+
+      const dateText = new Date(`${date}T${time || "00:00"}`).toLocaleDateString(
+        undefined,
+        {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }
+      );
+
+      if (!time) return dateText;
+
+      return `${dateText} · ${time.slice(0, 5)}`;
+    }
+
+
+    function normalizeEventForWishlist(event) {
+      return {
+        itemType: "event",
+        externalId: event.externalId || event.id || event.url || event.name || "",
+        id: event.id || "",
+        name: event.name || "Untitled event",
+        image: event.image || "",
+        url: event.url || "",
+        date: event.date || "",
+        time: event.time || "",
+        venue: event.venue || "",
+        city: event.city || "",
+        country: event.country || "",
+        source: "Ticketmaster",
+      };
+    }
+
+    function normalizeAttractionForWishlist(attraction) {
+      return {
+        itemType: "attraction",
+        externalId:
+          attraction.externalId ||
+          attraction.id ||
+          attraction.xid ||
+          attraction.url ||
+          attraction.name ||
+          "",
+        id: attraction.id || attraction.xid || "",
+        xid: attraction.xid || attraction.id || "",
+        name: attraction.name || "Unknown attraction",
+        image: attraction.image || "",
+        url: attraction.url || "",
+        description: attraction.description || "",
+        kinds: attraction.kinds || "",
+        rate: attraction.rate || "",
+        distance: attraction.distance || "",
+        lat: attraction.lat ?? attraction.latitude ?? null,
+        lon: attraction.lon ?? attraction.longitude ?? null,
+        source: "OpenTripMap",
+      };
+    }
+
+    async function saveToWishlist(itemType, item, button) {
+      try {
+        button.disabled = true;
+        button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving`;
+
+        const response = await fetch("/api/wishlist", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemType,
+            item,
+          }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (response.status === 401) {
+          const redirectTo = encodeURIComponent(
+            window.location.pathname + window.location.search
+          );
+
+          window.location.href = `/login.html?redirect=${redirectTo}`;
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to save item.");
+        }
+
+        button.innerHTML = `<i class="fa-solid fa-heart"></i> Saved`;
+        button.classList.remove("bg-white/[0.06]", "text-white/70");
+        button.classList.add("bg-pink-500", "text-white");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+        button.disabled = false;
+        button.innerHTML = `<i class="fa-regular fa-heart"></i> Save`;
+      }
+    }
+
+
+    function renderEvents(events) {
+      if (!eventsGrid || !eventsWrap) return;
+
+      eventsWrap.classList.remove("hidden");
+      eventsGrid.innerHTML = "";
+
+      if (!events.length) {
+        eventsGrid.innerHTML = `
+          <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-white/50">
+            <i class="fa-solid fa-calendar-xmark mb-3 block text-3xl text-white/35"></i>
+            <p class="font-semibold text-white/70">No upcoming events found for this country.</p>
+            <p class="mt-2 text-sm text-white/40">
+              Try another country, or check again later.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      events.forEach((event) => {
+        const card = document.createElement("article");
+        const safeName = escapeHtml(event.name || "Untitled event");
+        const safeImage = escapeHtml(event.image || "");
+        const safeUrl = escapeHtml(event.url || "");
+        const safeVenue = escapeHtml(event.venue || "Venue not available");
+        const safeCity = escapeHtml(event.city || "");
+
+        card.className =
+          "overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition hover:-translate-y-1 hover:border-amber-400/40 hover:bg-white/[0.07]";
+
+        card.innerHTML = `
+          <div class="h-36 bg-white/5">
+            ${
+              safeImage
+                ? `<img src="${safeImage}" alt="${safeName}" class="h-full w-full object-cover" />`
+                : `<div class="flex h-full items-center justify-center text-white/35">
+                    <i class="fa-solid fa-calendar-days text-3xl"></i>
+                  </div>`
+            }
+          </div>
+
+          <div class="p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-400">
+              ${escapeHtml(formatEventDate(event.date, event.time))}
+            </p>
+
+            <h3 class="mt-2 line-clamp-2 text-base font-bold text-white">
+              ${safeName}
+            </h3>
+
+            <p class="mt-2 text-sm text-white/50">
+              <i class="fa-solid fa-location-dot mr-1"></i>
+              ${safeVenue}${safeCity ? ` · ${safeCity}` : ""}
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${
+                safeUrl
+                  ? `<a
+                      href="${safeUrl}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-amber-400"
+                    >
+                      View event
+                      <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>`
+                  : ""
+              }
+
+              <button
+                type="button"
+                class="save-wishlist-btn inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-pink-500 hover:text-white"
+              >
+                <i class="fa-regular fa-heart"></i>
+                Save
+              </button>
+            </div>
+          </div>
+        `;
+
+        const saveButton = card.querySelector(".save-wishlist-btn");
+
+        saveButton.addEventListener("click", () => {
+          saveToWishlist("event", normalizeEventForWishlist(event), saveButton);
+        });
+
+        eventsGrid.appendChild(card);
+      });
+    }
+
+
+    async function loadEventsForSelectedCountry() {
+      const country = destinationCountry?.value || "";
+      const countryCode = getSelectedCountryCode();
+
+      resetEvents();
+
+      if (!country || !countryCode) return;
+
+      if (eventsWrap) eventsWrap.classList.remove("hidden");
+
+      if (eventsSubtitle) {
+        eventsSubtitle.textContent = `Loading upcoming events in ${country}...`;
+      }
+
+      if (eventsGrid) {
+        eventsGrid.innerHTML = `
+          <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-white/50">
+            <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+            Loading upcoming events...
+          </div>
+        `;
+      }
+
+      try {
+        const url = `/api/events?countryCode=${encodeURIComponent(countryCode)}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load events");
+        }
+
+        if (eventsSubtitle) {
+          eventsSubtitle.textContent = `Upcoming events in ${country}`;
+        }
+
+        renderEvents(data.events || []);
+      } catch (error) {
+        console.error(error);
+
+        if (eventsSubtitle) {
+          eventsSubtitle.textContent = "Could not load upcoming events.";
+        }
+
+        if (eventsGrid) {
+          eventsGrid.innerHTML = `
+            <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-red-400/20 bg-red-500/10 p-6 text-center text-red-200">
+              ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+
+
+    function resetAttractions() {
+      if (attractionsWrap) attractionsWrap.classList.add("hidden");
+      if (attractionsGrid) attractionsGrid.innerHTML = "";
+      if (attractionsSubtitle) {
+        attractionsSubtitle.textContent = "Select a state/province to discover popular attractions.";
+      }
+    }
+
+    function formatDistance(distance) {
+      if (!distance && distance !== 0) return "";
+      const meters = Number(distance);
+
+      if (Number.isNaN(meters)) return "";
+
+      if (meters >= 1000) {
+        return `${(meters / 1000).toFixed(1)} km away`;
+      }
+
+      return `${Math.round(meters)} m away`;
+    }
+
+    function cleanAttractionKind(kinds) {
+      if (!kinds) return "Attraction";
+
+      return kinds
+        .split(",")
+        .slice(0, 2)
+        .map((kind) => {
+          return kind
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+        })
+        .join(" · ");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+
+    function renderAttractions(attractions) {
+      if (!attractionsGrid || !attractionsWrap) return;
+
+      attractionsWrap.classList.remove("hidden");
+      attractionsGrid.innerHTML = "";
+
+      if (!attractions.length) {
+        attractionsGrid.innerHTML = `
+          <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-white/50">
+            <i class="fa-solid fa-map-location-dot mb-3 block text-3xl text-white/35"></i>
+            <p class="font-semibold text-white/70">No popular attractions found for this state/province.</p>
+            <p class="mt-2 text-sm text-white/40">
+              Try another state/province, or increase the search radius later.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      attractions.forEach((attraction) => {
+        const card = document.createElement("article");
+        const title = escapeHtml(attraction.name || "Unknown attraction");
+        const description = escapeHtml(
+          attraction.description
+            ? attraction.description.slice(0, 160)
+            : "No description available."
+        );
+        const kind = escapeHtml(cleanAttractionKind(attraction.kinds));
+        const distance = escapeHtml(formatDistance(attraction.distance));
+        const image = escapeHtml(attraction.image || "");
+        const url = escapeHtml(attraction.url || "");
+
+        card.className =
+          "overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition hover:-translate-y-1 hover:border-sky-400/40 hover:bg-white/[0.07]";
+
+        card.innerHTML = `
+          <div class="h-36 bg-white/5">
+            ${
+              image
+                ? `<img src="${image}" alt="${title}" class="h-full w-full object-cover" />`
+                : `<div class="flex h-full items-center justify-center text-white/35">
+                    <i class="fa-solid fa-camera text-3xl"></i>
+                  </div>`
+            }
+          </div>
+
+          <div class="p-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full bg-sky-500/15 px-3 py-1 text-xs font-semibold text-sky-300">
+                ${kind}
+              </span>
+              ${
+                attraction.rate
+                  ? `<span class="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-300">
+                      Rate ${escapeHtml(attraction.rate)}
+                    </span>`
+                  : ""
+              }
+            </div>
+
+            <h3 class="mt-3 line-clamp-2 text-base font-bold text-white">
+              ${title}
+            </h3>
+
+            <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-white/55">
+              ${description}
+            </p>
+
+            ${
+              distance
+                ? `<p class="mt-3 text-sm text-white/45">
+                    <i class="fa-solid fa-location-arrow mr-1"></i>
+                    ${distance}
+                  </p>`
+                : ""
+            }
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${
+                url
+                  ? `<a
+                      href="${url}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
+                    >
+                      View details
+                      <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>`
+                  : ""
+              }
+
+              <button
+                type="button"
+                class="save-wishlist-btn inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-pink-500 hover:text-white"
+              >
+                <i class="fa-regular fa-heart"></i>
+                Save
+              </button>
+            </div>
+          </div>
+        `;
+
+        const saveButton = card.querySelector(".save-wishlist-btn");
+
+        saveButton.addEventListener("click", () => {
+          saveToWishlist(
+            "attraction",
+            normalizeAttractionForWishlist(attraction),
+            saveButton
+          );
+        });
+
+        attractionsGrid.appendChild(card);
+      });
+    }
+
+
+    async function loadAttractionsForSelectedState() {
+      const state = destinationCity?.value || "";
+      const country = destinationCountry?.value || "";
+      const countryCode = getSelectedCountryCode();
+
+      resetAttractions();
+
+      if (!state || !country || !countryCode) return;
+
+      if (attractionsWrap) attractionsWrap.classList.remove("hidden");
+
+      if (attractionsSubtitle) {
+        attractionsSubtitle.textContent = `Loading popular attractions in ${state}, ${country}...`;
+      }
+
+      if (attractionsGrid) {
+        attractionsGrid.innerHTML = `
+          <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-white/50">
+            <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+            Loading popular attractions...
+          </div>
+        `;
+      }
+
+      try {
+        const url =
+          `/api/popular-attractions?state=${encodeURIComponent(state)}` +
+          `&country=${encodeURIComponent(country)}` +
+          `&countryCode=${encodeURIComponent(countryCode)}` +
+          `&radius=50000&limit=12`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load attractions");
+        }
+
+        if (attractionsSubtitle) {
+          attractionsSubtitle.textContent = `Popular attractions in ${state}, ${country}`;
+        }
+
+        renderAttractions(data.attractions || []);
+      } catch (error) {
+        console.error(error);
+
+        if (attractionsSubtitle) {
+          attractionsSubtitle.textContent = "Could not load attractions.";
+        }
+
+        if (attractionsGrid) {
+          attractionsGrid.innerHTML = `
+            <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-red-400/20 bg-red-500/10 p-6 text-center text-red-200">
+              ${escapeHtml(error.message)}
+            </div>
+          `;
+        }
+      }
+    }
+
+    function setTripGridHidden(hidden) {
+      const grid = document.getElementById("exploreTripGrid");
+      grid?.classList.toggle("hidden", hidden);
+    }
+
+    function setGridLoading(grid, message) {
+      if (!grid) return;
+
+      grid.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-white/50">
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    function setGridError(grid, message) {
+      if (!grid) return;
+
+      grid.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-red-400/20 bg-red-500/10 p-6 text-center text-red-200">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    async function loadAnywhereInspiration() {
+      resetEvents();
+      resetAttractions();
+
+      eventsWrap?.classList.remove("hidden");
+      attractionsWrap?.classList.remove("hidden");
+
+      if (eventsSubtitle) {
+        eventsSubtitle.textContent = "Latest events around the world.";
+      }
+
+      if (attractionsSubtitle) {
+        attractionsSubtitle.textContent = "Discover attractions around the world.";
+      }
+
+      setGridLoading(eventsGrid, "Loading global upcoming events...");
+      setGridLoading(attractionsGrid, "Loading global attractions...");
+
+      try {
+        const response = await fetch(
+          "/api/explore/anywhere?eventLimit=12&attractionLimit=12"
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load Anywhere inspiration");
+        }
+
+        renderEvents(data.events || []);
+        renderAttractions(data.attractions || []);
+
+        if (eventsSubtitle) {
+          eventsSubtitle.textContent = "Upcoming events around the world";
+        }
+
+        if (attractionsSubtitle) {
+          attractionsSubtitle.textContent = "Discover attractions around the world";
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (eventsSubtitle) {
+          eventsSubtitle.textContent = "Could not load global events.";
+        }
+
+        if (attractionsSubtitle) {
+          attractionsSubtitle.textContent = "Could not load global attractions.";
+        }
+
+        setGridError(eventsGrid, error.message);
+        setGridError(attractionsGrid, error.message);
+      }
+    }
+
+    countryChipSearch?.addEventListener("input", renderCountryChips);
+    cityChipSearch?.addEventListener("input", renderStateChips);
+
     function resetSelect(selectElement, placeholder, disabled = false) {
       if (!selectElement) return;
 
@@ -1284,6 +2811,14 @@
         const item = document.createElement("option");
         item.value = value;
         item.textContent = value;
+
+        // Store the country code returned by the backend API.
+        const countryCode = typeof option === "object" && option.code ? option.code : "";
+
+        if (countryCode) {
+          item.dataset.cc = countryCode;
+        }
+
         selectElement.appendChild(item);
       });
     }
@@ -1321,18 +2856,16 @@
       const cards = document.querySelectorAll("#trips article[data-region]");
       const selectedRegion = destinationRegion?.value || "";
       const selectedCountry = destinationCountry?.value || "";
-      const selectedCity = destinationCity?.value || "";
       const searchText = (exploreSearchInput?.value || "").trim().toLowerCase();
       let visibleCount = 0;
 
       cards.forEach((card) => {
         const regionMatches = !selectedRegion || card.dataset.region === selectedRegion;
         const countryMatches = !selectedCountry || card.dataset.country === selectedCountry;
-        const cityMatches = !selectedCity || card.dataset.city === selectedCity;
 
         const cardText = `${card.dataset.region} ${card.dataset.country} ${card.dataset.city} ${card.textContent}`.toLowerCase();
         const searchMatches = !searchText || cardText.includes(searchText);
-        const isVisible = regionMatches && countryMatches && cityMatches && searchMatches;
+        const isVisible = regionMatches && countryMatches && searchMatches;
 
         card.classList.toggle("hidden", !isVisible);
 
@@ -1342,12 +2875,12 @@
       });
 
       let emptyState = document.getElementById("exploreEmptyState");
-      const grid = document.querySelector("#trips .grid");
+      const grid = document.getElementById("exploreTripGrid");
 
       if (!emptyState && grid) {
         emptyState = document.createElement("p");
         emptyState.id = "exploreEmptyState";
-        emptyState.className = "hidden rounded-xl bg-white p-5 text-sm text-slate-500 ring-1 ring-slate-200 md:col-span-2 lg:col-span-3";
+        emptyState.className = "hidden";
         emptyState.textContent = "No matching trips yet. Try another destination or add a new trip.";
         grid.appendChild(emptyState);
       }
@@ -1373,7 +2906,11 @@
 
     async function loadCountriesByRegion(region) {
       resetSelect(destinationCountry, "Country", true);
-      resetSelect(destinationCity, "City", true);
+      resetSelect(destinationCity, "State / Province", true);
+      resetEvents();
+      resetAttractions();
+      renderCountryChips();
+      renderStateChips();
 
       if (!region) return;
 
@@ -1383,56 +2920,182 @@
 
         resetSelect(destinationCountry, "Country", false);
         addOptions(destinationCountry, data.countries || []);
+        renderCountryChips();
       } catch (error) {
         console.error(error);
         resetSelect(destinationCountry, "Could not load", true);
+        renderCountryChips();
       }
     }
 
-    async function loadCitiesByCountry(country) {
-      resetSelect(destinationCity, "City", true);
+    async function loadStatesByCountry(country) {
+      resetSelect(destinationCity, "State / Province", true);
+      resetAttractions();
+      renderStateChips();
 
       if (!country) return;
 
       try {
         setSelectLoading(destinationCity, "Loading...");
-        const data = await fetchDestinationJson(`/api/destinations/cities?country=${encodeURIComponent(country)}`);
+        const data = await fetchDestinationJson(`/api/destinations/states?country=${encodeURIComponent(country)}`);
 
-        resetSelect(destinationCity, "City", false);
-        addOptions(destinationCity, data.cities || []);
+        resetSelect(destinationCity, "State / Province", false);
+        addOptions(destinationCity, data.states || []);
+        renderStateChips();
       } catch (error) {
         console.error(error);
         resetSelect(destinationCity, "Could not load", true);
+        renderStateChips();
       }
     }
+
+    const regionCarousel = document.getElementById("regionCarousel");
+    const cascadeRow = document.getElementById("cascadeRow");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const regionScrollPrev = document.getElementById("regionScrollPrev");
+    const regionScrollNext = document.getElementById("regionScrollNext");
+
+    const REGION_META = {
+      Anywhere: { haul: "", img: "" },
+      Africa: { haul: "Long haul", img: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600" },
+      Americas: { haul: "Long haul", img: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600" },
+      Asia: { haul: "Long haul", img: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600" },
+      Europe: { haul: "Medium haul", img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600" },
+      Oceania: { haul: "Long haul", img: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600" },
+    };
+
+    function renderRegionCards(regions) {
+      if (!regionCarousel) return;
+
+      const preferredOrder = ["Europe", "Asia", "Americas", "Africa", "Oceania"];
+      const orderedRegions = preferredOrder.filter((name) => regions.includes(name));
+      const remainingRegions = regions.filter((name) => !preferredOrder.includes(name)).sort();
+      const items = ["Anywhere", ...orderedRegions, ...remainingRegions];
+
+      regionCarousel.innerHTML = items.map((name) => {
+        const meta = REGION_META[name] || { haul: "", img: "" };
+        const isAnywhere = name === "Anywhere";
+
+        return `
+          <button type="button" class="region-card ${isAnywhere ? "anywhere" : ""}"
+            data-region="${isAnywhere ? "" : name}" aria-pressed="${isAnywhere ? "true" : "false"}">
+            <div class="bg" ${meta.img && !isAnywhere ? `style="background-image:url('${meta.img}')"` : ""}></div>
+            <div class="scrim"></div>
+            ${meta.haul ? `<span class="badge-haul">${meta.haul}</span>` : ""}
+            <span class="label">${isAnywhere ? '<i class="fa-solid fa-globe"></i>' : ''}${name}</span>
+          </button>
+        `;
+      }).join("");
+
+      regionCarousel.querySelectorAll(".region-card").forEach((card) => {
+        card.addEventListener("click", () => selectRegion(card.dataset.region, card));
+      });
+    }
+
+    async function selectRegion(region, cardEl) {
+      const isAnywhere = !region;
+
+      if (countryChipSearch) countryChipSearch.value = "";
+      if (cityChipSearch) cityChipSearch.value = "";
+
+      resetEvents();
+      resetAttractions();
+
+      destinationRegion.value = region;
+
+      regionCarousel?.querySelectorAll(".region-card").forEach((card) => {
+        card.setAttribute("aria-pressed", card === cardEl ? "true" : "false");
+      });
+
+      cascadeRow?.classList.remove("hidden");
+      cascadeRow?.classList.remove("flex");
+
+      countryWrap?.classList.toggle("hidden", isAnywhere);
+      cityWrap?.classList.add("hidden");
+
+      resetSelect(destinationCountry, "Country", true);
+      resetSelect(destinationCity, "State / Province", true);
+      renderCountryChips();
+      renderStateChips();
+
+      if (isAnywhere) {
+        if (exploreSearchInput) exploreSearchInput.value = "";
+
+        setTripGridHidden(true);
+        await loadAnywhereInspiration();
+        return;
+      }
+
+      setTripGridHidden(false);
+      await loadCountriesByRegion(region);
+      filterExploreTrips();
+    }
+
+    regionScrollPrev?.addEventListener("click", () => {
+      regionCarousel?.scrollBy({ left: -260, behavior: "smooth" });
+    });
+
+    regionScrollNext?.addEventListener("click", () => {
+      regionCarousel?.scrollBy({ left: 260, behavior: "smooth" });
+    });
+
+    document.getElementById("countryScrollPrev")?.addEventListener("click", () => {
+      countryChipRail?.scrollBy({ left: -280, behavior: "smooth" });
+    });
+
+    document.getElementById("countryScrollNext")?.addEventListener("click", () => {
+      countryChipRail?.scrollBy({ left: 280, behavior: "smooth" });
+    });
+
+    clearFiltersBtn?.addEventListener("click", async () => {
+      if (exploreSearchInput) exploreSearchInput.value = "";
+      if (countryChipSearch) countryChipSearch.value = "";
+      if (cityChipSearch) cityChipSearch.value = "";
+      resetSelect(destinationCountry, "Country", true);
+      resetSelect(destinationCity, "State / Province", true);
+      resetEvents();
+      resetAttractions();
+      renderCountryChips();
+      renderStateChips();
+      cityWrap?.classList.add("hidden");
+      await selectRegion("", regionCarousel?.querySelector(".region-card.anywhere"));
+    });
 
     async function initialiseDestinationDropdowns() {
       if (!destinationRegion || !destinationCountry || !destinationCity) return;
 
-      await loadDestinationRegions();
+      const fallbackRegions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
+      let regions = fallbackRegions;
 
-      destinationRegion.addEventListener("change", async function () {
-        const region = destinationRegion.value;
+      try {
+        const data = await fetchDestinationJson("/api/destinations/regions");
+        regions = data.regions || fallbackRegions;
+      } catch (error) {
+        console.error(error);
+      }
 
-        setExploreSearchFromDropdowns();
+      resetSelect(destinationRegion, "Region", false);
+      addOptions(destinationRegion, regions);
+      renderRegionCards(regions);
+
+      destinationCountry.addEventListener("change", async () => {
+        if (cityChipSearch) cityChipSearch.value = "";
+        renderCountryChips();
+        resetAttractions();
         filterExploreTrips();
-        await loadCountriesByRegion(region);
+        loadEventsForSelectedCountry();
+        await loadStatesByCountry(destinationCountry.value);
       });
 
-      destinationCountry.addEventListener("change", async function () {
-        const country = destinationCountry.value;
-
-        setExploreSearchFromDropdowns();
+      destinationCity.addEventListener("change", () => {
+        renderStateChips();
         filterExploreTrips();
-        await loadCitiesByCountry(country);
-      });
-
-      destinationCity.addEventListener("change", function () {
-        setExploreSearchFromDropdowns();
-        filterExploreTrips();
+        loadAttractionsForSelectedState();
       });
 
       exploreSearchInput?.addEventListener("input", filterExploreTrips);
+
+      await selectRegion("", regionCarousel?.querySelector(".region-card.anywhere"));
     }
 
     initialiseDestinationDropdowns();
@@ -1441,5 +3104,261 @@
     getUserCurrentLocationDefaults();
   </script>
 
+  <script>
+    (() => {
+      const plannedTripsGrid = document.getElementById("plannedTripsGrid");
+      const plannedTripSearch = document.getElementById("plannedTripSearch");
+
+      let plannedTrips = [];
+
+      function escapeTripHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatTripDate(value) {
+        if (!value) return "";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) return "";
+
+        return date.toLocaleDateString(undefined, {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function getTripDateText(trip) {
+        const start = formatTripDate(trip.departure_date);
+        const end = formatTripDate(trip.return_date);
+
+        if (start && end) return `${start} — ${end}`;
+        if (start) return start;
+
+        return "Date not set";
+      }
+
+      function getTripDescription(trip) {
+        if (trip.notes) return trip.notes;
+
+        const spotsCount = Array.isArray(trip.spots) ? trip.spots.length : 0;
+
+        if (spotsCount > 0) {
+          return `${spotsCount} planned activit${spotsCount === 1 ? "y" : "ies"} saved for this itinerary.`;
+        }
+
+        return "Open this trip to continue planning your itinerary.";
+      }
+
+      function getTripActivityCount(trip) {
+        return Array.isArray(trip.spots) ? trip.spots.length : 0;
+      }
+
+      function getTripTags(trip) {
+        const tags = [];
+
+        if (trip.trip_style) tags.push(trip.trip_style);
+
+        const spots = Array.isArray(trip.spots) ? trip.spots : [];
+
+        if (spots.some((spot) => spot.itemType === "food")) tags.push("Food");
+        if (spots.some((spot) => spot.itemType === "event")) tags.push("Events");
+        if (spots.some((spot) => spot.itemType === "attraction")) tags.push("Attractions");
+
+        return [...new Set(tags)].slice(0, 3);
+      }
+
+      function getTripHeaderClass(index) {
+        const classes = ["card-header-paris", "card-header-tokyo", "card-header-icy"];
+        return classes[index % classes.length];
+      }
+
+      function getTripIcon(trip) {
+        const style = String(trip.trip_style || "").toLowerCase();
+
+        if (style.includes("beach")) return "fa-umbrella-beach";
+        if (style.includes("adventure")) return "fa-mountain-sun";
+        if (style.includes("food")) return "fa-utensils";
+        if (style.includes("relax")) return "fa-spa";
+        if (style.includes("city")) return "fa-city";
+
+        return "fa-map-location-dot";
+      }
+
+      function getFilteredPlannedTrips() {
+        const keyword = String(plannedTripSearch?.value || "").trim().toLowerCase();
+
+        if (!keyword) return plannedTrips;
+
+        return plannedTrips.filter((trip) => {
+          return [
+            trip.trip_name,
+            trip.destination,
+            trip.notes,
+            trip.trip_style,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(keyword);
+        });
+      }
+
+      function renderPlannedTrips() {
+        if (!plannedTripsGrid) return;
+
+        const trips = getFilteredPlannedTrips();
+
+        if (!trips.length) {
+          plannedTripsGrid.innerHTML = `
+            <div class="glass-card p-6 text-white/60 md:col-span-2 lg:col-span-3">
+              No planned trips found.
+            </div>
+          `;
+          return;
+        }
+
+        plannedTripsGrid.innerHTML = trips
+          .map((trip, index) => {
+            const itineraryUrl = `/itenary.html?tripId=${encodeURIComponent(trip._id)}`;
+            const editUrl = `/PlanNewTrip.html?edit=${encodeURIComponent(trip._id)}`;
+            const headerClass = getTripHeaderClass(index);
+            const icon = getTripIcon(trip);
+            const tags = getTripTags(trip);
+            const activitiesCount = getTripActivityCount(trip);
+
+            return `
+              <article class="glass-card overflow-hidden">
+                <a href="${itineraryUrl}" class="block">
+                  <div class="${headerClass} p-5 text-white">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <div class="flex items-center gap-1.5 text-sm opacity-90">
+                          <i class="fa-solid fa-location-dot"></i>
+                          Destination
+                        </div>
+
+                        <h3 class="mt-1 text-xl font-semibold">
+                          ${escapeTripHtml(trip.destination || "Destination not set")}
+                        </h3>
+                      </div>
+
+                      <i class="fa-solid ${icon} text-3xl"></i>
+                    </div>
+
+                    <div class="mt-4 flex items-center gap-4 text-sm">
+                      <div>
+                        <i class="fa-solid fa-list-check mr-1"></i>
+                        ${activitiesCount} activit${activitiesCount === 1 ? "y" : "ies"}
+                      </div>
+
+                      <div>
+                        <i class="fa-solid fa-users mr-1"></i>
+                        ${Number(trip.travelers) || 1} traveler${Number(trip.travelers) === 1 ? "" : "s"}
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <div class="p-5 space-y-4">
+                  <div>
+                    <h4 class="text-lg font-bold text-white">
+                      ${escapeTripHtml(trip.trip_name || "Untitled Trip")}
+                    </h4>
+                  </div>
+
+                  <div class="flex items-center gap-2 text-sm text-white/50">
+                    <i class="fa-solid fa-calendar-days text-amber-400"></i>
+                    ${escapeTripHtml(getTripDateText(trip))}
+                  </div>
+
+                  <p class="text-sm text-white/65 leading-relaxed line-clamp-2">
+                    ${escapeTripHtml(getTripDescription(trip))}
+                  </p>
+
+                  <div class="flex flex-wrap gap-1.5">
+                    ${
+                      tags.length
+                        ? tags.map((tag) => `<span class="badge badge-muted">${escapeTripHtml(tag)}</span>`).join("")
+                        : `<span class="badge badge-muted">Planned</span>`
+                    }
+                  </div>
+
+                  <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                    <a
+                      href="${itineraryUrl}"
+                      class="text-xs font-semibold text-amber-400 hover:text-amber-300 transition"
+                    >
+                      View Itinerary →
+                    </a>
+
+                    <div class="flex gap-2">
+                      <a
+                        href="${editUrl}"
+                        class="h-8 w-8 rounded-lg text-white/50 hover:bg-white/10 hover:text-amber-400 transition-smooth flex items-center justify-center"
+                        title="Edit trip"
+                      >
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      async function loadPlannedTripsForHome() {
+        if (!plannedTripsGrid) return;
+
+        try {
+          plannedTripsGrid.innerHTML = `
+            <div class="glass-card p-6 text-white/60 md:col-span-2 lg:col-span-3">
+              Loading your planned trips...
+            </div>
+          `;
+
+          const response = await fetch("/api/trips");
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to load planned trips.");
+          }
+
+          plannedTrips = Array.isArray(data) ? data : [];
+
+          renderPlannedTrips();
+        } catch (error) {
+          console.error(error);
+
+          plannedTripsGrid.innerHTML = `
+            <div class="glass-card p-6 text-red-300 md:col-span-2 lg:col-span-3">
+              ${escapeTripHtml(error.message)}
+            </div>
+          `;
+        }
+      }
+
+      plannedTripSearch?.addEventListener("input", renderPlannedTrips);
+
+      window.addEventListener("load", loadPlannedTripsForHome);
+    })();
+  </script>
+
+=======
+  <footer class="border-t border-border bg-muted/40 py-8">
+    <div class="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
+      SmartTrip — Web API Development Assignment · Node.js · Express · MySQL · OpenWeatherMap
+    </div>
+  </footer>
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
 </body>
 </html>

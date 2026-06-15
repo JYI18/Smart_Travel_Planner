@@ -76,7 +76,10 @@
   </style>
 </head>
 
-<body class="min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 py-10 font-sans">
+<body class="relative min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 pt-28 pb-10 font-sans">
+
+  <!-- NAVIGATION BAR -->
+  <div id="topnavbar" class="absolute left-0 top-0 z-20 w-full"></div>
 
   <main class="w-full max-w-[780px] rounded-3xl bg-white px-8 py-10 text-center shadow-card md:px-10">
 
@@ -102,38 +105,38 @@
     </div>
 
     <form
-    method="POST"
-    action="/setup-profile"
-    enctype="multipart/form-data"
-    novalidate
-    id="setupProfileForm"
-    class="grid grid-cols-1 gap-4 text-left md:grid-cols-2"
+      method="POST"
+      action="/setup-profile"
+      enctype="multipart/form-data"
+      novalidate
+      id="setupProfileForm"
+      class="grid grid-cols-1 gap-4 text-left md:grid-cols-2"
     >
 
-    <div class="md:col-span-2">
-    <label for="avatar" class="mb-1 block text-sm font-semibold text-slate-700">
-        Profile Image
-    </label>
+      <div class="md:col-span-2">
+        <label for="avatar" class="mb-1 block text-sm font-semibold text-slate-700">
+          Profile Image
+        </label>
 
-    <div class="relative">
-        <i class="fa-regular fa-image absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        <input
-        id="avatar"
-        name="avatar"
-        type="file"
-        accept="image/png, image/jpeg, image/jpg, image/webp"
-        class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accentDark focus:border-accent focus:ring-4 focus:ring-accent/20"
-        />
-    </div>
+        <div class="relative">
+          <i class="fa-regular fa-image absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="avatar"
+            name="avatar"
+            type="file"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accentDark focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
 
-    <div class="helper">
-        Upload a JPG or PNG image. Leave blank to use the default avatar.
-    </div>
+        <div class="helper">
+          Upload a JPG or PNG image. Leave blank to use the default avatar.
+        </div>
 
-    <div class="error-msg" id="err_avatar">
-        Please upload a valid image file.
-    </div>
-    </div>
+        <div class="error-msg" id="err_avatar">
+          Please upload a valid image file.
+        </div>
+      </div>
 
       <div class="md:col-span-2">
         <label for="aboutMe" class="mb-1 block text-sm font-semibold text-slate-700">
@@ -192,6 +195,98 @@
             <option value="Bahasa Malaysia">Bahasa Malaysia</option>
             <option value="Mandarin">Chinese</option>
           </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="dob" class="mb-1 block text-sm font-semibold text-slate-700">
+          Date of Birth
+        </label>
+
+        <div class="relative">
+          <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="dob"
+            name="dob"
+            type="date"
+            autocomplete="bday"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="gender" class="mb-1 block text-sm font-semibold text-slate-700">
+          Gender
+        </label>
+
+        <div class="relative">
+          <i class="fa-solid fa-venus-mars absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select
+            id="gender"
+            name="gender"
+            class="form-control w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          >
+            <option value="">Select gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="contact" class="mb-1 block text-sm font-semibold text-slate-700">
+          Contact No.
+        </label>
+
+        <div class="relative">
+          <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="contact"
+            name="contact"
+            type="tel"
+            autocomplete="tel"
+            placeholder="6012-3456789"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="current_country" class="mb-1 block text-sm font-semibold text-slate-700">
+          Current Living Country
+        </label>
+
+        <div class="relative">
+          <i class="fa-solid fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="current_country"
+            name="current_country"
+            type="text"
+            autocomplete="country-name"
+            placeholder="e.g. Malaysia"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="current_city" class="mb-1 block text-sm font-semibold text-slate-700">
+          Current Living City
+        </label>
+
+        <div class="relative">
+          <i class="fa-regular fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            id="current_city"
+            name="current_city"
+            type="text"
+            autocomplete="address-level2"
+            placeholder="e.g. Kuala Lumpur"
+            class="form-control w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-base outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/20"
+          />
         </div>
       </div>
 
@@ -266,6 +361,18 @@
     </div>
 
   </main>
+
+  <!-- LOAD NAVIGATION BAR -->
+  <script>
+    fetch("/components/topNavBar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("topnavbar").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Navbar failed to load:", error);
+      });
+  </script>
 
   <script src="/js/setup_profile.js" defer></script>
 </body>

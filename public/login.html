@@ -30,7 +30,10 @@
   </script>
 </head>
 
-<body class="min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 font-sans">
+<body class="relative min-h-screen bg-[url('/img/FlyAway_Background.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center px-4 pt-24 pb-8 font-sans">
+
+  <!-- NAVIGATION BAR -->
+  <div id="topnavbar" class="absolute left-0 top-0 z-20 w-full"></div>
 
   <main class="w-full max-w-[420px] rounded-3xl bg-white px-10 py-11 text-center shadow-card">
 
@@ -121,14 +124,26 @@
           Sign up
         </a>
       </p>
-
+<!-- 
       <p>
         <a href="/forgot-password" class="font-medium text-accent hover:underline">
           Forgot Password?
         </a>
-      </p>
+      </p> -->
     </div>
   </main>
+
+  <!-- LOAD NAVIGATION BAR -->
+  <script>
+    fetch("/components/topNavBar.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("topnavbar").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Navbar failed to load:", error);
+      });
+  </script>
 
   <script>
     const pwd = document.getElementById("password");

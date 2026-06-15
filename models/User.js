@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     dob: {
       type: Date,
       required: function () {
-        return this.authProvider === "local";
+        return this.profileCompleted;
       },
     },
 
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
     contact: {
       type: String,
       required: function () {
-        return this.authProvider === "local";
+        return this.profileCompleted;
       },
       trim: true,
       default: "",
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
     current_country: {
       type: String,
       required: function () {
-        return this.authProvider === "local";
+        return this.profileCompleted;
       },
       trim: true,
       default: "Malaysia",
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
     current_city: {
       type: String,
       required: function () {
-        return this.authProvider === "local";
+        return this.profileCompleted;
       },
       trim: true,
       default: "",

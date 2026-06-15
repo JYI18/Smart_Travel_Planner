@@ -1,251 +1,1218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <div id="topnavbar"></div>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Itenary</title>
-  <meta name="description" content="Build a curated trip itinerary, hour by hour. Plan your day-by-day travel activities with FlyAway." />
 
+  <title>Itinerary | FlyAway</title>
+
+  <meta
+    name="description"
+    content="Build a curated trip itinerary, hour by hour. Plan your day-by-day travel activities with FlyAway."
+  />
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif'],
-          },
-          colors: {
-            navy: '#0f1e3d',
-            amber: {
-              brand: '#f5a623',
-            },
-            cream: '#f7f5f0',
+            sans: ["Inter", "ui-sans-serif", "system-ui"],
+            serif: ["Playfair Display", "Georgia", "serif"],
           },
         },
       },
     };
-
-    fetch("/components/topNavBar.html")
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById("topnavbar").innerHTML = data;
-    })
-    .catch(error => {
-      console.error("Navbar failed to load:", error);
-    });
   </script>
-  <style>body{font-family:'Inter',sans-serif;background:#f7f5f0;}</style>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: #0d0f14;
+      color: #e8eaf0;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1d25;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f5a524;
+      border-radius: 10px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(245, 165, 36, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30, 140, 200, 0.07) 0%, transparent 60%),
+        #0d0f14;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    #topnavbar {
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(13, 15, 20, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #topnavbar [class*="bg-white"],
+    #topnavbar [class*="bg-stone"],
+    #topnavbar [class*="bg-gray"],
+    #topnavbar [class*="bg-slate"] {
+      background-color: rgba(17, 17, 20, 0.92) !important;
+    }
+
+    #topnavbar [class*="text-stone"],
+    #topnavbar [class*="text-gray"],
+    #topnavbar [class*="text-slate"],
+    #topnavbar [class*="text-black"] {
+      color: #f5f5f0 !important;
+    }
+
+    #topnavbar a:hover {
+      color: #f5a524 !important;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 1.25rem;
+      transition: all 0.35s ease;
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(245, 165, 36, 0.25);
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #F5A524 0%, #FFD700 50%, #F5A524 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #F5A524, #e8832a);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.6rem 1.5rem;
+      border-radius: 9999px;
+      transition: opacity 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
+    .input-base {
+      height: 2.75rem;
+      width: 100%;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e8eaf0;
+      padding: 0.5rem 0.875rem;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-base::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .input-base:focus {
+      border-color: rgba(245, 165, 36, 0.5);
+      box-shadow: 0 0 0 3px rgba(245, 165, 36, 0.12);
+    }
+
+    .friend-tag {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 8px 4px 0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .place-vote-item {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .place-vote-item:last-child {
+      border-bottom: none;
+    }
+
+    .vote-count {
+      background: rgba(245, 165, 36, 0.15);
+      color: #F5A524;
+      padding: 4px 12px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(245, 165, 36, 0.3);
+    }
+
+    .status-msg {
+      font-size: 0.8rem;
+      margin-top: 10px;
+      color: #F5A524;
+    }
+  </style>
 </head>
-<body class="text-navy">
+
+<body>
+  <!-- Top Navigation Placeholder -->
+  <div id="topnavbar"></div>
 
   <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
 
     <!-- Sidebar -->
     <aside class="space-y-6">
-      <a href="index.html" class="flex items-center gap-2 text-sm text-navy/70 hover:text-navy">
-        <i class="fa-solid fa-arrow-left"></i> All Trips
+<<<<<<< HEAD
+      <a href="/myTripList.html" class="flex items-center gap-2 text-sm text-white/70 hover:text-amber-400 transition">
+=======
+      <a href="/MyTrips.html" class="flex items-center gap-2 text-sm text-white/70 hover:text-amber-400 transition">
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        <i class="fa-solid fa-arrow-left"></i>
+        All Trips
       </a>
 
-      <div class="rounded-xl overflow-hidden border border-black/5 bg-white">
-        <img src="https://images.unsplash.com/photo-1513735492246-483525079686?auto=format&fit=crop&w=600&q=60"
-             alt="Lisbon" class="w-full h-36 object-cover grayscale" />
+      <div class="glass-card overflow-hidden">
+        <img
+          id="tripSidebarImage"
+          src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80"
+          alt="Trip image"
+          class="w-full h-36 object-cover opacity-80 hover:opacity-100 transition duration-500"
+        >
+
         <div class="p-4">
-          <h2 class="font-serif text-2xl font-bold leading-tight">Lisbon &amp; The Algarve</h2>
-          <p class="text-sm text-navy/60 mt-1">Apr 14 — Apr 23, 2026</p>
-          <span class="inline-flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-amber-brand text-white text-xs font-semibold">
-            <i class="fa-solid fa-plane"></i> Upcoming
+          <h2 id="tripSidebarTitle" class="font-serif text-2xl font-bold leading-tight text-white">
+            Loading trip...
+          </h2>
+
+          <p id="tripSidebarDates" class="text-sm text-white/60 mt-1">
+            Loading dates...
+          </p>
+
+          <span
+            id="tripSidebarStatus"
+            class="inline-flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold"
+          >
+            <i class="fa-solid fa-plane"></i>
+            Planned
           </span>
         </div>
       </div>
 
       <div>
-        <p class="text-xs uppercase tracking-wider text-navy/50 mb-2">Trip Sections</p>
+        <p class="text-xs uppercase tracking-wider text-white/40 mb-2">
+          Trip Sections
+        </p>
+
         <nav class="flex flex-col gap-1 text-sm">
-          <a href="#" class="px-4 py-2.5 rounded-md bg-navy text-white font-semibold">Itinerary</a>
-          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Budget</a>
-          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Packing List</a>
-          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white text-navy/80">Notes</a>
+          <a href="#" class="px-4 py-2.5 rounded-md bg-amber-500/20 text-amber-400 font-semibold border border-amber-500/30">
+            Itinerary
+          </a>
+
+<<<<<<< HEAD
+          <!-- <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white/5 text-white/70 transition">
+=======
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white/5 text-white/70 transition">
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+            Budget
+          </a>
+
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white/5 text-white/70 transition">
+            Packing List
+          </a>
+
+          <a href="#" class="px-4 py-2.5 rounded-md hover:bg-white/5 text-white/70 transition">
+            Notes
+<<<<<<< HEAD
+          </a> -->
+=======
+          </a>
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+
+          <a href="#travel-buddy" class="px-4 py-2.5 rounded-md hover:bg-white/5 text-white/70 transition flex items-center justify-between group">
+            Travel Buddy
+            <i class="fas fa-users text-amber-400/50 group-hover:text-amber-400 transition"></i>
+          </a>
         </nav>
       </div>
 
-      <div class="rounded-xl bg-white border border-black/5 p-4">
-        <div class="flex items-center gap-2 text-sm font-semibold">
-          <i class="fa-solid fa-compass text-amber-brand"></i> Travel Tip
+      <div class="glass-card p-4">
+        <div class="flex items-center gap-2 text-sm font-semibold text-amber-400">
+          <i class="fa-solid fa-compass"></i>
+          Travel Tip
         </div>
-        <p class="text-sm text-navy/70 mt-2 leading-relaxed">
-          Pastéis de Belém open at 8 AM — head early to avoid the queue and enjoy them warm.
+
+        <p id="travelTipText" class="text-sm text-white/70 mt-2 leading-relaxed">
+          Add activities to each day so your itinerary is easier to follow.
         </p>
       </div>
     </aside>
 
     <!-- Main -->
-    <main class="space-y-8">
+    <main class="space-y-10">
 
       <!-- Header -->
-      <div class="flex items-start justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <p class="text-sm text-navy/60">Trip Itinerary</p>
-          <h1 class="font-serif text-4xl md:text-5xl font-bold mt-1">Your Day-by-Day Plan</h1>
-          <p class="text-navy/60 mt-3 max-w-xl">Build a curated journey, hour by hour. Every great trip begins with a thoughtful plan.</p>
+          <p class="text-sm text-amber-400 tracking-wider uppercase font-semibold">
+            Trip Itinerary
+          </p>
+
+          <h1 class="font-serif text-4xl md:text-5xl font-bold mt-1 text-white">
+            Your Day-by-Day Plan
+          </h1>
+
+          <p class="text-white/60 mt-3 max-w-xl">
+            Build a curated journey, hour by hour. Every great trip begins with a thoughtful plan.
+          </p>
         </div>
-        <button class="shrink-0 inline-flex items-center gap-2 px-5 py-3 bg-amber-brand text-white font-semibold rounded-md hover:brightness-95">
-          <i class="fa-solid fa-plus"></i> Add Activity
-        </button>
+
+        <a
+          id="editTripButton"
+          href="/PlanNewTrip.html"
+          class="btn-primary shrink-0"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Add Activity
+        </a>
       </div>
 
       <!-- Choose a Day -->
-      <section class="rounded-2xl bg-white/60 border border-black/5 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-lg">Choose a Day</h3>
-          <span class="text-xs text-navy/60">Apr 14 — Apr 23, 2026 · 10 days</span>
+      <section class="glass-card p-6">
+        <div class="flex flex-wrap items-center justify-between mb-4 gap-2">
+          <h3 class="font-semibold text-lg text-white">
+            Choose a Day
+          </h3>
+
+          <span
+            id="tripDateRange"
+            class="text-xs text-white/50 px-3 py-1 bg-white/5 rounded-full border border-white/10"
+          >
+            Loading trip dates...
+          </span>
         </div>
-        <div class="grid grid-cols-4 md:grid-cols-8 gap-3">
-          <button class="h-14 rounded-md bg-navy text-white text-sm font-semibold">Day 1</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 2</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 3</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 4</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 5</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 6</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 7</button>
-          <button class="h-14 rounded-md bg-navy/90 text-white/90 text-sm">Day 8</button>
+
+        <div id="dayButtons" class="grid grid-cols-4 md:grid-cols-8 gap-3">
+          <!-- Day buttons inserted by JavaScript -->
         </div>
       </section>
 
       <!-- Summary Cards -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
-          <div class="w-12 h-12 rounded-full bg-amber-brand/15 text-amber-brand flex items-center justify-center text-lg">
+        <div class="flex items-center gap-4 glass-card p-5">
+          <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(245,165,36,0.2)]">
             <i class="fa-solid fa-sun"></i>
           </div>
+
           <div>
-            <p class="text-xs uppercase tracking-wider text-navy/50">Selected Day</p>
-            <p class="font-serif text-lg font-bold">Tuesday, April 14</p>
+            <p class="text-xs uppercase tracking-wider text-white/40">
+              Selected Day
+            </p>
+
+            <p id="selectedDayText" class="font-serif text-lg font-bold text-white">
+              Loading...
+            </p>
           </div>
         </div>
-        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
-          <div class="w-12 h-12 rounded-full bg-navy/10 text-navy flex items-center justify-center text-lg">
+
+        <div class="flex items-center gap-4 glass-card p-5">
+          <div class="w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(59,130,246,0.2)]">
             <i class="fa-solid fa-list-check"></i>
           </div>
+
           <div>
-            <p class="text-xs uppercase tracking-wider text-navy/50">Activities</p>
-            <p class="font-serif text-lg font-bold">5 planned</p>
+            <p class="text-xs uppercase tracking-wider text-white/40">
+              Activities
+            </p>
+
+            <p id="activitiesCount" class="font-serif text-lg font-bold text-white">
+              0 planned
+            </p>
           </div>
         </div>
-        <div class="flex items-center gap-4 bg-white rounded-xl border border-black/5 p-5">
-          <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+
+        <div class="flex items-center gap-4 glass-card p-5">
+          <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(16,185,129,0.2)]">
             <i class="fa-regular fa-clock"></i>
           </div>
+
           <div>
-            <p class="text-xs uppercase tracking-wider text-navy/50">First Activity</p>
-            <p class="font-serif text-lg font-bold">8:30 AM · Airport Pickup</p>
+            <p class="text-xs uppercase tracking-wider text-white/40">
+              First Activity
+            </p>
+
+            <p id="firstActivityText" class="font-serif text-lg font-bold text-white">
+              No activity yet
+            </p>
           </div>
         </div>
       </section>
 
       <!-- Day details -->
       <section>
-        <div class="flex items-end justify-between flex-wrap gap-2">
+        <div class="flex items-end justify-between flex-wrap gap-2 mb-6 border-b border-white/10 pb-4">
           <div>
-            <h2 class="font-serif text-3xl font-bold">Tuesday, April 14</h2>
-            <p class="text-navy/60 mt-1">Arrival day — settle in and explore the Alfama district.</p>
+            <h2 id="activeDayTitle" class="font-serif text-3xl font-bold text-white">
+              Loading day...
+            </h2>
+
+            <p id="activeDayDescription" class="text-white/60 mt-1">
+              Loading itinerary...
+            </p>
           </div>
-          <span class="text-sm text-navy/50">Local time · Lisbon (WET)</span>
+
+          <span class="text-sm text-white/40 flex items-center gap-2">
+            <i class="fas fa-globe"></i>
+            Trip itinerary
+          </span>
         </div>
 
-        <!-- Activities -->
-        <div class="mt-6 space-y-4">
-
-          <!-- Activity card -->
-          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
-            <div class="bg-cream flex flex-col items-center justify-center p-6">
-              <p class="font-serif text-xl font-bold">5/01/26</p>
-              <p class="text-xs text-navy/50 mt-1">Local time</p>
-            </div>
-            <div class="p-5">
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-brand text-white text-xs font-semibold">
-                <i class="fa-solid fa-plane"></i> Transport
-              </span>
-              <div class="flex items-start justify-between mt-3">
-                <h3 class="font-serif text-xl font-bold">Airport Shuttle to Hotel</h3>
-                <div class="flex items-center gap-3 text-navy/40">
-                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
-                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
-                </div>
-              </div>
-              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
-                <i class="fa-solid fa-location-dot"></i> Ngurah Rai International Airport, Bali
-              </p>
-              <p class="text-sm text-navy/80 mt-3">Pre-booked shuttle from Ngurah Rai Airport to Kuta hotel zone.</p>
-            </div>
-          </article>
-
-          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
-            <div class="bg-cream flex flex-col items-center justify-center p-6">
-              <p class="font-serif text-xl font-bold">5/02/26</p>
-              <p class="text-xs text-navy/50 mt-1">Local time</p>
-            </div>
-            <div class="p-5">
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-brand text-white text-xs font-semibold">
-                <i class="fa-solid fa-plane"></i> Transport
-              </span>
-              <div class="flex items-start justify-between mt-3">
-                <h3 class="font-serif text-xl font-bold">Grab Taxi to Seminyak</h3>
-                <div class="flex items-center gap-3 text-navy/40">
-                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
-                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
-                </div>
-              </div>
-              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
-                <i class="fa-solid fa-location-dot"></i> Seminyak, Bali
-              </p>
-              <p class="text-sm text-navy/80 mt-3">Ride to beachside cafés and boutique shopping in Seminyak.</p>
-            </div>
-          </article>
-
-          <article class="grid grid-cols-[120px_1fr] gap-0 bg-white rounded-xl border border-black/5 overflow-hidden">
-            <div class="bg-cream flex flex-col items-center justify-center p-6">
-              <p class="font-serif text-xl font-bold">5/03/26</p>
-              <p class="text-xs text-navy/50 mt-1">Local time</p>
-            </div>
-            <div class="p-5">
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold">
-                <i class="fa-solid fa-utensils"></i> Food
-              </span>
-              <div class="flex items-start justify-between mt-3">
-                <h3 class="font-serif text-xl font-bold">Dinner at Time Out Market</h3>
-                <div class="flex items-center gap-3 text-navy/40">
-                  <button class="hover:text-navy"><i class="fa-regular fa-pen-to-square"></i></button>
-                  <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
-                </div>
-              </div>
-              <p class="text-sm text-navy/60 mt-2 flex items-center gap-2">
-                <i class="fa-solid fa-location-dot"></i> Mercado da Ribeira, Lisbon
-              </p>
-              <p class="text-sm text-navy/80 mt-3">Try pastéis de nata and Portuguese seafood from the city's top chefs.</p>
-            </div>
-          </article>
-
+        <div id="activitiesList" class="space-y-4">
+          <!-- Activities inserted by JavaScript -->
         </div>
       </section>
 
-      <div class="pt-4">
-        <a href="index.html" class="inline-flex items-center gap-2 text-sm text-navy/70 hover:text-navy">
-          <i class="fa-solid fa-arrow-left"></i> Back to FlyAway home
-        </a>
-      </div>
+      <!-- TRAVEL BUDDY SECTION -->
+      <section id="travel-buddy" class="mt-16 pt-10 border-t border-white/10 scroll-mt-24">
+        <div class="mb-6">
+          <p class="text-sm text-amber-400 tracking-wider uppercase font-semibold flex items-center gap-2">
+            <i class="fas fa-users"></i>
+            Travel Buddy
+          </p>
+
+          <h2 class="font-serif text-3xl font-bold text-white mt-1">
+            Group Planning &amp; Voting
+          </h2>
+
+          <p class="text-white/60 mt-2">
+            Invite your friends to the trip, vote on places to visit, and finalize your itinerary together.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Invite Friends -->
+          <div class="glass-card p-6">
+            <h3 class="font-semibold text-lg text-white mb-4 flex items-center gap-2">
+              <i class="fas fa-envelope text-amber-400"></i>
+              Invite Friends
+            </h3>
+
+            <div class="flex gap-2 mb-4">
+              <input
+                type="text"
+                id="friendName"
+                class="input-base"
+<<<<<<< HEAD
+                placeholder="Friend's name"
+=======
+                placeholder="Friend's name or email"
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+              >
+
+              <button id="inviteBtn" class="btn-primary whitespace-nowrap">
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </div>
+
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5 min-h-[100px]">
+              <div class="text-xs text-white/40 mb-2 uppercase tracking-wide">
+                Travel Crew
+              </div>
+
+              <div id="friendsContainer"></div>
+
+              <button
+                id="shareLinkBtn"
+                class="mt-4 w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-amber-400 text-sm font-semibold transition flex items-center justify-center gap-2"
+              >
+                <i class="fas fa-link"></i>
+                Copy Trip Invite Link
+              </button>
+            </div>
+
+            <div class="status-msg h-5 mt-2" id="groupStatusMsg"></div>
+          </div>
+
+          <!-- Vote on Places -->
+          <div class="glass-card p-6">
+            <h3 class="font-semibold text-lg text-white mb-4 flex items-center gap-2">
+              <i class="fas fa-poll text-amber-400"></i>
+              Place Suggestions
+            </h3>
+
+            <div class="flex gap-2 mb-4">
+              <input
+                type="text"
+                id="suggestionInput"
+                class="input-base"
+                placeholder="Suggest a place, e.g. Tokyo Tower"
+              >
+
+              <button id="suggestBtn" class="btn-primary whitespace-nowrap">
+                <i class="fas fa-lightbulb"></i>
+              </button>
+            </div>
+
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5 min-h-[100px] max-h-[250px] overflow-y-auto">
+              <div class="text-xs text-white/40 mb-2 uppercase tracking-wide flex justify-between">
+                <span>Top Voted Places</span>
+                <i class="fas fa-fire text-amber-400/50"></i>
+              </div>
+
+              <div id="placesVotesList" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
-  <footer class="border-t border-black/5 mt-12">
-    <div class="max-w-7xl mx-auto px-6 py-6 text-sm text-navy/60">
-      FlyAway · Trip Itinerary · Node.js · Express · MySQL · OpenWeatherMap
+  <footer class="border-t border-white/10 mt-12 bg-black/40">
+    <div class="max-w-7xl mx-auto px-6 py-8 text-sm text-white/50 flex justify-between items-center">
+      <div>FlyAway · Smart Travel Planner</div>
+
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-amber-400 transition">
+          <i class="fab fa-twitter"></i>
+        </a>
+
+        <a href="#" class="hover:text-amber-400 transition">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
     </div>
   </footer>
+
+  <!-- Topnavbar script -->
+  <script>
+    fetch("/components/topNavBar.html")
+      .then((response) => response.text())
+      .then((data) => {
+        const nav = document.getElementById("topnavbar");
+
+        if (nav) {
+          nav.innerHTML = data;
+
+          const scripts = nav.getElementsByTagName("script");
+
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Navbar failed to load:", error);
+      });
+  </script>
+
+  <!-- Dynamic Itinerary JS -->
+  <script>
+    let loadedItineraryTrip = null;
+    let activeItineraryDayIndex = 0;
+    let itineraryDays = [];
+
+    function getItineraryTripId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("tripId");
+    }
+
+    function safeText(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function parseDateOnly(value) {
+      if (!value) return null;
+
+      const datePart = String(value).split("T")[0];
+      const [year, month, day] = datePart.split("-").map(Number);
+
+      if (!year || !month || !day) return null;
+
+      return new Date(year, month - 1, day);
+    }
+
+    function formatDate(value) {
+      const date = parseDateOnly(value);
+
+      if (!date) return "";
+
+      return date.toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+
+    function formatShortDate(value) {
+      const date = parseDateOnly(value);
+
+      if (!date) return "";
+
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+    }
+
+    function formatTime(value) {
+      if (!value) return "";
+
+      const text = String(value);
+
+      if (/^\d{2}:\d{2}/.test(text)) {
+        const [hourText, minuteText] = text.split(":");
+        let hour = Number(hourText);
+        const minute = minuteText.slice(0, 2);
+        const suffix = hour >= 12 ? "PM" : "AM";
+
+        hour = hour % 12 || 12;
+
+        return `${hour}:${minute} ${suffix}`;
+      }
+
+      return text;
+    }
+
+    function getTripDateRangeText(trip) {
+      const start = formatShortDate(trip.departure_date);
+      const end = formatShortDate(trip.return_date);
+
+      if (start && end) {
+        return `${start} — ${end} · ${itineraryDays.length} day${itineraryDays.length === 1 ? "" : "s"}`;
+      }
+
+      if (start) return `From ${start}`;
+
+      return "Dates not set";
+    }
+
+    function buildItineraryDays(trip) {
+      const start = parseDateOnly(trip.departure_date);
+      const end = parseDateOnly(trip.return_date);
+
+      if (!start || !end || end < start) {
+        return [
+          {
+            label: "Day 1",
+            title: "Day 1",
+            date: null,
+          },
+        ];
+      }
+
+      const days = [];
+      const current = new Date(start);
+      let index = 1;
+
+      while (current <= end && days.length < 30) {
+        days.push({
+          label: `Day ${index}`,
+          title: current.toLocaleDateString(undefined, {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          }),
+          date: new Date(current),
+        });
+
+        current.setDate(current.getDate() + 1);
+        index += 1;
+      }
+
+      return days;
+    }
+
+    function getTripStatus(trip) {
+      const explicitStatus = String(trip.status || "planned").toLowerCase();
+
+      if (explicitStatus === "ongoing") return "Ongoing";
+      if (explicitStatus === "completed") return "Completed";
+      if (explicitStatus === "draft") return "Draft";
+
+      const start = parseDateOnly(trip.departure_date);
+      const end = parseDateOnly(trip.return_date);
+      const today = new Date();
+
+      today.setHours(0, 0, 0, 0);
+
+      if (start && end) {
+        if (today < start) return "Upcoming";
+        if (today >= start && today <= end) return "Ongoing";
+        if (today > end) return "Completed";
+      }
+
+      return "Upcoming";
+    }
+
+    function getTripImage(trip) {
+      const spots = Array.isArray(trip.spots) ? trip.spots : [];
+      const spotWithImage = spots.find((spot) => spot.image);
+
+      return spotWithImage?.image || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80";
+    }
+
+    function getSpotTypeConfig(itemType) {
+      if (itemType === "food") {
+        return {
+          label: "Food",
+          icon: "fa-utensils",
+          className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+        };
+      }
+
+      if (itemType === "event") {
+        return {
+          label: "Event",
+          icon: "fa-calendar-days",
+          className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        };
+      }
+
+      return {
+        label: "Sightseeing",
+        icon: "fa-camera",
+        className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+      };
+    }
+
+    function getSpotLocation(spot) {
+      if (spot.itemType === "event") {
+        return [spot.venue, spot.city, spot.country].filter(Boolean).join(" · ");
+      }
+
+      if (spot.itemType === "food") {
+        return spot.location || [spot.city, spot.country].filter(Boolean).join(" · ");
+      }
+
+      return [spot.city, spot.country].filter(Boolean).join(" · ") || spot.source || "Location not available";
+    }
+
+    function getSpotDescription(spot) {
+      if (spot.activityNotes) return spot.activityNotes;
+
+      if (spot.itemType === "food") {
+        return [spot.cuisine, spot.foodType, spot.price].filter(Boolean).join(" · ") || "Food spot saved for this trip.";
+      }
+
+      if (spot.itemType === "event") {
+        return [spot.date, formatTime(spot.time)].filter(Boolean).join(" · ") || "Event saved for this trip.";
+      }
+
+      return spot.description || spot.kinds || "Attraction saved for this trip.";
+    }
+
+    function getDefaultActivityTime(index) {
+      const times = ["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"];
+      return times[index % times.length];
+    }
+
+    function getSpotsForActiveDay() {
+      const spots = Array.isArray(loadedItineraryTrip?.spots)
+        ? loadedItineraryTrip.spots
+        : [];
+
+      return spots
+        .filter((spot) => Number(spot.dayIndex || 0) === activeItineraryDayIndex)
+        .sort((a, b) => {
+          const timeA = a.startTime || "";
+          const timeB = b.startTime || "";
+
+          return timeA.localeCompare(timeB);
+        });
+    }
+
+    function renderItineraryDayButtons() {
+      const container = document.getElementById("dayButtons");
+
+      if (!container) return;
+
+      container.innerHTML = itineraryDays
+        .map((day, index) => {
+          const active = index === activeItineraryDayIndex;
+
+          return `
+            <button
+              type="button"
+              onclick="setItineraryDay(${index})"
+              class="h-14 rounded-xl text-sm font-semibold transition ${
+                active
+                  ? "bg-gradient-to-tr from-[#F5A524] to-[#e8832a] text-white shadow-lg shadow-amber-500/20"
+                  : "bg-white/5 hover:bg-white/10 border border-white/10 text-white/70"
+              }"
+            >
+              ${safeText(day.label)}
+            </button>
+          `;
+        })
+        .join("");
+    }
+
+    function renderActiveItineraryDay() {
+      const day = itineraryDays[activeItineraryDayIndex] || itineraryDays[0];
+      const spots = getSpotsForActiveDay();
+
+      document.getElementById("selectedDayText").textContent = day?.title || "Day 1";
+      document.getElementById("activitiesCount").textContent = `${spots.length} planned`;
+
+      document.getElementById("firstActivityText").textContent = spots.length
+        ? `${formatTime(spots[0].startTime || getDefaultActivityTime(0))} · ${spots[0].name}`
+        : "No activity yet";
+
+      document.getElementById("activeDayTitle").textContent = day?.title || "Day 1";
+
+      document.getElementById("activeDayDescription").textContent = spots.length
+        ? `${spots.length} planned activit${spots.length === 1 ? "y" : "ies"} for this day.`
+        : "No activities assigned to this day yet.";
+
+      const activitiesList = document.getElementById("activitiesList");
+
+      if (!spots.length) {
+        activitiesList.innerHTML = `
+          <div class="glass-card p-8 text-center">
+            <i class="fa-regular fa-calendar-plus text-4xl text-white/30"></i>
+            <p class="mt-3 font-semibold text-white/70">No activities for this day.</p>
+            <p class="mt-2 text-sm text-white/45">
+              Go back to Plan New Trip, assign spots to this day, and save again.
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+      activitiesList.innerHTML = spots
+        .map((spot, index) => {
+          const config = getSpotTypeConfig(spot.itemType);
+          const startTime = formatTime(spot.startTime || getDefaultActivityTime(index));
+          const endTime = spot.endTime ? formatTime(spot.endTime) : "";
+          const location = getSpotLocation(spot);
+          const description = getSpotDescription(spot);
+
+          return `
+            <article class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-0 glass-card overflow-hidden">
+              <div class="bg-black/20 flex md:flex-col items-center justify-center p-4 md:p-6 border-b md:border-b-0 md:border-r border-white/5">
+                <p class="font-serif text-xl font-bold text-white">
+                  ${safeText(startTime)}
+                </p>
+
+                <p class="text-xs text-white/40 mt-1 md:mt-2">
+                  ${safeText(endTime)}
+                </p>
+              </div>
+
+              <div class="p-5">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-semibold uppercase tracking-wide ${config.className}">
+                  <i class="fa-solid ${config.icon}"></i>
+                  ${safeText(config.label)}
+                </span>
+
+                <div class="flex items-start justify-between mt-3 gap-4">
+                  <h3 class="font-serif text-xl font-bold text-white">
+                    ${safeText(spot.name)}
+                  </h3>
+
+                  ${
+                    spot.url
+                      ? `<a href="${safeText(spot.url)}" target="_blank" rel="noopener noreferrer" class="text-white/30 hover:text-amber-400 transition">
+                          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>`
+                      : ""
+                  }
+                </div>
+
+                <p class="text-sm text-amber-400/80 mt-2 flex items-center gap-2">
+                  <i class="fa-solid fa-location-dot"></i>
+                  ${safeText(location || "Location not available")}
+                </p>
+
+                <p class="text-sm text-white/70 mt-3">
+                  ${safeText(description)}
+                </p>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function setItineraryDay(index) {
+      activeItineraryDayIndex = index;
+      renderItineraryDayButtons();
+      renderActiveItineraryDay();
+    }
+
+    async function loadPlannedTripItinerary() {
+      const tripId = getItineraryTripId();
+
+      const activitiesList = document.getElementById("activitiesList");
+
+      if (!tripId) {
+        activitiesList.innerHTML = `
+          <div class="glass-card p-8 text-center">
+            <i class="fa-solid fa-link-slash text-4xl text-white/30"></i>
+            <p class="mt-3 font-semibold text-white/70">No trip selected.</p>
+            <p class="mt-2 text-sm text-white/45">
+              Open this page from My Trips using View Itinerary.
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/trips/${encodeURIComponent(tripId)}`);
+        const trip = await response.json();
+
+        if (!response.ok) {
+          throw new Error(trip.error || "Failed to load trip itinerary.");
+        }
+
+        loadedItineraryTrip = trip;
+        itineraryDays = buildItineraryDays(trip);
+        activeItineraryDayIndex = 0;
+
+        document.getElementById("tripSidebarTitle").textContent = trip.trip_name || "Untitled Trip";
+        document.getElementById("tripSidebarDates").textContent = getTripDateRangeText(trip);
+        document.getElementById("tripDateRange").textContent = getTripDateRangeText(trip);
+        document.getElementById("tripSidebarImage").src = getTripImage(trip);
+
+        document.getElementById("tripSidebarStatus").innerHTML = `
+          <i class="fa-solid fa-plane"></i>
+          ${safeText(getTripStatus(trip))}
+        `;
+
+        const editButton = document.getElementById("editTripButton");
+
+        if (editButton) {
+          editButton.href = `/PlanNewTrip.html?edit=${encodeURIComponent(trip._id)}`;
+        }
+
+        renderItineraryDayButtons();
+        renderActiveItineraryDay();
+      } catch (error) {
+        console.error(error);
+
+        activitiesList.innerHTML = `
+          <div class="glass-card p-8 text-center text-red-300">
+            <i class="fa-solid fa-triangle-exclamation text-4xl"></i>
+            <p class="mt-3 font-semibold">${safeText(error.message)}</p>
+          </div>
+        `;
+      }
+    }
+
+    window.addEventListener("load", loadPlannedTripItinerary);
+  </script>
+
+  <!-- Travel Buddy JS logic -->
+  <script>
+    const API_URL = window.location.origin;
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentTripId = urlParams.get("tripId");
+    const tripQuery = currentTripId ? `?tripId=${currentTripId}` : "";
+
+    function escapeHtml(str) {
+      if (!str) return "";
+
+      return String(str).replace(/[&<>]/g, function (m) {
+        if (m === "&") return "&amp;";
+        if (m === "<") return "&lt;";
+        if (m === ">") return "&gt;";
+        return m;
+      });
+    }
+
+    function updateGroupMsg(msg) {
+      const d = document.getElementById("groupStatusMsg");
+
+      if (d) {
+        d.innerHTML = `<i class="fas fa-check-circle text-green-400"></i> <span class="text-white/80">${msg}</span>`;
+
+        setTimeout(() => {
+          if (d) d.innerHTML = "";
+        }, 3000);
+      }
+    }
+
+    function renderMissingTrip() {
+      const container = document.getElementById("friendsContainer");
+      const votesContainer = document.getElementById("placesVotesList");
+
+      if (container) {
+        container.innerHTML = '<div class="text-white/40 text-sm py-2 italic">Open this page with a shared trip link to invite friends.</div>';
+      }
+
+      if (votesContainer) {
+        votesContainer.innerHTML = '<div class="text-white/40 text-sm py-2 italic">Open this page with a shared trip link to suggest places and vote.</div>';
+      }
+    }
+
+    function isTripLoaded() {
+      return Boolean(currentTripId);
+    }
+
+    function getApiUrl(path) {
+      return `${API_URL}${path}${tripQuery}`;
+    }
+
+    async function loadFriends() {
+      const container = document.getElementById("friendsContainer");
+
+      if (!isTripLoaded()) {
+        renderMissingTrip();
+        return;
+      }
+
+      try {
+        const res = await fetch(getApiUrl("/api/buddies"));
+        const friends = await res.json();
+
+        if (!Array.isArray(friends) || friends.length === 0) {
+          container.innerHTML = '<div class="text-white/40 text-sm py-2 italic">No friends invited yet. You are riding solo!</div>';
+          return;
+        }
+
+        container.innerHTML = friends
+          .map((f) => `
+            <div class="friend-tag">
+              <i class="fas fa-user-astronaut text-amber-400"></i>
+              ${escapeHtml(f.name)}
+              <i class="fas fa-times text-white/30 hover:text-red-400 transition ml-2 cursor-pointer" onclick="removeFriend('${f._id}')"></i>
+            </div>
+          `)
+          .join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = '<div class="text-red-300 text-sm py-2">Unable to load friends.</div>';
+      }
+    }
+
+    async function addFriend() {
+      if (!isTripLoaded()) {
+        updateGroupMsg("Open this page with a shared trip link first.");
+        return;
+      }
+
+      const nameInput = document.getElementById("friendName");
+      const name = nameInput.value.trim();
+
+      if (!name) return;
+
+      await fetch(getApiUrl("/api/buddies"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      nameInput.value = "";
+      updateGroupMsg(`${escapeHtml(name)} joined the trip!`);
+      loadFriends();
+    }
+
+    async function removeFriend(id) {
+      if (!isTripLoaded()) {
+        updateGroupMsg("Open this page with a shared trip link first.");
+        return;
+      }
+
+      await fetch(getApiUrl(`/api/buddies/${id}`), {
+        method: "DELETE",
+      });
+
+      updateGroupMsg("Friend removed");
+      loadFriends();
+    }
+
+    async function loadSuggestions() {
+      const container = document.getElementById("placesVotesList");
+
+      if (!isTripLoaded()) {
+        renderMissingTrip();
+        return;
+      }
+
+      try {
+        const res = await fetch(getApiUrl("/api/suggestions"));
+        const suggestions = await res.json();
+
+        if (!Array.isArray(suggestions) || suggestions.length === 0) {
+          container.innerHTML = '<div class="text-white/40 text-sm py-2 italic">Suggest a place above to start voting.</div>';
+          return;
+        }
+
+        container.innerHTML = suggestions
+          .map((p) => `
+            <div class="place-vote-item bg-white/5 rounded-lg px-3 py-2 mt-2">
+              <div class="text-white text-sm font-medium">${escapeHtml(p.placeName)}</div>
+
+              <div class="flex items-center gap-3">
+                <span class="vote-count text-xs">
+                  <i class="fas fa-thumbs-up"></i>
+                  ${p.votes}
+                </span>
+
+                <button
+                  onclick="voteSuggestion('${p._id}', '${escapeHtml(p.placeName).replace(/'/g, "\\'")}')"
+                  class="hover:text-amber-400 text-white/50 transition cursor-pointer border-none bg-transparent"
+                >
+                  <i class="fas fa-arrow-up border border-white/20 p-1.5 rounded bg-white/5 hover:bg-white/10"></i>
+                </button>
+              </div>
+            </div>
+          `)
+          .join("");
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = '<div class="text-red-300 text-sm py-2">Unable to load suggestions.</div>';
+      }
+    }
+
+    async function addSuggestion() {
+      if (!isTripLoaded()) {
+        updateGroupMsg("Open this page with a shared trip link first.");
+        return;
+      }
+
+      const input = document.getElementById("suggestionInput");
+      const placeName = input.value.trim();
+
+      if (!placeName) return;
+
+      await fetch(getApiUrl("/api/suggestions"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ placeName }),
+      });
+
+      input.value = "";
+      updateGroupMsg(`"${escapeHtml(placeName)}" added for voting.`);
+      loadSuggestions();
+    }
+
+    async function voteSuggestion(id, placeName) {
+      if (!isTripLoaded()) {
+        updateGroupMsg("Open this page with a shared trip link first.");
+        return;
+      }
+
+      const res = await fetch(getApiUrl(`/api/suggestions/${id}/vote`), {
+        method: "PUT",
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        updateGroupMsg(error.error || "Unable to vote.");
+        return;
+      }
+
+      updateGroupMsg(`Voted for ${placeName}`);
+      loadSuggestions();
+    }
+
+    document.getElementById("inviteBtn").addEventListener("click", addFriend);
+
+    document.getElementById("friendName").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addFriend();
+    });
+
+    document.getElementById("suggestBtn").addEventListener("click", addSuggestion);
+
+    document.getElementById("suggestionInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addSuggestion();
+    });
+
+    document.getElementById("shareLinkBtn").addEventListener("click", () => {
+      if (!currentTripId) {
+        updateGroupMsg("No shared trip loaded. Use a trip link with tripId.");
+        return;
+      }
+
+      const shareUrl = `${window.location.origin}/itenary.html?tripId=${currentTripId}`;
+
+      navigator.clipboard
+        .writeText(shareUrl)
+        .then(() => {
+          updateGroupMsg("Invite link copied to clipboard!");
+        })
+        .catch(() => {
+          updateGroupMsg("Unable to copy invite link.");
+        });
+    });
+
+    window.addEventListener("load", () => {
+      loadFriends();
+      loadSuggestions();
+    });
+  </script>
 </body>
 </html>

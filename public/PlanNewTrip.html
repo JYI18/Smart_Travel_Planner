@@ -1,722 +1,1635 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-<title>FlyAway — Your Journey Begins Here</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #0a0a0a;
-    overflow-x: hidden;
-  }
-  
-  /* Parallax & Travel Vibe Background */
-  .parallax-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-    background-image: url('img/FlyAway_Background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-  }
-  
-  .parallax-bg::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.85) 100%);
-    pointer-events: none;
-  }
-  
-  /* Animated clouds */
-  .cloud {
-    position: fixed;
-    background: rgba(255,255,255,0.08);
-    border-radius: 1000px;
-    filter: blur(30px);
-    pointer-events: none;
-    z-index: -1;
-    animation: floatCloud 40s linear infinite;
-  }
-  
-  @keyframes floatCloud {
-    0% { transform: translateX(-100px); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.6; }
-    100% { transform: translateX(calc(100vw + 200px)); opacity: 0; }
-  }
-  
-  /* 3D Card Effect */
-  .travel-card {
-    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    transform-style: preserve-3d;
-    perspective: 1000px;
-  }
-  
-  .travel-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: 0 30px 40px -20px rgba(0,0,0,0.4), 0 0 0 2px rgba(245,165,36,0.3);
-  }
-  
-  .travel-card-inner {
-    transition: all 0.3s ease;
-  }
-  
-  /* Glow effect on hover */
-  .glow-on-hover:hover {
-    box-shadow: 0 0 25px rgba(245,165,36,0.4);
-  }
-  
-  /* Hero section with parallax text */
-  .hero-title {
-    background: linear-gradient(135deg, #F5A524 0%, #FFD700 50%, #F5A524 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 2px 10px rgba(245,165,36,0.3);
-    animation: titleGlow 3s ease-in-out infinite;
-  }
-  
-  @keyframes titleGlow {
-    0%, 100% { text-shadow: 0 0 20px rgba(245,165,36,0.3); }
-    50% { text-shadow: 0 0 40px rgba(245,165,36,0.6); }
-  }
-  
-  /* Animated underline */
-  .animated-underline {
-    position: relative;
-  }
-  
-  .animated-underline::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #F5A524, #FFD700);
-    transition: width 0.3s ease;
-  }
-  
-  .animated-underline:hover::after {
-    width: 100%;
-  }
-  
-  /* Pulse animation for buttons */
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  
-  .pulse-on-hover:hover {
-    animation: pulse 0.5s ease-in-out;
-  }
-  
-  /* Shimmer border */
-  .shimmer-border {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .shimmer-border::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #F5A524, #FFD700, #F5A524, #FFD700);
-    background-size: 400% 400%;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
-  }
-  
-  .shimmer-border:hover::before {
-    opacity: 1;
-    animation: shimmerRotate 3s linear infinite;
-  }
-  
-  @keyframes shimmerRotate {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  /* Modal animation */
-  .modal-enter {
-    animation: modalSlideIn 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  }
-  
-  @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.95) translateY(-20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  
-  /* Floating particles */
-  .particle {
-    position: fixed;
-    width: 4px;
-    height: 4px;
-    background: rgba(245,165,36,0.6);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: particleFloat 8s linear infinite;
-  }
-  
-  @keyframes particleFloat {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
-  }
-  
-  /* Scroll reveal */
-  .scroll-reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease-out;
-  }
-  
-  .scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  /* Loading skeleton */
-  .skeleton {
-    background: linear-gradient(90deg, #2a2a3e 25%, #3a3a4e 50%, #2a2a3e 75%);
-    background-size: 200% 100%;
-    animation: skeletonWave 1.5s infinite;
-  }
-  
-  @keyframes skeletonWave {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-  
-  /* Destination badge pulse */
-  .destination-badge {
-    position: relative;
-  }
-  
-  .destination-badge::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: rgba(245,165,36,0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    animation: radarPing 2s infinite;
-  }
-  
-  @keyframes radarPing {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
-  }
-  
-  /* Custom scrollbar */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
-  ::-webkit-scrollbar-thumb { background: #F5A524; border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+  <title>FlyAway · Plan Your Journey | Smart Travel Planner</title>
+
+  <!-- Tailwind + Fonts + Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"
+    rel="stylesheet"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    fetch("/components/topNavBar.html")
+      .then((response) => response.text())
+      .then((data) => {
+        const nav = document.getElementById("topnavbar");
+
+        if (nav) {
+          nav.innerHTML = data;
+
+          const scripts = nav.getElementsByTagName("script");
+
+          for (let i = 0; i < scripts.length; i += 1) {
+            window.eval(scripts[i].innerText);
+          }
+        }
+      })
+      .catch((error) => console.error("Navbar failed to load:", error));
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-main: #07111f;
+      --bg-panel: rgba(15, 23, 42, 0.78);
+      --bg-panel-strong: rgba(15, 23, 42, 0.92);
+      --bg-panel-soft: rgba(30, 41, 59, 0.62);
+      --border-soft: rgba(148, 163, 184, 0.22);
+      --border-gold: rgba(245, 165, 36, 0.42);
+      --text-main: #e5eef8;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --gold: #f5a524;
+      --gold-light: #ffc857;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg-main);
+      overflow-x: hidden;
+      color: var(--text-main);
+    }
+
+    .parallax-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background-image: url("img/FlyAway_Background.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .parallax-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(245, 165, 36, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.12), transparent 30%),
+        linear-gradient(145deg, rgba(2, 6, 23, 0.88) 0%, rgba(7, 17, 31, 0.96) 52%, rgba(15, 23, 42, 0.98) 100%);
+      pointer-events: none;
+    }
+
+    .glass-card {
+      background: var(--bg-panel);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-gold);
+      border-radius: 2rem;
+      transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow:
+        0 24px 80px -30px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      background: rgba(15, 23, 42, 0.86);
+      border-color: rgba(245, 165, 36, 0.72);
+      box-shadow:
+        0 32px 90px -36px rgba(0, 0, 0, 0.9),
+        0 0 36px rgba(245, 165, 36, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .input-light {
+      display: flex;
+      height: 2.9rem;
+      width: 100%;
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(2, 6, 23, 0.55);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-light::placeholder {
+      color: rgba(148, 163, 184, 0.78);
+    }
+
+    .input-light:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245, 165, 36, 0.18);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    textarea.input-light {
+      min-height: 100px;
+    }
+
+    select.input-light option {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      opacity: 0.75;
+      cursor: pointer;
+    }
+
+    .btn-gold {
+      background: linear-gradient(105deg, #f59e0b 0%, #f5a524 52%, #facc15 100%);
+      color: #111827;
+      font-weight: 800;
+      padding: 0.75rem 2rem;
+      border-radius: 3rem;
+      transition: all 0.2s;
+      box-shadow: 0 12px 28px rgba(245, 165, 36, 0.24);
+    }
+
+    .btn-gold:hover {
+      transform: scale(1.02);
+      box-shadow: 0 18px 36px rgba(245, 165, 36, 0.38);
+    }
+
+    .btn-outline-light {
+      background: rgba(15, 23, 42, 0.48);
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      color: #cbd5e1;
+      border-radius: 3rem;
+      font-weight: 600;
+      padding: 0.7rem 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-outline-light:hover {
+      background: rgba(245, 165, 36, 0.12);
+      border-color: rgba(245, 165, 36, 0.75);
+      color: #ffd166;
+    }
+
+    .style-chip-light {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      transition: all 0.2s;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .style-chip-light.active {
+      background: linear-gradient(105deg, #f59e0b, #f5a524);
+      border-color: rgba(245, 165, 36, 0.9);
+      color: #111827;
+      box-shadow: 0 10px 24px rgba(245, 165, 36, 0.22);
+    }
+
+    .style-chip-light:hover:not(.active) {
+      background: rgba(245, 165, 36, 0.12);
+      border-color: rgba(245, 165, 36, 0.7);
+      color: #ffd166;
+    }
+
+    .section-label-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ffd166;
+      background: rgba(245, 165, 36, 0.12);
+      border: 1px solid rgba(245, 165, 36, 0.24);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      backdrop-filter: blur(8px);
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(125deg, #f59e0b, #f5a524, #ffe08a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .particle-soft {
+      position: fixed;
+      width: 3px;
+      height: 3px;
+      background: rgba(245, 165, 36, 0.55);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatSoft 12s linear infinite;
+      z-index: 0;
+      box-shadow: 0 0 12px rgba(245, 165, 36, 0.3);
+    }
+
+    @keyframes floatSoft {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 0.6;
+      }
+
+      85% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .cloud-soft {
+      position: fixed;
+      background: rgba(30, 64, 175, 0.18);
+      border-radius: 1000px;
+      filter: blur(46px);
+      pointer-events: none;
+      z-index: -1;
+      animation: floatCloudSoft 45s linear infinite;
+    }
+
+    @keyframes floatCloudSoft {
+      0% {
+        transform: translateX(-200px);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 0.45;
+      }
+
+      80% {
+        opacity: 0.35;
+      }
+
+      100% {
+        transform: translateX(calc(100vw + 300px));
+        opacity: 0;
+      }
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer-light {
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(2, 6, 23, 0.76);
+      backdrop-filter: blur(14px);
+    }
+
+    #topnavbar {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    #topnavbar [class*="bg-white"],
+    #topnavbar [class*="bg-stone"],
+    #topnavbar [class*="bg-gray"] {
+      background-color: rgba(15, 23, 42, 0.86) !important;
+    }
+
+    #topnavbar [class*="text-stone"],
+    #topnavbar [class*="text-gray"],
+    #topnavbar [class*="text-slate"] {
+      color: #e2e8f0 !important;
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+<<<<<<< HEAD
+=======
+      line-clamp: 2;
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #020617;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #f5a524;
+      border-radius: 10px;
+    }
+  </style>
 </head>
-<body>
-<!-- Parallax Background -->
-<div class="parallax-bg"></div>
-<!-- Floating Clouds -->
-<div id="clouds"></div>
-<!-- Particles -->
-<div id="particles"></div>
-<!-- Topnavbar -->
-<nav class="sticky top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/20 bg-black/35 px-8 py-2 shadow-xl backdrop-blur-md">
-  <div class="flex items-center gap-3 text-white">
-    <img src="/img/FlyAway_Logo.png" alt="FlyAway Logo" class="h-10 w-16 object-contain">
-    <span class="text-lg font-semibold">FlyAway</span>
-  </div>
 
-  <div class="hidden gap-6 text-sm font-semibold text-white md:flex">
-    <a href="#" class="hover:text-[#f5a623] transition">
-      <i class="fa-solid fa-house mr-1"></i> Home
-    </a>
-    <a href="#" onclick="openAddModal(); return false;" class="hover:text-[#f5a623] transition">
-      <i class="fa-solid fa-plus mr-1"></i> Add Trip
-    </a>
-    <a href="itenary.html" class="hover:text-[#f5a623] transition">
-      <i class="fa-solid fa-suitcase-rolling mr-1"></i> My Trips
-    </a>
-    <a href="#profile" class="hover:text-[#f5a623] transition">
-      <i class="fa-solid fa-user mr-1"></i> Profile
-    </a>
-    <a href="#" onclick="toggleFavoritesFilter(); return false;" class="hover:text-[#f5a623] transition">
-      <i class="fa-solid fa-heart mr-1"></i> Favourites
-    </a>
-  </div>
+<body class="antialiased">
+<<<<<<< HEAD
 
-  <!-- Mobile: keep the action buttons -->
-  <div class="flex gap-3 md:hidden">
-    <button onclick="openAddModal()" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-lg hover:scale-105 transition-all">
-      <i class="fas fa-plus mr-1"></i>Add
-    </button>
-  </div>
-</nav>
-<!-- Hero Section -->
-<section class="relative pt-16 pb-16 text-center">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="scroll-reveal">
-      <div class="inline-block mb-4 px-4 py-1 rounded-full bg-white/10 backdrop-blur border border-white/20">
-        <span class="text-amber-400 text-sm font-medium"><i class="fas fa-map-marked-alt mr-2"></i>DISCOVER THE WORLD</span>
+  <div class="parallax-bg"></div>
+  <div id="softClouds"></div>
+  <div id="softParticles"></div>
+  <div id="topnavbar"></div>
+
+=======
+  <div class="parallax-bg"></div>
+  <div id="softClouds"></div>
+  <div id="softParticles"></div>
+  <div id="topnavbar"></div>
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+  <main class="relative z-10 max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <div class="scroll-reveal text-center mb-12">
+      <div class="section-label-light mx-auto w-fit mb-4">
+        <i class="fa-regular fa-compass"></i>
+        DREAM. PLAN. EXPLORE
       </div>
-      <h1 class="hero-title font-serif text-6xl md:text-7xl lg:text-8xl font-black mb-4">
-        Your Journey<br>Begins Here
+
+      <h1 class="font-serif text-5xl md:text-6xl font-black text-slate-100 leading-tight">
+        Design your next<br>
+        <span class="gold-gradient-text">smart getaway</span>
       </h1>
-      <p class="text-white/70 text-lg max-w-2xl mx-auto font-light">
-        Every trip tells a story. Collect memories, not things. Start planning your next adventure today.
+
+      <p class="text-slate-300 max-w-2xl mx-auto mt-4 text-base font-medium bg-slate-900/55 backdrop-blur-sm rounded-full py-2 px-6 inline-block">
+        Fill in the details — your journey, beautifully organized.
       </p>
     </div>
-  </div>
-</section>
-<!-- Stats Dashboard -->
-<div class="max-w-7xl mx-auto px-6 py-8">
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statsGrid">
-    <!-- Stats loaded dynamically -->
-  </div>
-</div>
-<!-- Search & Filter Bar -->
-<div class="max-w-7xl mx-auto px-6 py-6">
-  <div class="flex flex-wrap gap-4 items-center justify-between bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10">
-    <div class="relative flex-1 max-w-md">
-      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/40"></i>
-      <input type="text" id="searchInput" placeholder="Search your next destination..." class="w-full pl-11 pr-4 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-    </div>
-    <div class="flex gap-2 flex-wrap">
-      <button onclick="filterByStyle('All')" class="filter-chip px-4 py-2 rounded-full bg-amber-500 text-white font-medium transition-all hover:scale-105" data-style="All">All</button>
-      <button onclick="filterByStyle('Beach')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Beach"><i class="fas fa-umbrella-beach mr-1"></i>Beach</button>
-      <button onclick="filterByStyle('Adventure')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Adventure"><i class="fas fa-mountain-sun mr-1"></i>Adventure</button>
-      <button onclick="filterByStyle('City')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="City"><i class="fas fa-city mr-1"></i>City</button>
-      <button onclick="filterByStyle('Foodie')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Foodie"><i class="fas fa-utensils mr-1"></i>Foodie</button>
-      <button onclick="filterByStyle('Relax')" class="filter-chip px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-amber-500/30 transition-all" data-style="Relax"><i class="fas fa-spa mr-1"></i>Relax</button>
-      <button onclick="toggleFavoritesFilter()" id="favFilterBtn" class="px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-yellow-500/30 transition-all"><i class="fas fa-star mr-1"></i>Favorites</button>
-    </div>
-  </div>
-</div>
-<!-- Trips Container -->
-<div class="max-w-7xl mx-auto px-6 pb-20">
-  <div id="tripsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all">
-    <!-- Skeleton loaders -->
-    <div class="skeleton rounded-2xl h-80"></div>
-    <div class="skeleton rounded-2xl h-80"></div>
-    <div class="skeleton rounded-2xl h-80"></div>
-  </div>
-</div>
-<!-- Add/Edit Modal -->
-<div id="tripModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
-  <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-10 modal-enter border border-white/20">
-    <div class="sticky top-0 bg-gray-900/95 backdrop-blur border-b border-white/10 px-6 py-4 flex justify-between items-center">
-      <h2 class="font-serif text-2xl text-white" id="modalTitle">✈️ Plan New Expedition</h2>
-      <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-white/10 transition"><i class="fas fa-times text-white/70"></i></button>
-    </div>
-    <div class="p-6">
-      <form id="tripForm" onsubmit="event.preventDefault(); saveTrip();">
-        <input type="hidden" id="tripId">
-        <div class="grid md:grid-cols-2 gap-4 mb-4">
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Trip Name</label><input type="text" id="tripName" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Summer in Paris"></div>
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Destination</label><input type="text" id="destination" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="Paris, France"></div>
+
+    <div class="glass-card max-w-4xl mx-auto p-6 md:p-8 transition-all duration-300">
+      <div class="flex items-center gap-3 border-b border-amber-500/25 pb-5 mb-6">
+        <div class="h-11 w-11 rounded-2xl bg-amber-400/15 flex items-center justify-center shadow-inner">
+          <i class="fa-solid fa-map-location-dot text-amber-300 text-xl"></i>
         </div>
-        <div class="grid md:grid-cols-2 gap-4 mb-4">
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Departure</label><input type="date" id="departureDate" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Return</label><input type="date" id="returnDate" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
-        </div>
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-white/80 mb-2">Travel Style</label>
-          <div class="flex gap-2 flex-wrap" id="modalStyleContainer">
-            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Beach"><i class="fas fa-umbrella-beach mr-1"></i>Beach</div>
-            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Adventure"><i class="fas fa-mountain-sun mr-1"></i>Adventure</div>
-            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="City"><i class="fas fa-city mr-1"></i>City</div>
-            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Foodie"><i class="fas fa-utensils mr-1"></i>Foodie</div>
-            <div class="style-chip px-4 py-2 rounded-full bg-white/10 text-white/70 cursor-pointer hover:bg-amber-500/30 transition" data-style="Relax"><i class="fas fa-spa mr-1"></i>Relax</div>
+
+        <h2 class="text-2xl font-serif font-bold text-slate-100">
+          Trip blueprint
+        </h2>
+
+        <span class="text-xs text-amber-300 ml-auto bg-amber-400/10 px-3 py-1 rounded-full">
+          <i class="fa-regular fa-pen-to-square mr-1"></i>
+          new expedition
+        </span>
+      </div>
+
+      <form id="newTripForm" onsubmit="event.preventDefault(); saveNewTrip();">
+        <input type="hidden" id="tripIdField" value="">
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-flag mr-1 text-amber-300"></i>
+              Trip name *
+            </label>
+
+            <input
+              type="text"
+              id="tripName"
+              class="input-light"
+              placeholder="e.g., Amalfi Coast Dream"
+              required
+            >
           </div>
-          <input type="hidden" id="tripStyle">
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-location-dot mr-1 text-amber-300"></i>
+              Destination *
+            </label>
+
+            <input
+              type="text"
+              id="destination"
+              class="input-light"
+              placeholder="e.g., Santorini, Greece"
+              required
+            >
+          </div>
         </div>
-        <div class="grid md:grid-cols-3 gap-4 mb-4">
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Travelers</label><input type="number" id="travelers" value="2" min="1" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"></div>
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Budget</label><input type="number" id="budget" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40" placeholder="0"></div>
-          <div><label class="block text-sm font-medium text-white/80 mb-1">Currency</label><select id="currency" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select></div>
+
+        <div class="grid md:grid-cols-2 gap-6 mt-5">
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-calendar mr-1 text-amber-300"></i>
+              Departure
+            </label>
+
+            <input type="date" id="departureDate" class="input-light">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-regular fa-calendar-check mr-1 text-amber-300"></i>
+              Return
+            </label>
+
+            <input type="date" id="returnDate" class="input-light">
+          </div>
         </div>
-        <div class="mb-4"><label class="block text-sm font-medium text-white/80 mb-1">Travel Notes</label><textarea id="notes" rows="3" class="w-full px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40" placeholder="Must-see places, local tips..."></textarea></div>
-        <div class="flex gap-3 justify-end">
-          <button type="button" onclick="closeModal()" class="px-6 py-2 rounded-full border border-white/30 text-white/70 hover:bg-white/10 transition">Cancel</button>
-          <button type="submit" class="px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg hover:shadow-amber-500/30 transition"><i class="fas fa-save mr-2"></i>Save Trip</button>
+
+        <div class="mt-6">
+          <label class="block text-sm font-semibold text-slate-200 mb-2">
+            <i class="fa-solid fa-tag mr-1 text-amber-300"></i>
+            Travel vibe
+          </label>
+
+          <div class="flex flex-wrap gap-2 mb-2" id="styleChipsContainer">
+            <div class="style-chip-light" data-style="Beach">
+              <i class="fa-solid fa-umbrella-beach mr-1"></i>
+              Beach
+            </div>
+
+            <div class="style-chip-light" data-style="Adventure">
+              <i class="fa-solid fa-mountain-sun mr-1"></i>
+              Adventure
+            </div>
+
+            <div class="style-chip-light" data-style="City">
+              <i class="fa-solid fa-city mr-1"></i>
+              City
+            </div>
+
+            <div class="style-chip-light" data-style="Foodie">
+              <i class="fa-solid fa-utensils mr-1"></i>
+              Foodie
+            </div>
+
+            <div class="style-chip-light" data-style="Relax">
+              <i class="fa-solid fa-spa mr-1"></i>
+              Relax
+            </div>
+          </div>
+
+          <input type="hidden" id="tripStyleInput">
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-5 mt-5">
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-users mr-1 text-amber-300"></i>
+              Travelers
+            </label>
+
+            <input type="number" id="travelers" min="1" value="2" class="input-light">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-coins mr-1 text-amber-300"></i>
+              Budget (approx)
+            </label>
+
+            <input type="number" id="budget" class="input-light" placeholder="0">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+              <i class="fa-solid fa-globe mr-1 text-amber-300"></i>
+              Currency
+            </label>
+
+            <select id="currency" class="input-light bg-slate-900/90">
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+              <option>JPY</option>
+              <option>CAD</option>
+<<<<<<< HEAD
+              <option>MYR</option>
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+            <i class="fa-regular fa-note-sticky mr-1 text-amber-300"></i>
+            Travel notes / wishlist
+          </label>
+
+          <textarea
+            id="notes"
+            rows="3"
+            class="input-light"
+            placeholder="Hidden gems, local cuisine, must-see spots..."
+          ></textarea>
+        </div>
+
+        <!-- Add spots to trip -->
+        <div class="mt-8 rounded-3xl border border-amber-500/25 bg-slate-900/55 p-5">
+          <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-xs font-extrabold uppercase tracking-wider text-amber-300">
+                <i class="fa-solid fa-route mr-1"></i>
+                Trip Spots
+              </p>
+
+              <h3 class="mt-1 font-serif text-2xl font-bold text-slate-100">
+                Add places to this trip
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-400">
+                Add attractions, events, and food spots from your wishlist or search new places.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onclick="loadPlannerWishlist()"
+              class="btn-outline-light px-4 py-2.5"
+            >
+              <i class="fa-solid fa-heart mr-1"></i>
+              Load Wishlist
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <div class="mb-2 flex items-center justify-between">
+              <p class="text-sm font-bold text-slate-200">
+                Selected for this trip
+              </p>
+
+              <span id="selectedSpotsCount" class="text-xs text-slate-400">
+                0 spots selected
+              </span>
+            </div>
+
+            <div id="selectedTripSpots" class="grid gap-3 md:grid-cols-2">
+              <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/60 p-5 text-center text-sm text-slate-400 md:col-span-2">
+                No spots added yet.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-6 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-4">
+            <div class="mb-3 flex items-center justify-between">
+              <p class="text-sm font-bold text-slate-200">
+                Add from wishlist
+              </p>
+
+              <button
+                type="button"
+                onclick="loadPlannerWishlist()"
+                class="rounded-full bg-amber-400/15 px-3 py-1.5 text-xs font-bold text-amber-200 hover:bg-amber-400/20"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div id="plannerWishlistGrid" class="grid gap-3 md:grid-cols-2">
+              <p class="text-sm text-slate-400">
+                Click “Load Wishlist” to show saved attractions, events, and food spots.
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-700/70 bg-slate-900/60 p-4">
+            <p class="mb-3 text-sm font-bold text-slate-200">
+              Find more spots while planning
+            </p>
+
+            <div class="grid gap-3 md:grid-cols-4">
+              <select id="plannerSearchType" class="input-light">
+                <option value="attraction">Attractions</option>
+                <option value="event">Events</option>
+                <option value="food">Food Spots</option>
+              </select>
+
+              <input
+                id="plannerCountry"
+                type="text"
+                class="input-light"
+                placeholder="Country, e.g. Japan"
+                value="Japan"
+              >
+
+              <input
+                id="plannerCountryCode"
+                type="text"
+                class="input-light"
+                placeholder="Code, e.g. JP"
+                value="JP"
+              >
+
+              <input
+                id="plannerState"
+                type="text"
+                class="input-light"
+                placeholder="State, e.g. Tokyo"
+                value="Tokyo"
+              >
+            </div>
+
+            <div class="mt-3 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                id="plannerFoodQuery"
+                type="text"
+                class="input-light"
+                placeholder="For food search: ramen, cafe, bakery..."
+              >
+
+              <button
+                type="button"
+                onclick="searchPlannerSpots()"
+                class="btn-gold px-5 py-2.5"
+              >
+                <i class="fa-solid fa-magnifying-glass mr-1"></i>
+                Search
+              </button>
+            </div>
+
+            <p class="mt-2 text-xs text-slate-400">
+              Attractions need country + country code + state. Events need country code. Food uses destination/state/country.
+            </p>
+
+            <div id="plannerSearchResults" class="mt-4 grid gap-3 md:grid-cols-2">
+              <p class="text-sm text-slate-400">
+                Search results will appear here.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-end gap-3 border-t border-amber-500/20 pt-6">
+          <button
+            type="reset"
+            onclick="resetForm()"
+            class="btn-outline-light px-6 py-2.5"
+          >
+            <i class="fa-regular fa-trash-alt mr-1"></i>
+            Clear
+          </button>
+
+          <button type="submit" class="btn-gold px-8 py-2.5">
+            <i class="fa-regular fa-floppy-disk mr-2"></i>
+            Save Trip
+          </button>
+        </div>
+
+        <div id="tripShareSection" class="hidden mt-6 rounded-2xl border border-amber-500/20 bg-amber-400/10/70 p-4 text-slate-200">
+          <p class="font-semibold mb-2">
+            Invite friends with this trip link
+          </p>
+
+          <div class="flex gap-2 flex-wrap">
+            <input
+              id="tripShareUrl"
+              type="text"
+              readonly
+              class="input-light flex-1 min-w-[220px] bg-slate-900/90"
+              placeholder="Save trip to generate invite link"
+            >
+
+            <button
+              type="button"
+              onclick="copyTripLink()"
+              class="btn-outline-light px-4 py-2.5 whitespace-nowrap"
+            >
+              <i class="fas fa-link mr-1"></i>
+              Copy Link
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-2">
+            Send this to trip members to open the shared itinerary without extra setup.
+          </p>
         </div>
       </form>
     </div>
-  </div>
-</div>
-<!-- Toast -->
-<div id="toastContainer" class="fixed bottom-6 right-6 z-50"></div>
-<script>
-const API_URL = window.location.origin;
-let allTrips = [];
-let currentFilter = 'All';
-let showFavOnly = false;
-let isGridView = true;
-// Create floating clouds
-function createClouds() {
-const cloudContainer = document.getElementById('clouds');
-for (let i = 0; i < 8; i++) {
-    const cloud = document.createElement('div');
-    cloud.className = 'cloud';
-    cloud.style.width = Math.random() * 200 + 100 + 'px';
-    cloud.style.height = Math.random() * 100 + 50 + 'px';
-    cloud.style.bottom = Math.random() * 60 + 10 + '%';
-    cloud.style.left = -Math.random() * 200 + 'px';
-    cloud.style.animationDelay = Math.random() * 20 + 's';
-    cloud.style.animationDuration = Math.random() * 30 + 30 + 's';
-    cloudContainer.appendChild(cloud);
-}
-}
-// Create floating particles
-function createParticles() {
-const particleContainer = document.getElementById('particles');
-for (let i = 0; i < 50; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.animationDelay = Math.random() * 8 + 's';
-    particle.style.animationDuration = Math.random() * 10 + 5 + 's';
-    particle.style.width = Math.random() * 3 + 2 + 'px';
-    particle.style.height = particle.style.width;
-    particleContainer.appendChild(particle);
-}
-}
-// Scroll reveal observer
-const observer = new IntersectionObserver((entries) => {
-entries.forEach(entry => {
-    if (entry.isIntersecting) {
-    entry.target.classList.add('revealed');
+  </main>
+
+  <footer class="footer-light border-t border-slate-700/70 py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-6 text-center text-slate-400 text-sm">
+      FlyAway Smart Travel Planner — seamless trip management · powered by wanderlust
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = window.location.origin;
+
+    let selectedTripSpots = [];
+
+<<<<<<< HEAD
+    function redirectToLogin() {
+      window.location.href = "/login.html";
     }
-});
-}, { threshold: 0.1 });
-document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-document.addEventListener('DOMContentLoaded', () => {
-createClouds();
-createParticles();
-loadTrips();
-document.getElementById('searchInput').addEventListener('input', filterTrips);
-});
-async function loadTrips() {
-try {
-    const res = await fetch(`${API_URL}/api/trips`);
-    allTrips = await res.json();
-    updateStats();
-    filterTrips();
-} catch (err) {
-    console.error(err);
-}
-}
-function updateStats() {
-const total = allTrips.length;
-const totalBudget = allTrips.reduce((sum, t) => sum + (t.budget || 0), 0);
-const destinations = new Set(allTrips.map(t => t.destination)).size;
-const favCount = allTrips.filter(t => t.favorite).length;
-document.getElementById('statsGrid').innerHTML = `
-    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
-    <i class="fas fa-suitcase-rolling text-3xl text-amber-400 mb-2"></i>
-    <p class="text-3xl font-bold text-white">${total}</p>
-    <p class="text-xs text-white/50">EXPLORATIONS</p>
-    </div>
-    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
-    <i class="fas fa-globe-asia text-3xl text-emerald-400 mb-2"></i>
-    <p class="text-3xl font-bold text-white">${destinations}</p>
-    <p class="text-xs text-white/50">DESTINATIONS</p>
-    </div>
-    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
-    <i class="fas fa-dollar-sign text-3xl text-green-400 mb-2"></i>
-    <p class="text-3xl font-bold text-white">$${totalBudget.toLocaleString()}</p>
-    <p class="text-xs text-white/50">TREASURE</p>
-    </div>
-    <div class="bg-white/10 backdrop-blur rounded-2xl p-5 text-center border border-white/10 hover:bg-white/15 transition-all scroll-reveal">
-    <i class="fas fa-star text-3xl text-yellow-400 mb-2"></i>
-    <p class="text-3xl font-bold text-white">${favCount}</p>
-    <p class="text-xs text-white/50">FAVORITES</p>
-    </div>
-`;
-document.querySelectorAll('#statsGrid .scroll-reveal').forEach(el => observer.observe(el));
-}
-function filterTrips() {
-const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-let filtered = allTrips.filter(trip => {
-    const matchesSearch = trip.trip_name.toLowerCase().includes(searchTerm) || trip.destination.toLowerCase().includes(searchTerm);
-    const matchesStyle = currentFilter === 'All' || trip.trip_style === currentFilter;
-    const matchesFav = !showFavOnly || trip.favorite;
-    return matchesSearch && matchesStyle && matchesFav;
-});
-renderTrips(filtered);
-}
-function filterByStyle(style) {
-currentFilter = style;
-document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.classList.remove('bg-amber-500', 'text-white');
-    chip.classList.add('bg-white/10', 'text-white/70');
-    if (chip.getAttribute('data-style') === style) {
-    chip.classList.add('bg-amber-500', 'text-white');
-    chip.classList.remove('bg-white/10', 'text-white/70');
+
+    function isUnauthorized(response) {
+      return response.status === 401;
     }
-});
-filterTrips();
-}
-function toggleFavoritesFilter() {
-showFavOnly = !showFavOnly;
-const btn = document.getElementById('favFilterBtn');
-if (showFavOnly) {
-    btn.classList.add('bg-yellow-500/50', 'text-white');
-    btn.classList.remove('bg-white/10', 'text-white/70');
-} else {
-    btn.classList.remove('bg-yellow-500/50', 'text-white');
-    btn.classList.add('bg-white/10', 'text-white/70');
-}
-filterTrips();
-}
-function toggleView() {
-isGridView = !isGridView;
-const container = document.getElementById('tripsContainer');
-if (isGridView) {
-    container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all';
-    document.getElementById('viewToggleText').innerText = 'Grid';
-} else {
-    container.className = 'flex flex-col gap-6 transition-all';
-    document.getElementById('viewToggleText').innerText = 'List';
-}
-filterTrips();
-}
-function getGradient(style) {
-const gradients = {
-    Beach: 'from-cyan-500/80 to-blue-600/80',
-    Adventure: 'from-orange-500/80 to-red-600/80',
-    City: 'from-purple-500/80 to-pink-600/80',
-    Foodie: 'from-amber-500/80 to-orange-600/80',
-    Relax: 'from-emerald-500/80 to-teal-600/80'
-};
-return gradients[style] || 'from-amber-500/80 to-orange-600/80';
-}
-function getIcon(style) {
-const icons = { Beach: 'umbrella-beach', Adventure: 'mountain-sun', City: 'city', Foodie: 'utensils', Relax: 'spa' };
-return icons[style] || 'plane-departure';
-}
-function renderTrips(trips) {
-const container = document.getElementById('tripsContainer');
-if (trips.length === 0) {
-    container.innerHTML = `<div class="col-span-full text-center py-20"><i class="fas fa-compass fa-5x text-white/20 mb-4"></i><p class="text-white/50 text-lg">No expeditions found. Start your journey!</p></div>`;
-    return;
-}
-container.innerHTML = trips.map(trip => `
-    <div class="travel-card group bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/50 transition-all duration-500" data-id="${trip._id}">
-    <div class="relative h-48 bg-gradient-to-r ${getGradient(trip.trip_style)} overflow-hidden">
-        <div class="absolute inset-0 flex items-center justify-center transition-transform group-hover:scale-110 duration-700">
-        <i class="fas fa-${getIcon(trip.trip_style)} text-white text-5xl opacity-60"></i>
-        </div>
-        <button onclick="event.stopPropagation(); toggleFavorite('${trip._id}', ${trip.favorite})" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/50 backdrop-blur flex items-center justify-center hover:scale-110 transition-all duration-300">
-        <i class="fas fa-star ${trip.favorite ? 'text-yellow-400' : 'text-white/60'} text-sm"></i>
-        </button>
-        <div class="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-xs font-semibold text-white/80">${trip.status}</div>
-        <div class="absolute bottom-3 left-3 right-3">
-        <div class="flex items-center gap-2 text-white/80 text-xs bg-black/40 backdrop-blur rounded-full px-3 py-1 w-fit">
-            <i class="fas fa-calendar-alt"></i>
-            <span>${formatDate(trip.departure_date)} → ${formatDate(trip.return_date)}</span>
-        </div>
-        </div>
-    </div>
-    <div class="p-5">
-        <h3 class="font-serif text-2xl font-bold text-white mb-1 group-hover:text-amber-400 transition-colors">${escapeHtml(trip.trip_name)}</h3>
-        <div class="flex items-center gap-2 mb-3">
-        <i class="fas fa-map-pin text-amber-400 text-sm"></i>
-        <p class="text-white/60 text-sm">${escapeHtml(trip.destination)}</p>
-        </div>
-        <div class="flex flex-wrap gap-2 mb-4">
-        <span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-users mr-1"></i>${trip.travelers} travelers</span>
-        <span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-tag mr-1"></i>${trip.trip_style || 'Any'}</span>
-        ${trip.budget ? `<span class="px-2 py-1 rounded-lg bg-white/10 text-white/70 text-xs"><i class="fas fa-coins mr-1"></i>${trip.budget} ${trip.currency}</span>` : ''}
-        </div>
-        ${trip.notes ? `<p class="text-white/50 text-sm mb-4 line-clamp-2"><i class="fas fa-quote-left mr-1 text-amber-400/50"></i>${escapeHtml(trip.notes.substring(0, 80))}${trip.notes.length > 80 ? '...' : ''}</p>` : ''}
-        <div class="flex gap-2 pt-2 border-t border-white/10">
-        <button onclick="openEditModal('${trip._id}')" class="flex-1 py-2 rounded-xl border border-amber-500/50 text-amber-400 hover:bg-amber-500/20 transition-all text-sm font-medium"><i class="far fa-edit mr-1"></i>Edit</button>
-        <button onclick="deleteTrip('${trip._id}')" class="flex-1 py-2 rounded-xl border border-red-500/50 text-red-400 hover:bg-red-500/20 transition-all text-sm font-medium"><i class="far fa-trash-alt mr-1"></i>Delete</button>
-        </div>
-    </div>
-    </div>
-`).join('');
-}
-async function toggleFavorite(id, currentState) {
-try {
-    const res = await fetch(`${API_URL}/api/trips/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ favorite: !currentState })
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(icon, title) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon,
+        title,
+        showConfirmButton: false,
+        timer: 2100,
+        background: "#0f172add",
+        color: "#e2e8f0",
+        backdrop: false,
+      });
+    }
+
+=======
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(icon, title) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon,
+        title,
+        showConfirmButton: false,
+        timer: 2100,
+        background: "#0f172add",
+        color: "#e2e8f0",
+        backdrop: false,
+      });
+    }
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+    function initSoftAtmosphere() {
+      const cloudContainer = document.getElementById("softClouds");
+
+      for (let i = 0; i < 12; i += 1) {
+        const cloud = document.createElement("div");
+
+        cloud.className = "cloud-soft";
+        cloud.style.width = Math.random() * 240 + 120 + "px";
+        cloud.style.height = Math.random() * 100 + 60 + "px";
+        cloud.style.bottom = Math.random() * 60 + 5 + "%";
+        cloud.style.left = -Math.random() * 200 + "px";
+        cloud.style.animationDelay = Math.random() * 20 + "s";
+        cloud.style.animationDuration = Math.random() * 40 + 35 + "s";
+
+        cloudContainer.appendChild(cloud);
+      }
+
+      const particleDiv = document.getElementById("softParticles");
+
+      for (let i = 0; i < 40; i += 1) {
+        const particle = document.createElement("div");
+
+        particle.className = "particle-soft";
+        particle.style.left = Math.random() * 100 + "%";
+        particle.style.animationDelay = Math.random() * 14 + "s";
+        particle.style.animationDuration = Math.random() * 16 + 7 + "s";
+        particle.style.width = Math.random() * 5 + 2 + "px";
+        particle.style.height = particle.style.width;
+
+        particleDiv.appendChild(particle);
+      }
+    }
+
+    initSoftAtmosphere();
+
+    const revealItems = document.querySelectorAll(".scroll-reveal");
+    const scrollObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    revealItems.forEach((element) => scrollObserver.observe(element));
+
+    const styleChips = document.querySelectorAll(".style-chip-light");
+    const tripStyleHidden = document.getElementById("tripStyleInput");
+
+    function updateStyleSelection(selectedStyle) {
+      styleChips.forEach((chip) => {
+        const styleVal = chip.getAttribute("data-style");
+
+        if (styleVal === selectedStyle) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+
+      tripStyleHidden.value = selectedStyle || "";
+    }
+
+    styleChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const style = chip.getAttribute("data-style");
+        updateStyleSelection(style);
+      });
     });
-    if (res.ok) {
-    await loadTrips();
-    showToast('success', !currentState ? '✨ Added to favorites!' : 'Removed from favorites');
-    if (!currentState) {
-        const canvas = document.createElement('canvas');
-        canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
-        document.body.appendChild(canvas);
-        const ConfettiGenerator = await import('https://cdn.skypack.dev/confetti-js').then(m => m.default);
-        const confetti = new ConfettiGenerator({ target: canvas, max: 80, size: 1.5 });
-        confetti.render();
-        setTimeout(() => canvas.remove(), 2000);
+
+    function buildExternalId(item) {
+      return String(
+        item.externalId ||
+          item.id ||
+          item.xid ||
+          item.place_id ||
+          item.website ||
+          item.url ||
+          item.name ||
+          ""
+      ).trim();
     }
+
+    function normalizeTripSpot(item, fallbackType) {
+      const itemType = item.itemType || fallbackType;
+
+      return {
+        itemType,
+        externalId: buildExternalId(item),
+        name: item.name || "Unnamed spot",
+        image: item.image || "",
+        url: item.url || item.website || "",
+        description: item.description || "",
+        source: item.source || "",
+
+<<<<<<< HEAD
+=======
+        // Needed by itinerary page
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        dayIndex: Number.isFinite(Number(item.dayIndex)) ? Number(item.dayIndex) : 0,
+        startTime: item.startTime || "",
+        endTime: item.endTime || "",
+        activityNotes: item.activityNotes || "",
+
+<<<<<<< HEAD
+=======
+        // attraction
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        kinds: item.kinds || "",
+        lat: item.lat || item.latitude || null,
+        lon: item.lon || item.longitude || null,
+        distance: item.distance || null,
+
+<<<<<<< HEAD
+=======
+        // event
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        date: item.date || "",
+        time: item.time || "",
+        venue: item.venue || "",
+        city: item.city || "",
+        country: item.country || "",
+
+<<<<<<< HEAD
+=======
+        // food
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        cuisine: item.cuisine || "",
+        foodType: item.foodType || item.type || "",
+        location: item.location || "",
+        price: item.price || "",
+        open: item.open || "",
+        tags: Array.isArray(item.tags) ? item.tags : [],
+      };
     }
-} catch (err) {
-    showToast('error', 'Failed to update favorite');
-}
-}
-function openAddModal() {
-document.getElementById('modalTitle').innerHTML = '✈️ Plan New Expedition';
-document.getElementById('tripId').value = '';
-document.getElementById('tripForm').reset();
-document.getElementById('tripStyle').value = '';
-document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('bg-amber-500', 'text-white'));
-document.getElementById('tripModal').style.display = 'flex';
-}
-async function openEditModal(id) {
-try {
-    const res = await fetch(`${API_URL}/api/trips/${id}`);
-    const trip = await res.json();
-    document.getElementById('modalTitle').innerHTML = '✏️ Edit Expedition';
-    document.getElementById('tripId').value = trip._id;
-    document.getElementById('tripName').value = trip.trip_name;
-    document.getElementById('destination').value = trip.destination;
-    document.getElementById('departureDate').value = trip.departure_date || '';
-    document.getElementById('returnDate').value = trip.return_date || '';
-    document.getElementById('travelers').value = trip.travelers;
-    document.getElementById('budget').value = trip.budget || '';
-    document.getElementById('currency').value = trip.currency || 'USD';
-    document.getElementById('notes').value = trip.notes || '';
-    document.getElementById('tripStyle').value = trip.trip_style || '';
-    document.querySelectorAll('.style-chip').forEach(c => {
-    c.classList.remove('bg-amber-500', 'text-white');
-    if (c.getAttribute('data-style') === trip.trip_style) {
-        c.classList.add('bg-amber-500', 'text-white');
+
+    function isSameSpot(a, b) {
+      return a.itemType === b.itemType && a.externalId === b.externalId;
     }
-    });
-    document.getElementById('tripModal').style.display = 'flex';
-} catch (err) {
-    showToast('error', 'Could not load trip');
-}
-}
-function closeModal() {
-document.getElementById('tripModal').style.display = 'none';
-}
-async function saveTrip() {
-const id = document.getElementById('tripId').value;
-const tripData = {
-    trip_name: document.getElementById('tripName').value,
-    destination: document.getElementById('destination').value,
-    departure_date: document.getElementById('departureDate').value,
-    return_date: document.getElementById('returnDate').value,
-    trip_style: document.getElementById('tripStyle').value,
-    travelers: parseInt(document.getElementById('travelers').value),
-    budget: parseFloat(document.getElementById('budget').value) || null,
-    currency: document.getElementById('currency').value,
-    notes: document.getElementById('notes').value,
-    status: 'planned'
-};
-if (!tripData.trip_name || !tripData.destination) {
-    showToast('error', 'Trip name and destination required');
-    return;
-}
-try {
-    let res;
-    if (id) {
-    res = await fetch(`${API_URL}/api/trips/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData)
-    });
-    } else {
-    res = await fetch(`${API_URL}/api/trips`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData)
-    });
+
+    function getTripDayCount() {
+      const departureValue = document.getElementById("departureDate").value;
+      const returnValue = document.getElementById("returnDate").value;
+
+      if (!departureValue || !returnValue) return 1;
+
+      const departure = new Date(departureValue);
+      const returnDate = new Date(returnValue);
+
+      if (
+        Number.isNaN(departure.getTime()) ||
+        Number.isNaN(returnDate.getTime()) ||
+        returnDate < departure
+      ) {
+        return 1;
+      }
+
+      const diffMs = returnDate - departure;
+      const dayCount = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+
+      return Math.min(Math.max(dayCount, 1), 30);
     }
-    if (res.ok) {
-    closeModal();
-    await loadTrips();
-    showToast('success', id ? 'Trip updated!' : 'New adventure created!');
-    } else {
-    showToast('error', 'Failed to save');
+
+    function getDefaultStartTime(index) {
+      const times = ["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"];
+      return times[index % times.length];
     }
-} catch (err) {
-    showToast('error', 'Connection error');
-}
-}
-async function deleteTrip(id) {
-const result = await Swal.fire({
-    title: 'Delete Expedition?',
-    text: 'This journey will be lost forever',
-    icon: 'warning',
-    background: '#1a1a2e',
-    color: '#fff',
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, delete'
-});
-if (result.isConfirmed) {
-    try {
-    await fetch(`${API_URL}/api/trips/${id}`, { method: 'DELETE' });
-    await loadTrips();
-    showToast('success', 'Trip deleted');
-    } catch (err) {
-    showToast('error', 'Failed to delete');
+
+    function renderDayOptions(selectedDayIndex) {
+      const dayCount = getTripDayCount();
+
+      return Array.from({ length: dayCount }, (_, index) => {
+        return `
+          <option value="${index}" ${Number(selectedDayIndex) === index ? "selected" : ""}>
+            Day ${index + 1}
+          </option>
+        `;
+      }).join("");
     }
-}
-}
-function showToast(type, message) {
-const container = document.getElementById('toastContainer');
-const toast = document.createElement('div');
-toast.className = `mb-3 ${type === 'success' ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-red-500 to-rose-600'} text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 animate-fade-in backdrop-blur`;
-toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>${message}`;
-container.appendChild(toast);
-setTimeout(() => toast.remove(), 3000);
-}
-function formatDate(dateStr) {
-if (!dateStr) return 'TBD';
-return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-function escapeHtml(str) {
-if (!str) return '';
-return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
-}
-// Style chips in modal
-document.querySelectorAll('.style-chip').forEach(chip => {
-chip.addEventListener('click', () => {
-    document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('bg-amber-500', 'text-white'));
-    chip.classList.add('bg-amber-500', 'text-white');
-    document.getElementById('tripStyle').value = chip.getAttribute('data-style');
-});
-});
-</script>
+
+    function updateSelectedSpotField(index, field, value) {
+      if (!selectedTripSpots[index]) return;
+
+      selectedTripSpots[index][field] = value;
+    }
+
+    function addSpotToTrip(item, itemType) {
+      const spot = normalizeTripSpot(item, itemType);
+
+      if (!spot.externalId || !spot.name) {
+        showToast("error", "This spot is missing required data");
+        return;
+      }
+
+      const alreadyAdded = selectedTripSpots.some((existing) =>
+        isSameSpot(existing, spot)
+      );
+
+      if (alreadyAdded) {
+        showToast("info", "This spot is already added to the trip");
+        return;
+      }
+
+      const dayCount = getTripDayCount();
+
+      spot.dayIndex = selectedTripSpots.length % dayCount;
+      spot.startTime = spot.startTime || getDefaultStartTime(selectedTripSpots.length);
+
+      selectedTripSpots.push(spot);
+      renderSelectedTripSpots();
+      showToast("success", "Spot added to trip");
+    }
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+    function removeSpotFromTrip(index) {
+      selectedTripSpots.splice(index, 1);
+      renderSelectedTripSpots();
+    }
+
+    function getSpotIcon(itemType) {
+      if (itemType === "event") return "fa-calendar-days";
+      if (itemType === "food") return "fa-utensils";
+
+      return "fa-mountain-sun";
+    }
+
+    function getSpotLabel(itemType) {
+      if (itemType === "event") return "Event";
+      if (itemType === "food") return "Food";
+
+      return "Attraction";
+    }
+
+    function getSpotSubtext(spot) {
+      if (spot.itemType === "event") {
+        return [spot.date, spot.venue, spot.city, spot.country]
+          .filter(Boolean)
+          .join(" · ");
+      }
+
+      if (spot.itemType === "food") {
+        return [spot.cuisine, spot.foodType, spot.location]
+          .filter(Boolean)
+          .join(" · ");
+      }
+
+      return spot.description || spot.kinds || spot.source || "Attraction";
+    }
+
+    function renderSpotCard(spot, options = {}) {
+      const { addButton = false, removeIndex = null } = options;
+      const icon = getSpotIcon(spot.itemType);
+      const label = getSpotLabel(spot.itemType);
+      const subtext = getSpotSubtext(spot);
+
+      return `
+        <article class="rounded-2xl border border-slate-700/70 bg-slate-900/80 p-3 shadow-sm">
+          <div class="flex gap-3">
+            <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-amber-400/10">
+              ${
+                spot.image
+                  ? `<img src="${escapeHtml(spot.image)}" alt="${escapeHtml(spot.name)}" class="h-full w-full object-cover">`
+                  : `<div class="grid h-full w-full place-items-center text-amber-300">
+                      <i class="fa-solid ${icon} text-2xl"></i>
+                    </div>`
+              }
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <span class="inline-flex rounded-full bg-amber-400/15 px-2 py-0.5 text-[11px] font-bold text-amber-200">
+                ${escapeHtml(label)}
+              </span>
+
+              <h4 class="mt-1 line-clamp-2 text-sm font-bold text-slate-100">
+                ${escapeHtml(spot.name)}
+              </h4>
+
+              <p class="mt-1 line-clamp-2 text-xs text-slate-400">
+                ${escapeHtml(subtext)}
+              </p>
+
+              ${
+                removeIndex !== null
+                  ? `<div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      <select
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'dayIndex', Number(this.value))"
+                      >
+                        ${renderDayOptions(spot.dayIndex)}
+                      </select>
+
+                      <input
+                        type="time"
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        value="${escapeHtml(spot.startTime || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'startTime', this.value)"
+                      >
+
+                      <input
+                        type="time"
+                        class="input-light !h-9 !rounded-xl !text-xs"
+                        value="${escapeHtml(spot.endTime || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'endTime', this.value)"
+                      >
+
+                      <input
+                        type="text"
+                        class="input-light !h-9 !rounded-xl !text-xs sm:col-span-3"
+                        placeholder="Activity note, e.g. lunch, sunset visit..."
+                        value="${escapeHtml(spot.activityNotes || "")}"
+                        onchange="updateSelectedSpotField(${removeIndex}, 'activityNotes', this.value)"
+                      >
+                    </div>`
+                  : ""
+              }
+
+              <div class="mt-2 flex flex-wrap gap-2">
+                ${
+                  addButton
+                    ? `<button type="button" class="add-spot-btn rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-300">
+                        <i class="fa-solid fa-plus mr-1"></i>
+                        Add
+                      </button>`
+                    : ""
+                }
+
+                ${
+                  removeIndex !== null
+                    ? `<button type="button" onclick="removeSpotFromTrip(${removeIndex})" class="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/20">
+                        <i class="fa-solid fa-trash-can mr-1"></i>
+                        Remove
+                      </button>`
+                    : ""
+                }
+
+                ${
+                  spot.url
+                    ? `<a href="${escapeHtml(spot.url)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-slate-700/70 px-3 py-1.5 text-xs font-bold text-slate-400 hover:bg-slate-800">
+                        View
+                      </a>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSelectedTripSpots() {
+      const container = document.getElementById("selectedTripSpots");
+      const count = document.getElementById("selectedSpotsCount");
+
+      if (!container || !count) return;
+
+      count.textContent = `${selectedTripSpots.length} spot${selectedTripSpots.length === 1 ? "" : "s"} selected`;
+
+      if (!selectedTripSpots.length) {
+        container.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/60 p-5 text-center text-sm text-slate-400 md:col-span-2">
+            No spots added yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = selectedTripSpots
+        .map((spot, index) => renderSpotCard(spot, { removeIndex: index }))
+        .join("");
+    }
+
+    async function loadPlannerWishlist() {
+      const container = document.getElementById("plannerWishlistGrid");
+
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+          Loading wishlist...
+        </div>
+      `;
+
+      try {
+        const response = await fetch("/api/wishlist");
+<<<<<<< HEAD
+        const data = await response.json().catch(() => null);
+
+        if (isUnauthorized(response)) {
+          redirectToLogin();
+=======
+        const data = await response.json();
+
+        if (response.status === 401) {
+          window.location.href = "/login.html";
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          return;
+        }
+
+        if (!response.ok) {
+<<<<<<< HEAD
+          throw new Error(data?.error || "Failed to load wishlist");
+=======
+          throw new Error(data.error || "Failed to load wishlist");
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        }
+
+        const wishlist = Array.isArray(data.wishlist) ? data.wishlist : [];
+
+        if (!wishlist.length) {
+          container.innerHTML = `
+            <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+              Your wishlist is empty.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = "";
+
+        wishlist.forEach((item) => {
+          const spot = normalizeTripSpot(item, item.itemType);
+          const wrapper = document.createElement("div");
+
+          wrapper.innerHTML = renderSpotCard(spot, { addButton: true });
+
+          const button = wrapper.querySelector(".add-spot-btn");
+
+          button.addEventListener("click", () => {
+            addSpotToTrip(spot, spot.itemType);
+          });
+
+          container.appendChild(wrapper.firstElementChild);
+        });
+      } catch (error) {
+        console.error(error);
+
+        container.innerHTML = `
+          <div class="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-sm text-red-300 md:col-span-2">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
+
+    async function searchPlannerSpots() {
+      const container = document.getElementById("plannerSearchResults");
+
+      const searchType = document.getElementById("plannerSearchType").value;
+      const country = document.getElementById("plannerCountry").value.trim();
+      const countryCode = document.getElementById("plannerCountryCode").value.trim().toUpperCase();
+      const state = document.getElementById("plannerState").value.trim();
+      const foodQuery = document.getElementById("plannerFoodQuery").value.trim();
+
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+          Searching...
+        </div>
+      `;
+
+      try {
+        let items = [];
+
+        if (searchType === "attraction") {
+          if (!country || !countryCode || !state) {
+            throw new Error("Attraction search needs country, country code, and state.");
+          }
+
+          const params = new URLSearchParams({
+            country,
+            countryCode,
+            state,
+            radius: "50000",
+            limit: "12",
+          });
+
+          const response = await fetch(`/api/popular-attractions?${params.toString()}`);
+<<<<<<< HEAD
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok) {
+            throw new Error(data?.error || "Failed to search attractions");
+=======
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search attractions");
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          }
+
+          items = (data.attractions || []).map((item) =>
+            normalizeTripSpot(item, "attraction")
+          );
+        }
+
+        if (searchType === "event") {
+          if (!countryCode) {
+            throw new Error("Event search needs country code.");
+          }
+
+          const params = new URLSearchParams({
+            countryCode,
+            limit: "12",
+          });
+
+          const response = await fetch(`/api/events?${params.toString()}`);
+<<<<<<< HEAD
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok) {
+            throw new Error(data?.error || "Failed to search events");
+=======
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search events");
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          }
+
+          items = (data.events || []).map((item) =>
+            normalizeTripSpot(item, "event")
+          );
+        }
+
+        if (searchType === "food") {
+          const destination = document.getElementById("destination").value.trim();
+          const near = state && country ? `${state}, ${country}` : destination;
+
+          const params = new URLSearchParams({
+            near: near || "Tokyo, Japan",
+            query: foodQuery || "restaurant",
+            type: "All",
+            cuisine: "All",
+            limit: "12",
+            radius: "8000",
+          });
+
+          const response = await fetch(`/api/food-places?${params.toString()}`);
+<<<<<<< HEAD
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok) {
+            throw new Error(data?.error || "Failed to search food spots");
+=======
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to search food spots");
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+          }
+
+          items = (data.places || []).map((item) =>
+            normalizeTripSpot(item, "food")
+          );
+        }
+
+        renderPlannerSearchResults(items);
+      } catch (error) {
+        console.error(error);
+
+        container.innerHTML = `
+          <div class="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-sm text-red-300 md:col-span-2">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
+
+    function renderPlannerSearchResults(items) {
+      const container = document.getElementById("plannerSearchResults");
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-slate-600 bg-slate-900/70 p-5 text-center text-sm text-slate-400 md:col-span-2">
+            No spots found.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = "";
+
+      items.forEach((spot) => {
+        const wrapper = document.createElement("div");
+
+        wrapper.innerHTML = renderSpotCard(spot, { addButton: true });
+
+        const button = wrapper.querySelector(".add-spot-btn");
+
+        button.addEventListener("click", () => {
+          addSpotToTrip(spot, spot.itemType);
+        });
+
+        container.appendChild(wrapper.firstElementChild);
+      });
+    }
+
+    window.resetForm = function () {
+      document.getElementById("newTripForm").reset();
+      document.getElementById("tripIdField").value = "";
+      document.getElementById("tripStyleInput").value = "";
+
+      updateStyleSelection("");
+
+      document.getElementById("departureDate").value = "";
+      document.getElementById("returnDate").value = "";
+      document.getElementById("notes").value = "";
+      document.getElementById("budget").value = "";
+      document.getElementById("travelers").value = "2";
+      document.getElementById("currency").value = "USD";
+
+      selectedTripSpots = [];
+      renderSelectedTripSpots();
+
+      const plannerWishlistGrid = document.getElementById("plannerWishlistGrid");
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      if (plannerWishlistGrid) {
+        plannerWishlistGrid.innerHTML = `
+          <p class="text-sm text-slate-400">
+            Click “Load Wishlist” to show saved attractions, events, and food spots.
+          </p>
+        `;
+      }
+
+      const plannerSearchResults = document.getElementById("plannerSearchResults");
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+      if (plannerSearchResults) {
+        plannerSearchResults.innerHTML = `
+          <p class="text-sm text-slate-400">
+            Search results will appear here.
+          </p>
+        `;
+      }
+
+      document.getElementById("tripShareSection").classList.add("hidden");
+      document.getElementById("tripShareUrl").value = "";
+
+      Swal.fire({
+        title: "Cleared",
+        text: "Form is ready for a new journey",
+        icon: "info",
+        background: "#0f172a",
+        color: "#e2e8f0",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    };
+
+    async function saveNewTrip() {
+      const tripName = document.getElementById("tripName").value.trim();
+      const destination = document.getElementById("destination").value.trim();
+
+      if (!tripName || !destination) {
+        showToast("error", "Trip name & destination are required");
+        return;
+      }
+
+      const tripData = {
+        trip_name: tripName,
+        destination,
+        departure_date: document.getElementById("departureDate").value || null,
+        return_date: document.getElementById("returnDate").value || null,
+        trip_style: tripStyleHidden.value || "City",
+        travelers: parseInt(document.getElementById("travelers").value, 10) || 1,
+        budget: parseFloat(document.getElementById("budget").value) || null,
+        currency: document.getElementById("currency").value,
+        notes: document.getElementById("notes").value,
+        status: "planned",
+        favorite: false,
+        spots: selectedTripSpots,
+      };
+
+      const existingId = document.getElementById("tripIdField").value;
+
+      let url = `${API_URL}/api/trips`;
+      let method = "POST";
+
+      if (existingId) {
+        url = `${API_URL}/api/trips/${existingId}`;
+        method = "PUT";
+      }
+
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tripData),
+        });
+
+        const responseData = await response.json().catch(() => null);
+
+<<<<<<< HEAD
+        if (isUnauthorized(response)) {
+          redirectToLogin();
+          return;
+        }
+
+=======
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        if (!response.ok) {
+          throw new Error(responseData?.error || "Could not save trip.");
+        }
+
+        const saved = responseData;
+
+        document.getElementById("tripIdField").value = saved._id;
+        document.getElementById("tripShareUrl").value = `${API_URL}/itenary.html?tripId=${saved._id}`;
+        document.getElementById("tripShareSection").classList.remove("hidden");
+
+        selectedTripSpots = Array.isArray(saved.spots) ? saved.spots : selectedTripSpots;
+        renderSelectedTripSpots();
+
+        showToast("success", existingId ? "Trip updated!" : "New adventure saved!");
+
+        Swal.fire({
+          title: existingId ? "Updated!" : "Trip Created!",
+          text: existingId
+            ? "Your journey details and selected spots have been updated."
+            : "Your trip and selected spots are now saved.",
+          icon: "success",
+          background: "#0f172a",
+          color: "#e2e8f0",
+          confirmButtonColor: "#f5a524",
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("error", error.message || "Network error. Please try again.");
+      }
+    }
+
+    async function loadTripForEdit(id) {
+      try {
+        const response = await fetch(`${API_URL}/api/trips/${id}`);
+<<<<<<< HEAD
+        const trip = await response.json().catch(() => null);
+
+        if (isUnauthorized(response)) {
+          redirectToLogin();
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(trip?.error || "Trip not found");
+=======
+        const trip = await response.json();
+
+        if (!response.ok) {
+          throw new Error(trip.error || "Trip not found");
+>>>>>>> 6ee5284739e3c48884286e541c452d21ca9bd2b3
+        }
+
+        document.getElementById("tripIdField").value = trip._id;
+        document.getElementById("tripName").value = trip.trip_name || "";
+        document.getElementById("destination").value = trip.destination || "";
+        document.getElementById("departureDate").value = trip.departure_date ? trip.departure_date.split("T")[0] : "";
+        document.getElementById("returnDate").value = trip.return_date ? trip.return_date.split("T")[0] : "";
+        document.getElementById("travelers").value = trip.travelers || 2;
+        document.getElementById("budget").value = trip.budget || "";
+        document.getElementById("currency").value = trip.currency || "USD";
+        document.getElementById("notes").value = trip.notes || "";
+        document.getElementById("tripShareUrl").value = `${API_URL}/itenary.html?tripId=${trip._id}`;
+        document.getElementById("tripShareSection").classList.remove("hidden");
+
+        const style = trip.trip_style || "";
+        updateStyleSelection(style);
+
+        selectedTripSpots = Array.isArray(trip.spots)
+          ? trip.spots.map((spot) => normalizeTripSpot(spot, spot.itemType))
+          : [];
+
+        renderSelectedTripSpots();
+
+        window.scrollTo({
+          top: 140,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("error", error.message || "Cannot load trip data");
+      }
+    }
+
+    function copyTripLink() {
+      const shareInput = document.getElementById("tripShareUrl");
+
+      if (!shareInput.value) {
+        showToast("error", "Save the trip first to generate the invite link");
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(shareInput.value)
+        .then(() => showToast("success", "Invite link copied"))
+        .catch(() => showToast("error", "Unable to copy invite link"));
+    }
+
+    renderSelectedTripSpots();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get("edit");
+
+    if (editId) {
+      loadTripForEdit(editId);
+    }
+  </script>
 </body>
 </html>
