@@ -8,6 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
+<script>
+fetch("/components/topNavBar.html")
+  .then(r => r.text())
+  .then(d => { document.getElementById("topnavbar").innerHTML = d; })
+  .catch(e => { console.error("Navbar failed to load:", e); });
+</script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
@@ -33,32 +40,89 @@ body::before {
     radial-gradient(ellipse at 90% 100%, rgba(30,140,200,.05), transparent 50%);
 }
 
-/* ── NAV ── */
-.topnav {
-  position:fixed; top:0; left:0; right:0; z-index:200;
-  background:rgba(13,15,20,.92); backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  height:72px; display:flex; align-items:center; padding:0 32px; gap:32px;
+/* ── NAV OVERRIDES (force shared topNavBar.html to match this page's design) ── */
+#topnavbar nav,
+#topnavbar .topnav,
+#topnavbar header {
+  position:fixed !important; top:0 !important; left:0 !important; right:0 !important;
+  z-index:200 !important;
+  background:rgba(13,15,20,.95) !important;
+  backdrop-filter:blur(16px) !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  height:72px !important;
+  display:flex !important; align-items:center !important;
+  padding:0 32px !important; gap:24px !important;
+  box-shadow:none !important;
 }
-.nav-logo {
-  font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900;
-  background:linear-gradient(135deg,#F5A524,#FFD700);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  text-decoration:none; flex-shrink:0;
+
+/* Logo image — constrain it */
+#topnavbar img {
+  height:44px !important; width:auto !important;
+  object-fit:contain !important;
 }
-.nav-links {display:flex; gap:4px; flex:1;}
-.nav-link {
-  color:var(--text-dim); text-decoration:none; font-size:.82rem; font-weight:500;
-  padding:7px 13px; border-radius:8px; transition:.15s;
+
+/* Logo text */
+#topnavbar .nav-logo,
+#topnavbar .logo,
+#topnavbar [class*="logo"] {
+  font-family:'Playfair Display',serif !important;
+  font-size:1.3rem !important; font-weight:900 !important;
+  background:linear-gradient(135deg,#F5A524,#FFD700) !important;
+  -webkit-background-clip:text !important; -webkit-text-fill-color:transparent !important;
+  text-decoration:none !important;
 }
-.nav-link:hover {background:var(--surface-hover); color:#fff;}
-.nav-link.active {color:var(--gold); background:var(--gold-dim);}
-.nav-right {display:flex; gap:8px; margin-left:auto;}
-.nav-icon-btn {
-  color:var(--text-dim); padding:8px 10px; border-radius:8px;
-  text-decoration:none; transition:.15s;
+
+/* All nav links */
+#topnavbar a {
+  color:rgba(255,255,255,.6) !important;
+  text-decoration:none !important;
+  font-size:.83rem !important; font-weight:500 !important;
+  padding:6px 12px !important; border-radius:8px !important;
+  transition:.15s !important;
+  -webkit-text-fill-color:rgba(255,255,255,.6) !important;
 }
-.nav-icon-btn:hover {background:var(--surface-hover); color:#fff;}
+#topnavbar a:hover {
+  background:rgba(255,255,255,.07) !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+}
+
+/* Active link */
+#topnavbar a.active,
+#topnavbar a[href*="flight"] {
+  color:#F5A524 !important;
+  background:rgba(245,165,36,.1) !important;
+  -webkit-text-fill-color:#F5A524 !important;
+}
+
+/* Nav links container */
+#topnavbar ul,
+#topnavbar .nav-links {
+  display:flex !important; align-items:center !important;
+  gap:4px !important; list-style:none !important;
+  padding:0 !important; margin:0 !important; flex:1 !important;
+}
+#topnavbar li { list-style:none !important; }
+
+/* Icon buttons (heart, bell, profile) */
+#topnavbar .nav-icon-btn,
+#topnavbar a[href*="profile"],
+#topnavbar a[href*="notification"],
+#topnavbar a[href*="favour"] {
+  background:rgba(255,255,255,.05) !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+  border-radius:9px !important;
+  padding:7px 10px !important;
+  color:rgba(255,255,255,.6) !important;
+  -webkit-text-fill-color:rgba(255,255,255,.6) !important;
+}
+#topnavbar a[href*="profile"]:hover,
+#topnavbar a[href*="notification"]:hover,
+#topnavbar a[href*="favour"]:hover {
+  background:rgba(255,255,255,.1) !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+}
 
 /* ── LAYOUT ── */
 .container {max-width:1100px; margin:100px auto 80px; padding:0 24px;}
@@ -323,20 +387,8 @@ body::before {
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="topnav">
-  <a class="nav-logo" href="/index.html">FlyAway</a>
-  <div class="nav-links">
-    <a class="nav-link" href="/index.html">Home</a>
-    <a class="nav-link" href="/PlanNewTrip.html">Add Trip</a>
-    <a class="nav-link" href="/itenary.html">My Trips</a>
-    <a class="nav-link active" href="/flight.html">Flights</a>
-  </div>
-  <div class="nav-right">
-    <a class="nav-icon-btn" href="#"><i class="fa fa-heart"></i></a>
-    <a class="nav-icon-btn" href="#"><i class="fa fa-bell"></i></a>
-  </div>
-</nav>
+<!-- NAV (shared component) -->
+<div id="topnavbar"></div>
 
 <div class="container">
 
