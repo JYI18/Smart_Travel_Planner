@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Search Flights — FlyAway</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#0d0f14;color:#fff;min-height:100vh;}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(circle at top left,rgba(245,165,36,.07),transparent 40%),
+             radial-gradient(circle at bottom right,rgba(30,140,200,.07),transparent 40%);
+}
+
+/* ── TOP NAV (same as hotel) ── */
+.topnav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(13,15,20,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  height:80px;display:flex;align-items:center;padding:0 32px;
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;
+  background:linear-gradient(135deg,#F5A524,#FFD700);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-decoration:none;margin-right:32px;
+}
+.nav-links{display:flex;gap:10px;flex:1;}
+.nav-link{
+  color:rgba(255,255,255,.6);text-decoration:none;font-size:.85rem;
+  padding:8px 14px;border-radius:10px;
+}
+.nav-link:hover{background:rgba(255,255,255,.07);color:#fff;}
+.nav-link.active{color:#F5A524;background:rgba(245,165,36,.08);}
+.nav-right{margin-left:auto;display:flex;gap:10px;}
+.nav-icon-btn{color:rgba(255,255,255,.6);padding:8px 10px;border-radius:10px;text-decoration:none;}
+.nav-icon-btn:hover{background:rgba(255,255,255,.07);color:#fff;}
+
+/* ── LAYOUT ── */
+.container{max-width:1200px;margin:110px auto 60px;padding:0 24px;}
+.title{font-family:'Playfair Display',serif;font-size:2.2rem;}
+.subtitle{color:rgba(255,255,255,.4);margin-bottom:20px;}
+
+/* ── SEARCH BOX ── */
+.search-box{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;padding:16px;
+  display:grid;grid-template-columns:1fr 1fr 160px 120px auto;
+  gap:10px;align-items:end;
+}
+
+input,select{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:10px;
+  color:#fff;outline:none;
+}
+
+button{
+  background:linear-gradient(135deg,#F5A524,#e8832a);
+  border:none;color:#fff;padding:11px 18px;
+  border-radius:12px;font-weight:700;cursor:pointer;
+}
+
+/* ── RESULTS ── */
+.results{margin-top:24px;display:grid;gap:14px;}
+.card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;padding:16px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.left h3{font-size:1rem;margin-bottom:4px;}
+.left p{font-size:.8rem;color:rgba(255,255,255,.5);}
+.price{color:#F5A524;font-weight:800;font-size:1.2rem;}
+.badge{font-size:.7rem;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08);}
+/* AIRPORT AUTOCOMPLETE */
+
+.airport-wrapper{
+  position:relative;
+}
+
+
+.airport-list{
+
+  position:absolute;
+  top:45px;
+  left:0;
+  right:0;
+
+  background:#16191f;
+
+  border:1px solid rgba(255,255,255,.1);
+
+  border-radius:10px;
+
+  overflow:hidden;
+
+  z-index:999;
+
+}
+
+
+.airport-item{
+
+  padding:10px;
+
+  cursor:pointer;
+
+  font-size:.85rem;
+
+}
+
+
+.airport-item:hover{
+
+  background:rgba(245,165,36,.15);
+
+}
+
+
+.airport-item small{
+
+  color:rgba(255,255,255,.5);
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a class="nav-logo" href="/index.html">FlyAway</a>
+  <div class="nav-links">
+    <a class="nav-link" href="/index.html">Home</a>
+    <a class="nav-link" href="/PlanNewTrip.html">Add Trip</a>
+    <a class="nav-link" href="/itenary.html">My Trips</a>
+    <a class="nav-link active" href="/flight.html">Flights</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-icon-btn" href="#"><i class="fa fa-heart"></i></a>
+    <a class="nav-icon-btn" href="#"><i class="fa fa-bell"></i></a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="title">Search Flights ✈️</div>
+
+
+  <div class="search-box">
+
+  <div class="airport-wrapper">
+
+<input 
+id="origin"
+placeholder="Departure airport"
+/>
+
+<div 
+id="originList"
+class="airport-list">
+</div>
+
+</div>
+
+
+
+<div class="airport-wrapper">
+
+<input 
+id="destination"
+placeholder="Destination airport"
+/>
+
+<div 
+id="destinationList"
+class="airport-list">
+</div>
+
+</div>
+  <!-- Airline autocomplete -->
+  
+
+  <!-- Dates -->
+  <input type="date" id="departDate">
+  <input type="date" id="returnDate">
+
+  <select id="adults">
+    <option value="1">1 Adult</option>
+    <option value="2">2 Adults</option>
+    <option value="3">3 Adults</option>
+  </select>
+
+  <button onclick="searchFlights()">Search</button>
+
+</div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results"></div>
+</div>
+
+<script>
+    let selectedOrigin = "";
+let selectedDestination = "";
+
+
+
+function airportSearch(inputId,listId,type){
+
+
+const input =
+document.getElementById(inputId);
+
+
+const list =
+document.getElementById(listId);
+
+
+
+input.addEventListener(
+"input",
+async function(){
+
+
+const keyword =
+this.value.trim();
+
+
+
+if(keyword.length < 3){
+
+list.innerHTML="";
+
+return;
+
+}
+
+
+
+
+const response =
+await fetch(
+"/api/flights/airports/"+keyword
+);
+
+
+
+const data =
+await response.json();
+
+
+
+const airports =
+data?.data?.[0]?.airports || [];
+
+
+
+list.innerHTML="";
+
+
+
+airports.forEach((airport)=>{
+
+
+
+const div =
+document.createElement("div");
+
+
+div.className =
+"airport-item";
+
+
+
+div.innerHTML = `
+
+${airport.name}
+
+<br>
+
+<small>
+${airport.city}
+(${airport.iata})
+</small>
+
+`;
+
+
+
+div.onclick=function(){
+
+
+
+input.value =
+airport.name;
+
+
+
+if(type==="origin"){
+
+selectedOrigin =
+airport.iata;
+
+}
+else{
+
+selectedDestination =
+airport.iata;
+
+}
+
+
+
+list.innerHTML="";
+
+
+};
+
+
+
+list.appendChild(div);
+
+
+
+});
+
+
+
+});
+
+
+}
+
+
+
+airportSearch(
+"origin",
+"originList",
+"origin"
+);
+
+
+
+airportSearch(
+"destination",
+"destinationList",
+"destination"
+);
+
+async function searchFlights() {
+
+ const origin = selectedOrigin;
+
+
+const destination = selectedDestination;
+
+
+    const departDate =
+    document.getElementById("departDate")
+    .value;
+
+
+    const returnDate =
+    document.getElementById("returnDate")
+    .value;
+
+
+    const adults =
+    Number(document.getElementById("adults").value);
+
+
+
+    const legs = [];
+
+
+
+    if(origin && destination && departDate){
+
+        legs.push({
+
+            origin: origin,
+
+            destination: destination,
+
+            date: departDate
+
+        });
+
+    }
+
+
+
+    if(returnDate){
+
+        legs.push({
+
+            origin: destination,
+
+            destination: origin,
+
+            date: returnDate
+
+        });
+
+    }
+
+
+
+
+    if(legs.length === 0){
+
+        document.getElementById("results").innerHTML =
+        "<p>Please enter flight details.</p>";
+
+        return;
+
+    }
+
+
+
+
+
+    const requestBody = {
+
+        legs: legs,
+
+        adults: adults
+
+    };
+
+
+
+
+
+    document.getElementById("results").innerHTML =
+    "Searching...";
+
+
+
+
+
+    try{
+
+
+        const response = await fetch(
+            "/api/flights/search",
+            {
+
+                method:"POST",
+
+                headers:{
+
+                    "Content-Type":"application/json"
+
+                },
+
+
+                body:JSON.stringify(requestBody)
+
+            }
+        );
+
+
+
+
+        const data = await response.json();
+
+
+
+
+        console.log(
+            "FULL API RESPONSE",
+            data
+        );
+
+
+
+
+        renderFlights(data);
+
+
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        document.getElementById("results").innerHTML =
+        "Unable to search flights";
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+function renderFlights(data){
+
+
+    const results =
+    document.getElementById("results");
+
+
+    console.log("RENDER DATA:", data);
+
+
+
+    const journeys =
+    data?.data?.[0]?.journeys || [];
+
+
+
+    console.log("JOURNEYS:", journeys);
+
+
+
+    if(journeys.length === 0){
+
+        results.innerHTML =
+        "<p style='opacity:.6'>No flights found.</p>";
+
+        return;
+
+    }
+
+
+
+
+
+    results.innerHTML = journeys.map((flight)=>{
+
+
+        const segments =
+        flight.segments || [];
+
+
+
+        const firstSegment =
+        segments[0];
+
+
+
+        const lastSegment =
+        segments[segments.length - 1];
+
+
+
+
+
+        const airline =
+        firstSegment?.carrier?.marketingName
+        ||
+        firstSegment?.carrier?.name
+        ||
+        "Unknown Airline";
+
+
+
+
+
+        const from =
+        firstSegment?.originCode
+        ||
+        firstSegment?.origin?.code
+        ||
+        "-";
+
+
+
+
+
+        const to =
+        lastSegment?.destinationCode
+        ||
+        lastSegment?.destination?.code
+        ||
+        "-";
+
+
+
+
+
+        const price =
+        flight?.offers?.[0]
+        ?.pricing
+        ?.display
+        ?.total
+        ||
+        0;
+
+
+
+
+        const rmPrice =
+        Math.round(Number(price) * 4.7);
+
+
+
+
+
+
+        const stops =
+        segments.length > 0
+        ?
+        segments.length - 1
+        :
+        0;
+
+
+
+
+
+
+        return `
+
+
+        <div class="card">
+
+
+            <div class="left">
+
+
+                <h3>
+                    ✈️ ${airline}
+                </h3>
+
+
+                <p>
+                    ${from} → ${to}
+                </p>
+
+
+                <p style="opacity:.5">
+                    ${firstSegment?.departureTime || ""}
+                </p>
+
+
+            </div>
+
+
+
+
+            <div style="text-align:right">
+
+
+                <div class="price">
+
+                    RM ${rmPrice}
+
+                </div>
+
+
+                <div class="badge">
+
+                    ${stops} stops
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        `;
+
+
+
+    }).join("");
+
+}
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
