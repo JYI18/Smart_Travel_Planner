@@ -31,3 +31,238 @@
     </a>
   </div>
 </nav>
+
+<!-- GLOBAL SAFETY WIDGET -->
+<style>
+  /* Pulse animation for safety button */
+  @keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(245, 165, 36, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(245, 165, 36, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 165, 36, 0); }
+  }
+  .safety-fab {
+    animation: pulse-gold 2s infinite;
+  }
+  .safety-widget-modal {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    visibility: hidden;
+  }
+  .safety-widget-modal.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+  .sw-input:focus {
+    outline: none;
+    border-color: rgba(245, 165, 36, 0.8);
+    box-shadow: 0 0 0 2px rgba(245, 165, 36, 0.2);
+  }
+  #sw-results {
+    position: relative;
+  }
+  #sw-map {
+    width: 100%;
+    height: 240px;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+  #sw-results::-webkit-scrollbar { width: 4px; }
+  #sw-results::-webkit-scrollbar-thumb { background: rgba(245,165,36,0.5); border-radius: 4px; }
+</style>
+
+<!-- Floating Action Button -->
+<button id="safetyFabBtn" class="safety-fab fixed bottom-6 right-6 z-[9999] w-14 h-14 bg-gradient-to-tr from-[#e8832a] to-[#F5A524] rounded-full flex items-center justify-center text-white text-2xl shadow-[0_4px_20px_rgba(245,165,36,0.4)] hover:scale-110 transition-transform cursor-pointer border-none">
+  <i class="fas fa-shield-virus"></i>
+</button>
+
+<!-- Widget Modal -->
+<div id="safetyWidgetModal" class="safety-widget-modal fixed bottom-24 right-6 z-[9999] w-[340px] bg-[#0a0c10]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col font-sans text-white">
+  
+  <div class="bg-white/5 px-4 py-3 border-b border-white/10 flex justify-between items-center">
+    <div class="font-semibold flex items-center gap-2">
+      <i class="fas fa-shield-alt text-amber-400"></i> Smart Safety Check
+    </div>
+    <button id="swCloseBtn" class="text-white/50 hover:text-white transition bg-transparent border-none cursor-pointer">
+      <i class="fas fa-times text-lg"></i>
+    </button>
+  </div>
+
+  <div class="p-4 flex flex-col gap-4">
+    <!-- Input -->
+    <div>
+      <label class="text-xs text-white/60 mb-1 block">Where are you traveling?</label>
+      <div class="flex gap-2">
+        <input type="text" id="swDestInput" class="sw-input flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-white" placeholder="City, Country" value="Bangkok">
+        <button id="swCheckBtn" class="bg-amber-500 hover:bg-amber-600 text-black border-none rounded-lg px-3 py-2 cursor-pointer transition font-semibold text-sm">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Travel Advisory -->
+    <div id="swAdvisoryBox" class="bg-amber-500/10 border-l-4 border-amber-500 p-3 rounded-r-lg">
+      <div class="text-xs font-bold text-amber-400 mb-1 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Travel Advisory</div>
+      <div id="swWarningText" class="text-xs text-white/80">Enter a destination to check real-time risk level.</div>
+    </div>
+
+    <!-- Quick Emergency buttons -->
+    <div class="flex gap-2">
+      <button id="swHospitalBtn" class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2 flex flex-col items-center justify-center gap-1 cursor-pointer transition">
+        <i class="fas fa-hospital text-amber-400 text-lg"></i>
+        <span class="text-[10px] text-white/70">Hospitals</span>
+      </button>
+      <button id="swPoliceBtn" class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2 flex flex-col items-center justify-center gap-1 cursor-pointer transition">
+        <i class="fas fa-shield-haltered text-amber-400 text-lg"></i>
+        <span class="text-[10px] text-white/70">Police</span>
+      </button>
+    </div>
+
+    <!-- Results Area -->
+    <div id="sw-results" class="text-xs text-white/70 max-h-32 overflow-y-auto hidden bg-white/5 p-3 rounded-lg border border-white/5">
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const fab = document.getElementById('safetyFabBtn');
+  const modal = document.getElementById('safetyWidgetModal');
+  const closeBtn = document.getElementById('swCloseBtn');
+  const destInput = document.getElementById('swDestInput');
+  const checkBtn = document.getElementById('swCheckBtn');
+  const warningText = document.getElementById('swWarningText');
+  const hospitalBtn = document.getElementById('swHospitalBtn');
+  const policeBtn = document.getElementById('swPoliceBtn');
+  const resultsDiv = document.getElementById('sw-results');
+  if (!fab) return;
+  fab.addEventListener('click', () => modal.classList.toggle('active'));
+  closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+  function escapeHtml(str) { 
+      if(!str) return ''; 
+      return str.replace(/[&<>]/g, function(m){ 
+          if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;
+      });
+  }
+  async function updateWarning() {
+      let dest = destInput.value.trim() || "Thailand";
+      let country = dest.split(',').pop().trim().toLowerCase();
+      
+      warningText.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Checking database...`;
+      try {
+          const res = await fetch(`/api/advisories/${encodeURIComponent(country)}`);
+          const risk = await res.json();
+          warningText.innerHTML = `<strong>${escapeHtml(dest.toUpperCase())}</strong>: ${escapeHtml(risk.msg)} <br/><span class="inline-block mt-1 bg-black/40 px-1.5 py-0.5 rounded text-[10px] border border-white/10">${escapeHtml(risk.level)}</span>`;
+      } catch (err) {
+          warningText.innerHTML = `<strong>${escapeHtml(dest.toUpperCase())}</strong>: Could not load advisory data. <br/><span class="inline-block mt-1 bg-black/40 px-1.5 py-0.5 rounded text-[10px] border border-white/10">⚪ UNKNOWN</span>`;
+      }
+  }
+
+  checkBtn.addEventListener('click', updateWarning);
+  destInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') updateWarning(); });
+
+  async function loadLeaflet() {
+      if (window.L) return window.L;
+      if (window._flyAwayLeafletLoading) return window._flyAwayLeafletLoading;
+
+      window._flyAwayLeafletLoading = new Promise((resolve, reject) => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/leaflet/dist/leaflet.css';
+          link.onload = () => {};
+          link.onerror = reject;
+          document.head.appendChild(link);
+
+          const script = document.createElement('script');
+          script.src = 'https://unpkg.com/leaflet/dist/leaflet.js';
+          script.async = true;
+          script.onload = () => resolve(window.L);
+          script.onerror = reject;
+          document.body.appendChild(script);
+      });
+
+      return window._flyAwayLeafletLoading;
+  }
+
+  async function swGeocode(dest) {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(dest)}&format=json&limit=1`;
+      try {
+          let res = await fetch(url, { headers: { 'User-Agent': 'FlyAwayWidget/1.0' } });
+          let data = await res.json();
+          if(data && data[0]) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      } catch(e) { }
+      return null;
+  }
+
+  async function swFetchNearby(lat, lon, type) {
+      let amenity = type === 'hospital' ? 'hospital' : 'police';
+      let query = `[out:json];(node["amenity"="${amenity}"](around:4000,${lat},${lon});way["amenity"="${amenity}"](around:4000,${lat},${lon});relation["amenity"="${amenity}"](around:4000,${lat},${lon}););out center;`;
+      let overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+      try {
+          let resp = await fetch(overpassUrl, {
+              headers: {
+                  'Accept': 'application/json',
+                  'User-Agent': 'FlyAwayWidget/1.0'
+              }
+          });
+          if (!resp.ok) return null;
+          let data = await resp.json();
+          let elements = data.elements || [];
+          let results = elements.map(el => {
+              let coords = null;
+              if (el.type === 'node') coords = { lat: el.lat, lon: el.lon };
+              else if (el.center) coords = { lat: el.center.lat, lon: el.center.lon };
+              let name = el.tags?.name || (type === 'hospital' ? 'Hospital' : 'Police Station');
+              return coords ? { name, lat: coords.lat, lon: coords.lon } : null;
+          }).filter(Boolean);
+          return results.slice(0, 8);
+      } catch(e) { return null; }
+  }
+
+  async function swShowNearby(type) {
+      const dest = destInput.value.trim();
+      if(!dest) return;
+
+      resultsDiv.style.display = 'block';
+      resultsDiv.innerHTML = `<div id="sw-map"></div><div class="sw-results-list"><i class="fas fa-spinner fa-pulse text-amber-400"></i> Locating ${escapeHtml(dest)}...</div>`;
+      updateWarning();
+
+      const coords = await swGeocode(dest);
+      if(!coords) { resultsDiv.innerHTML = "Could not locate destination."; return; }
+
+      let places = await swFetchNearby(coords.lat, coords.lon, type);
+      if(!places || !places.length) {
+          resultsDiv.innerHTML = `<div> No ${type} data found nearby. Call 112 in emergency.</div>`;
+          return;
+      }
+
+      await loadLeaflet();
+      if (window.swSafetyMap) {
+          window.swSafetyMap.remove();
+          window.swSafetyMap = null;
+      }
+
+      window.swSafetyMap = L.map('sw-map', { zoomControl: true, attributionControl: true }).setView([coords.lat, coords.lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+          maxZoom: 19
+      }).addTo(window.swSafetyMap);
+
+      L.marker([coords.lat, coords.lon]).addTo(window.swSafetyMap).bindPopup(`${escapeHtml(dest)} (Destination)`).openPopup();
+
+      places.forEach(place => {
+          L.marker([place.lat, place.lon]).addTo(window.swSafetyMap).bindPopup(escapeHtml(place.name));
+      });
+
+      let items = places.map(p => `<li class="py-1 border-b border-white/10 last:border-0 truncate"><i class="fas fa-${type==='hospital' ? 'hospital' : 'shield-alt'} text-amber-400 w-4"></i> ${escapeHtml(p.name)}</li>`).join('');
+      const resultsList = resultsDiv.querySelector('.sw-results-list');
+      if (resultsList) {
+          resultsList.innerHTML = `<div class="font-bold text-white mb-1"> Nearby ${type==='hospital' ? 'Hospitals' : 'Police'}:</div><ul>${items}</ul>`;
+      }
+  }
+  hospitalBtn.addEventListener('click', () => swShowNearby('hospital'));
+  policeBtn.addEventListener('click', () => swShowNearby('police'));
+})();
+</script>
