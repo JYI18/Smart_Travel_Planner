@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
+
 const Room = require("../models/room");
 const Hotel = require("../models/hotel");
 const getCountryCode = require("../utils/getCNcode");
-
+const generateRooms =
+require("../utils/roomGenerator");
 // ============================
 // SEARCH HOTELS (CLEAN + FIXED)
 // ============================
@@ -101,73 +103,31 @@ router.get("/availability", async (req, res) => {
 
     if (rooms.length === 0) {
 
-      await Room.insertMany([
+      const hotel =
+        await Hotel.findOne({
+          hotelId
+        });
 
-        {
-          hotelId,
-          roomType: "Standard Room",
-          price: 200,
-          maxGuests: 2,
-          availableRooms: 10,
-          image:
-            "https://images.unsplash.com/photo-1566073771259-6a8506099945",
-          amenities: [
-            "WiFi",
-            "Air Conditioning",
-            "TV"
-          ]
-        },
+      if (!hotel) {
 
-        {
-          hotelId,
-          roomType: "Deluxe Room",
-          price: 350,
-          maxGuests: 2,
-          availableRooms: 5,
-          image:
-            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
-          amenities: [
-            "WiFi",
-            "Breakfast",
-            "TV"
-          ]
-        },
+        return res.status(404).json({
+          success: false,
+          message: "Hotel not found"
+        });
 
-        {
-          hotelId,
-          roomType: "Family Suite",
-          price: 600,
-          maxGuests: 4,
-          availableRooms: 3,
-          image:
-            "https://images.unsplash.com/photo-1590490360182-c33d57733427",
-          amenities: [
-            "WiFi",
-            "Breakfast",
-            "Bathtub"
-          ]
-        },
+      }
 
-        {
-          hotelId,
-          roomType: "Presidential Suite",
-          price: 1200,
-          maxGuests: 6,
-          availableRooms: 1,
-          image:
-            "https://images.unsplash.com/photo-1578683010236-d716f9a3f461",
-          amenities: [
-            "WiFi",
-            "Private Pool",
-            "Jacuzzi"
-          ]
-        }
+      const generatedRooms =
+        generateRooms(hotel);
 
-      ]);
+      await Room.insertMany(
+        generatedRooms
+      );
 
-      rooms = await Room.find({
-        hotelId
-      });
+      rooms =
+        await Room.find({
+          hotelId
+        });
 
     }
 
@@ -183,13 +143,13 @@ router.get("/availability", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Failed to fetch rooms"
+      message:
+      "Failed to fetch rooms"
     });
 
   }
 
 });
-
 // ============================
 // HOTEL DETAILS
 // ============================
